@@ -1,0 +1,66 @@
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\appsettings.Development.json
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\appsettings.json
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Rest API PWII.exe
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Rest API PWII.deps.json
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Rest API PWII.runtimeconfig.json
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Rest API PWII.runtimeconfig.dev.json
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Rest API PWII.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Rest API PWII.pdb
+D:\repositories\.NET\Rest API PWII\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.csprojAssemblyReference.cache
+D:\repositories\.NET\Rest API PWII\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.AssemblyInfoInputs.cache
+D:\repositories\.NET\Rest API PWII\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.AssemblyInfo.cs
+D:\repositories\.NET\Rest API PWII\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.RazorTargetAssemblyInfo.cache
+D:\repositories\.NET\Rest API PWII\Rest API PWII\obj\Debug\netcoreapp3.1\staticwebassets\Rest API PWII.StaticWebAssets.Manifest.cache
+D:\repositories\.NET\Rest API PWII\Rest API PWII\obj\Debug\netcoreapp3.1\staticwebassets\Rest API PWII.StaticWebAssets.xml
+D:\repositories\.NET\Rest API PWII\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.pdb
+D:\repositories\.NET\Rest API PWII\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.genruntimeconfig.cache
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Abstractions.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Memory.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.Abstractions.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Options.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Primitives.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\System.Collections.Immutable.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\System.ComponentModel.Annotations.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\bin\Debug\netcoreapp3.1\System.Diagnostics.DiagnosticSource.dll
+D:\repositories\.NET\Rest API PWII\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.csproj.CopyComplete
+D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.csprojAssemblyReference.cache
+D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.AssemblyInfoInputs.cache
+D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.AssemblyInfo.cs
+D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.pdb
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Rest API PWII.exe
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\appsettings.Development.json
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\appsettings.json
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Rest API PWII.deps.json
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Rest API PWII.runtimeconfig.json
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Rest API PWII.runtimeconfig.dev.json
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Rest API PWII.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Rest API PWII.pdb
+D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.RazorTargetAssemblyInfo.cache
+D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\staticwebassets\Rest API PWII.StaticWebAssets.Manifest.cache
+D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\staticwebassets\Rest API PWII.StaticWebAssets.xml
+D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.genruntimeconfig.cache
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Abstractions.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Memory.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.Abstractions.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Options.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Primitives.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\System.Collections.Immutable.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\System.ComponentModel.Annotations.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\System.Diagnostics.DiagnosticSource.dll
+D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.csproj.CoreCompileInputs.cache
+D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.MvcApplicationPartsAssemblyInfo.cache
+D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.csproj.CopyComplete
