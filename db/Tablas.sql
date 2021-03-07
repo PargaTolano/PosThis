@@ -104,6 +104,11 @@ CREATE TABLE Media(
 	Contenido			VARBINARY(MAX)
 );
 
+ALTER TABLE Usuarios 
+ADD 
+	FotoPerfil INTEGER NULL
+	CONSTRAINT fk_Usuario_Media FOREIGN KEY( FotoPerfil) REFERENCES Media(MediaID);
+
 -- TABLAS RELACIONALES
 
 CREATE TABLE HastagPost(
