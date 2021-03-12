@@ -1,0 +1,59 @@
+:root {
+    --main-color: #031B88;
+    --primary-color: #6096FD;
+    --secondary-color: #AA86F8;
+    --tertiary-color: #FB7B8E;
+    --fourth-color: #FAA7B8;
+    --white: green;
+}
+
+html {
+    background-color: var( --main-color);
+    color: gray;
+}
+
+.App {
+    text-align: left;
+    width: 100vw;
+    height: 100vh;
+}
+
+.login {
+    position: relative;
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    height: 100%;
+}
+
+.login {
+    flex: 0 0 auto;
+}
+
+.login header {
+    width: 100%;
+    height: 80px;
+    background-color: var( --primary-color);
+}
+
+.login aside {
+    width: 30%;
+    height: 100%;
+    font-style: italic;
+    color: #29627e;
+    padding: 20px;
+}
+
+.login main {
+    width: 60%;
+    height: 100%;
+    padding: 20px;
+}
+
+@media (max-width: 480px) {}
+
+@media (max-width: 768px) {}
+
+@media (max-width: 1024px) {}
+
+@media (max-width: 1200px) {}
