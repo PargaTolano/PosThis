@@ -1,10 +1,14 @@
 -- Equipo: 1
+
 -- Integrantes:
--- 1808868 Jose Antonio Parga Tolano
+-- José Antonio Parga Tolano - 1808868
+-- Esteban Barbosa Martínez - 1735087
+-- Yareli Guevara Villalpando - 1805427
+-- Valdemar Botello Jasso - 1542845
 
 -- Query para creacion de base de datos [PosThis]
 -- Insert de registros en tabla X
--- Query Creado el 2021-02-27
+-- Query Creado el 2021-02-27 por José Antonio Parga Tolano
 
 -- TABLAS PRIMAS
 
