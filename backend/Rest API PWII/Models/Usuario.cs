@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Rest_API_PWII.Models
 {
@@ -19,16 +18,22 @@ namespace Rest_API_PWII.Models
 
         public DateTime FechaNacimiento { get; set; }
 
+        [JsonIgnore]
         public virtual Media FotoPerfil { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Post> Posts { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Repost> Reposts { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Like> Likes { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Reply> Replies { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Follow> Follows { get; set; }
     }
 }

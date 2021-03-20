@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Ltz4I1bC0FnGwP05CsouzCGD9jXfMZVnlRPfl7mXzaXBmHOfsU2ZIJ+SBplemPwUYbokk3rENh7NCtk1P8IFug==",
+  "dgSpecHash": "vgpUQGqg17/N2y3qOGttyt7ZJiJ/C+AUyUqEx8ip0CehzZUQY3Y/a0SjnrcoKsmG5v45mQzzlggLObV+I4HSxQ==",
   "success": true,
   "projectFilePath": "D:\\repositories\\javascript\\PosThis\\backend\\Rest API PWII\\Rest API PWII.csproj",
   "expectedPackageFiles": [
@@ -15,6 +15,7 @@
     "C:\\Users\\Antonio\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\5.0.0\\microsoft.extensions.logging.abstractions.5.0.0.nupkg.sha512",
     "C:\\Users\\Antonio\\.nuget\\packages\\microsoft.extensions.options\\5.0.0\\microsoft.extensions.options.5.0.0.nupkg.sha512",
     "C:\\Users\\Antonio\\.nuget\\packages\\microsoft.extensions.primitives\\5.0.0\\microsoft.extensions.primitives.5.0.0.nupkg.sha512",
+    "C:\\Users\\Antonio\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
     "C:\\Users\\Antonio\\.nuget\\packages\\system.collections.immutable\\5.0.0\\system.collections.immutable.5.0.0.nupkg.sha512",
     "C:\\Users\\Antonio\\.nuget\\packages\\system.componentmodel.annotations\\5.0.0\\system.componentmodel.annotations.5.0.0.nupkg.sha512",
     "C:\\Users\\Antonio\\.nuget\\packages\\system.diagnostics.diagnosticsource\\5.0.1\\system.diagnostics.diagnosticsource.5.0.1.nupkg.sha512"

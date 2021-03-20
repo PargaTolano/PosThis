@@ -81,7 +81,7 @@ namespace Rest_API_PWII.Models
                 post
                     .HasOne( e => e.Usuario )
                     .WithMany( u => u.Posts )
-                    .HasForeignKey( Post.ForeignKeyUsuario );
+                    .HasForeignKey( p => p.UsuarioID );
 
                 post.HasKey(e => e.FechaPublicacion);
             });
@@ -97,26 +97,42 @@ namespace Rest_API_PWII.Models
                 repost
                     .HasOne(e => e.Post)
                     .WithMany(p => p.Reposts)
-                    .HasForeignKey( Repost.ForeignKeyPost );
+                    .HasForeignKey( r => r.PostID );
 
                 repost
                     .HasOne( e => e.Usuario )
                     .WithMany( r => r.Reposts )
-                    .HasForeignKey( Repost.ForeignKeyUsuario );
+                    .HasForeignKey( r => r.UsuarioID );
             });
 
             modelBuilder.Entity<Like>(like =>
             {
                 like.HasKey(e => e.LikeID);
+
                 like
                     .HasOne(e=> e.Post)
                     .WithMany( p=> p.Likes )
-                    .HasForeignKey( Like.ForeignKeyPost );
+                    .HasForeignKey( l => l.PostID );
 
                 like
                     .HasOne( e => e.Usuario )
                     .WithMany( u => u.Likes )
-                    .HasForeignKey( Like.ForeignKeyUsuario );
+                    .HasForeignKey( l => l.UsuarioID );
+            });
+
+            modelBuilder.Entity<Reply>(reply =>
+            {
+                reply.HasKey( e => e.ReplyID );
+
+                reply
+                    .HasOne( e => e.Post )
+                    .WithMany( p => p.Replies )
+                    .HasForeignKey( r => r.PostID );
+
+                reply
+                    .HasOne( e => e.Usuario )
+                    .WithMany( u => u.Replies )
+                    .HasForeignKey( r => r.UsuarioID );
             });
 
             modelBuilder.Entity<Hashtag>(hashtag =>
@@ -134,12 +150,12 @@ namespace Rest_API_PWII.Models
                 follow
                     .HasOne( e=> e.UsuarioSeguido )
                     .WithMany( u => u.Follows )
-                    .HasForeignKey( Follow.ForeignKeyUsuarioSeguido) ;
+                    .HasForeignKey( f => f.UsuarioSeguidoID );
 
                 follow
-                    .HasOne(e => e.UsuarioSeguidor)
-                    .WithMany(u => u.Follows)
-                    .HasForeignKey(Follow.ForeignKeyUsuarioSeguidor);
+                    .HasOne( e => e.UsuarioSeguidor )
+                    .WithMany( u => u.Follows )
+                    .HasForeignKey( f => f.UsuarioSeguidorID );
             });
 
             modelBuilder.Entity<Media>(media =>
@@ -168,12 +184,12 @@ namespace Rest_API_PWII.Models
                 hashtagPost
                     .HasOne( e=> e.Hashtag )
                     .WithMany( h => h.HashtagPosts )
-                    .HasForeignKey(HashtagPost.ForeignkeyHashtag);
+                    .HasForeignKey( hp=> hp.HashtagID );
 
                 hashtagPost
                    .HasOne( e=> e.Post )
                    .WithMany( p => p.HashtagPosts )
-                   .HasForeignKey(HashtagPost.ForeignkeyPost);
+                   .HasForeignKey( hp => hp.PostID );
             });
 
             modelBuilder.Entity<MediaPost>(mediaPost =>
@@ -184,12 +200,12 @@ namespace Rest_API_PWII.Models
                 mediaPost
                     .HasOne( e => e.Media )
                     .WithMany( m => m.MediaPosts )
-                    .HasForeignKey( MediaPost.ForeignkeyMedia );
+                    .HasForeignKey( mp=> mp.MediaID );
 
                 mediaPost
                     .HasOne( e => e.Post )
                     .WithMany( p => p.MediaPosts )
-                    .HasForeignKey( MediaPost.ForeignkeyPost );
+                    .HasForeignKey( mp => mp.PostID );
             });
         }
     }

@@ -10,6 +10,10 @@ namespace Rest_API_PWII.Models
 
         public int LikeID { get; set; }
 
+        public int UsuarioID { get; set; }
+
+        public int PostID { get; set; }
+
         public virtual Usuario Usuario { get; set; }
 
         public virtual Post Post { get; set; }

@@ -61,6 +61,4 @@ D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1
 D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\System.Collections.Immutable.dll
 D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\System.ComponentModel.Annotations.dll
 D:\repositories\javascript\PosThis\backend\Rest API PWII\bin\Debug\netcoreapp3.1\System.Diagnostics.DiagnosticSource.dll
-D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.csproj.CoreCompileInputs.cache
-D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.MvcApplicationPartsAssemblyInfo.cache
 D:\repositories\javascript\PosThis\backend\Rest API PWII\obj\Debug\netcoreapp3.1\Rest API PWII.csproj.CopyComplete

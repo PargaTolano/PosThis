@@ -9,6 +9,10 @@ namespace Rest_API_PWII.Models
     {
         public int FollowID { get; set; }
 
+        public int UsuarioSeguidorID { get; set; }
+
+        public int UsuarioSeguidoID { get; set; }
+
         public virtual Usuario UsuarioSeguidor { get; set; }
 
         public virtual Usuario UsuarioSeguido { get; set;  }
