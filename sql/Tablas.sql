@@ -12,7 +12,12 @@
 
 -- TABLAS PRIMAS
 
+--Query Modificado 27/03/2021
+--Se ha agragado un Drop al script para mejorar el funcionamiento
+
 USE [master];
+
+DROP DATABASE IF EXISTS PosThis;
 
 CREATE DATABASE PosThis;
 GO
