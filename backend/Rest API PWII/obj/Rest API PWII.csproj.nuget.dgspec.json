@@ -1,23 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "D:\\repositories\\javascript\\PosThis\\backend\\Rest API PWII\\Rest API PWII.csproj": {}
+    "D:\\Repositories\\Web\\PosThis\\backend\\Rest API PWII\\Rest API PWII.csproj": {}
   },
   "projects": {
-    "D:\\repositories\\javascript\\PosThis\\backend\\Rest API PWII\\Rest API PWII.csproj": {
+    "D:\\Repositories\\Web\\PosThis\\backend\\Rest API PWII\\Rest API PWII.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\repositories\\javascript\\PosThis\\backend\\Rest API PWII\\Rest API PWII.csproj",
+        "projectUniqueName": "D:\\Repositories\\Web\\PosThis\\backend\\Rest API PWII\\Rest API PWII.csproj",
         "projectName": "Rest API PWII",
-        "projectPath": "D:\\repositories\\javascript\\PosThis\\backend\\Rest API PWII\\Rest API PWII.csproj",
-        "packagesPath": "C:\\Users\\Antonio\\.nuget\\packages\\",
-        "outputPath": "D:\\repositories\\javascript\\PosThis\\backend\\Rest API PWII\\obj\\",
+        "projectPath": "D:\\Repositories\\Web\\PosThis\\backend\\Rest API PWII\\Rest API PWII.csproj",
+        "packagesPath": "C:\\Users\\Parga\\.nuget\\packages\\",
+        "outputPath": "D:\\Repositories\\Web\\PosThis\\backend\\Rest API PWII\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Antonio\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Parga\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -29,6 +30,7 @@
         },
         "frameworks": {
           "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
             "projectReferences": {}
           }
         },
@@ -40,6 +42,7 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "dependencies": {
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
@@ -68,7 +71,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
         }
       }
     }

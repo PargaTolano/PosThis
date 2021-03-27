@@ -14,9 +14,9 @@
 
 USE [master];
 
-DROP   DATABASE PosThis;
 CREATE DATABASE PosThis;
-GO;
+GO
+
 USE PosThis;
 
 CREATE TABLE Usuarios(
