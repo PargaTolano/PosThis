@@ -16,12 +16,14 @@ _Proyecto Final de Programacion Web II_
 Carpetas generales
 
 * **SQL**
+
 	Tablas.sql  
 	     	Tablas de la base de datos de la aplicación, 
 		aquí se crean las tablas con sus atributos y 
 		la relación entre las mismas.
 
 * **BACKEND**
+
 	     Rest API PWII
 		Contiene lo necesario para el desarrollo web del
 		programa. Contien:
@@ -47,6 +49,7 @@ Carpetas generales
 		Es el programa tal cuál.
 
 * **FRONTEND** 
+
 	Carpeta para la interfaz de la aplicación 
 			public:
 			Carpeta es para recursos que se usan en toda
