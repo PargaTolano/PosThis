@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Rest_API_PWII.Controllers
 {
-    [Route("api/[controller]/]action]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class SecurityController : ControllerBase
     {

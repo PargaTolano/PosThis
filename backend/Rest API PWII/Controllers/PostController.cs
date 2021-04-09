@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Threading.Tasks;
-using System.Net;
-using Microsoft.AspNetCore.Mvc;
+using Rest_API_PWII.Classes;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
 using Rest_API_PWII.Classes;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,30 +15,96 @@ namespace Rest_API_PWII.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class UsuariosController : ControllerBase
+    public class PostController : ControllerBase
     {
         private PosThisDbContext db;
 
-        UsuariosController( PosThisDbContext db )
+        PostController( PosThisDbContext db )
         {
             this.db = db;
         }
 
-        // GET: api/<UsuariosController>
+        // GET: api/<PostController>
         [HttpGet]
         public IActionResult Get()
         {
             try
             {
-                UsuarioCore usuarioCore = new UsuarioCore(db);
-                List<Usuario> usuarios = usuarioCore.GetAll();
+
+                PostCore postCore = new PostCore(db);
+                List<Post> posts = postCore.GetAll();
 
                 return Ok(
                     new ResponseApiSuccess
                     {
                         Code = 1,
-                        Data = usuarios,
-                        Message = "Usuarios Obtenidos Exitosamente"
+                        Data = posts,
+                        Message = "Posts Obtenidos Exitosamente"
+                    });
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(
+                   (int)HttpStatusCode.InternalServerError,
+                   new ResponseApiError
+                   {
+                       Code = 3,
+                       HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                       Message = ex.Message
+                   });
+            }
+        }
+
+        // GET api/<PostController>/5
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            try
+            {
+
+                PostCore postCore = new PostCore(db);
+                Post post = postCore.GetOne( id );
+
+                return Ok(
+                    new ResponseApiSuccess
+                    {
+                        Code = 1,
+                        Data = post,
+                        Message = "Posts Obtenidos Exitosamente"
+                    });
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(
+                   (int)HttpStatusCode.InternalServerError,
+                   new ResponseApiError
+                   {
+                       Code = 3,
+                       HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                       Message = ex.Message
+                   });
+            }
+        }
+
+        // POST api/<PostController>
+        [HttpPost]
+        public IActionResult Post([FromBody] Post post)
+        {
+            try
+            {
+                PostCore postCore = new PostCore(db);
+                ResponseApiError err = postCore.Create( post );
+                if (err != null)
+                    return StatusCode(err.HttpStatusCode, err);
+
+                return Ok(
+                    new ResponseApiSuccess
+                    {
+                        Code = 1,
+                        Data = post,
+                        Message = "Usuario creado exitosamente"
                     });
             }
             catch (Exception ex)
@@ -54,107 +120,47 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        // GET api/<UsuariosController>/5
-        [HttpGet("{id}")]
-        public IActionResult Get( int id )
+        // PUT api/<PostController>/5
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody] Post post)
         {
             try
             {
-                UsuarioCore usuarioCore = new UsuarioCore( db );
-                Usuario usuario = usuarioCore.GetOne( id );
+                PostCore postCore= new PostCore(db);
+                ResponseApiError err = postCore.Update(id, post);
+
+                if (err != null)
+                    return StatusCode(err.HttpStatusCode, err);
 
                 return Ok(
                     new ResponseApiSuccess
                     {
                         Code = 1,
-                        Data = usuario,
-                        Message = "Usuarios Obtenidos Exitosamente"
+                        Data = post,
+                        Message = "Usuario creado exitosamente"
                     });
             }
             catch (Exception ex)
             {
                 return StatusCode(
-                   (int)HttpStatusCode.InternalServerError,
-                   new ResponseApiError
-                   {
-                       Code = 3,
-                       HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                       Message = ex.Message
-                   });
-            }
-           
-        }
-
-        // POST api/<UsuariosController>
-        [HttpPost]
-        public async Task<IActionResult> Post( [FromBody] Usuario usuario )
-        {
-            try
-            {
-                UsuarioCore usuarioCore = new UsuarioCore( db );
-                ResponseApiError err = usuarioCore.Create( usuario );
-                if ( err != null )
-                    return StatusCode( err.HttpStatusCode, err );
-
-                return Ok(
-                    new ResponseApiSuccess {
-                        Code = 1, 
-                        Data = usuario,
-                        Message = "Usuario creado exitosamente" 
-                    } );
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(
-                    ( int ) HttpStatusCode.InternalServerError,
+                    (int)HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
                         Code = 3,
-                        HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
+                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });
             }
         }
 
-        // PUT api/<UsuariosController>/5
-        [HttpPut("{id}")]
-        public IActionResult Put( int id, [FromBody] Usuario usuario )
-        {
-            try
-            {
-                UsuarioCore usuarioCore = new UsuarioCore( db );
-                ResponseApiError err = usuarioCore.Update( id, usuario );
-                if ( err != null )
-                    return StatusCode( err.HttpStatusCode, err );
-
-                return Ok(
-                    new ResponseApiSuccess
-                    {
-                        Code = 1,
-                        Data = usuario,
-                        Message = "Usuario creado exitosamente"
-                    });
-            }
-            catch ( Exception ex )
-            {
-                return StatusCode(
-                    ( int ) HttpStatusCode.InternalServerError,
-                    new ResponseApiError {
-                        Code = 3,
-                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                        Message = ex.Message 
-                    });
-            }
-        }
-
-        // DELETE api/<UsuariosController>/5
+        // DELETE api/<PostController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete( int id )
+        public IActionResult Delete(int id)
         {
             try
             {
-                UsuarioCore usuarioCore = new UsuarioCore(db);
-                ResponseApiError err = usuarioCore.Delete( id );
+                PostCore postCore = new PostCore(db);
+                ResponseApiError err = postCore.Delete( id );
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
 
