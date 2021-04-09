@@ -90,7 +90,7 @@ namespace Rest_API_PWII.Controllers
 
         // POST api/<PostController>
         [HttpPost]
-        public IActionResult Post([FromBody] Post post)
+        public IActionResult Create([FromBody] Post post)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace Rest_API_PWII.Controllers
 
         // PUT api/<PostController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Post post)
+        public IActionResult Update(int id, [FromBody] Post post)
         {
             try
             {

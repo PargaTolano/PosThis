@@ -87,7 +87,7 @@ namespace Rest_API_PWII.Controllers
 
         // POST api/<UsuariosController>
         [HttpPost]
-        public async Task<IActionResult> Post( [FromBody] Usuario usuario )
+        public async Task<IActionResult> Create( [FromBody] Usuario usuario )
         {
             try
             {
@@ -118,7 +118,7 @@ namespace Rest_API_PWII.Controllers
 
         // PUT api/<UsuariosController>/5
         [HttpPut("{id}")]
-        public IActionResult Put( int id, [FromBody] Usuario usuario )
+        public IActionResult Update( int id, [FromBody] Usuario usuario )
         {
             try
             {
