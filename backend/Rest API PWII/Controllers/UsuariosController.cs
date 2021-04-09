@@ -64,7 +64,7 @@ namespace Rest_API_PWII.Controllers
 
         // POST api/<UsuariosController>
         [HttpPost]
-        public IActionResult Post( [FromBody] Usuario usuario )
+        public async Task<IActionResult> Post( [FromBody] Usuario usuario )
         {
             try
             {
@@ -100,7 +100,7 @@ namespace Rest_API_PWII.Controllers
             try
             {
                 UsuarioCore usuarioCore = new UsuarioCore( db );
-                ResponseApiError err = usuarioCore.Create( usuario );
+                ResponseApiError err = usuarioCore.Update( id, usuario );
                 if ( err == null )
                     return StatusCode( err.HttpStatusCode, err );
 

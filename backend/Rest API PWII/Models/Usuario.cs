@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 
 namespace Rest_API_PWII.Models
 {
-    public class Usuario
+    public class Usuario : IdentityUser
     {
         public int UsuarioID { get; set; }
 

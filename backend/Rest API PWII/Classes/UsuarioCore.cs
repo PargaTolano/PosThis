@@ -112,7 +112,6 @@ namespace Rest_API_PWII.Classes
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }

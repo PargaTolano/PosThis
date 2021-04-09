@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Rest_API_PWII.Models
 {
-    public class PosThisDbContext : DbContext
+    public class PosThisDbContext : IdentityDbContext<Usuario>
     {
         public DbSet<Usuario> Usuarios { get; set; }
 
