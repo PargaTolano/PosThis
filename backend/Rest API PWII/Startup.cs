@@ -41,19 +41,19 @@ namespace Rest_API_PWII
             string connectionString = Configuration.GetConnectionString("SqlConnection");
             byte[] key = Configuration.GetValue<byte[]>("SecretKey");
 
-            services.AddDbContext<PosThisDbContext>(options =>
+            services.AddDbContext<PosThisDbContext>( options =>
                 options.UseSqlServer(connectionString)
             );
 
             services.AddIdentity<Usuario, IdentityRole>()
                 .AddEntityFrameworkStores<PosThisDbContext>();
 
-            services.AddAuthentication(x =>
+            services.AddAuthentication( x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(x =>
+            .AddJwtBearer( x =>
             {
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
@@ -73,7 +73,7 @@ namespace Rest_API_PWII
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("Swagger/v1/swagger.json","PosThis v1"));
+                app.UseSwaggerUI( c => c.SwaggerEndpoint("Swagger/v1/swagger.json","PosThis v1") );
             }
 
             app.UseHttpsRedirection();
@@ -83,7 +83,7 @@ namespace Rest_API_PWII
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
+            app.UseEndpoints( endpoints =>
             {
                 endpoints.MapControllers();
             });
