@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Rest_API_PWII
 {
@@ -39,7 +40,10 @@ namespace Rest_API_PWII
                 });
 
             string connectionString = Configuration.GetConnectionString("SqlConnection");
-            byte[] key = Configuration.GetValue<byte[]>("SecretKey");
+            byte[] key;
+            string keyStr = Configuration.GetValue<string>("SecretKey");
+
+            key = Encoding.ASCII.GetBytes(keyStr);
 
             services.AddDbContext<PosThisDbContext>( options =>
                 options.UseSqlServer(connectionString)

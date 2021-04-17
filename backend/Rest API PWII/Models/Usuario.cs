@@ -36,5 +36,8 @@ namespace Rest_API_PWII.Models
 
         [JsonIgnore]
         public virtual ICollection<Follow> Follows { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<Follow> Following { get; set; }
     }
 }

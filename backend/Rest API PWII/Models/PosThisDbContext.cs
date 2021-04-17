@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,7 +31,7 @@ namespace Rest_API_PWII.Models
 
         public DbSet<MediaPost> MediaPosts { get; set; }
 
-        public PosThisDbContext()
+        public PosThisDbContext(DbContextOptions<PosThisDbContext> options) : base(options)
         {
 
         }
@@ -42,9 +43,11 @@ namespace Rest_API_PWII.Models
 
         protected override void OnModelCreating( ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Usuario>(usuario =>
             {
-
+                usuario.HasKey(u => u.Id);
                 usuario.HasKey(usuario => usuario.UsuarioID);
                 
                 usuario.Property(e => e.Nombre)
@@ -150,13 +153,15 @@ namespace Rest_API_PWII.Models
 
                 follow
                     .HasOne( e=> e.UsuarioSeguido )
-                    .WithMany( u => u.Follows )
-                    .HasForeignKey( f => f.UsuarioSeguidoID );
+                    .WithMany( u => u.Following )
+                    .HasForeignKey( f => f.UsuarioSeguidoID )
+                    .HasPrincipalKey( f => f.UsuarioID );
 
                 follow
                     .HasOne( e => e.UsuarioSeguidor )
                     .WithMany( u => u.Follows )
-                    .HasForeignKey( f => f.UsuarioSeguidorID );
+                    .HasForeignKey( f => f.UsuarioSeguidorID)
+                    .HasPrincipalKey(f => f.UsuarioID);
             });
 
             modelBuilder.Entity<Media>(media =>
@@ -177,10 +182,7 @@ namespace Rest_API_PWII.Models
             modelBuilder.Entity<HashtagPost>(hashtagPost =>
             {
                 hashtagPost
-                    .HasKey( e => e.Hashtag );
-
-                hashtagPost
-                    .HasKey( e => e.Post );
+                .HasKey(hp => hp.HashtagPostID);
 
                 hashtagPost
                     .HasOne( e=> e.Hashtag )
@@ -195,8 +197,8 @@ namespace Rest_API_PWII.Models
 
             modelBuilder.Entity<MediaPost>(mediaPost =>
             {
-                mediaPost.HasKey(e => e.Media);
-                mediaPost.HasKey(e => e.Post);
+                mediaPost
+                .HasKey(mp => mp.MediaPostID);
 
                 mediaPost
                     .HasOne( e => e.Media )

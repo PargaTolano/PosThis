@@ -7,6 +7,9 @@ namespace Rest_API_PWII.Models
 {
     public class HashtagPost
     {
+
+        public int HashtagPostID { get; set; }
+
         public int HashtagID { get; set; }
         
         public int PostID { get; set; }
