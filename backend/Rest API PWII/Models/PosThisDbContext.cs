@@ -33,7 +33,6 @@ namespace Rest_API_PWII.Models
 
         public PosThisDbContext(DbContextOptions<PosThisDbContext> options) : base(options)
         {
-
         }
 
         protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder)
@@ -47,7 +46,6 @@ namespace Rest_API_PWII.Models
 
             modelBuilder.Entity<Usuario>(usuario =>
             {
-                usuario.HasKey(u => u.Id);
                 usuario.HasKey(usuario => usuario.UsuarioID);
                 
                 usuario.Property(e => e.Nombre)
@@ -70,8 +68,6 @@ namespace Rest_API_PWII.Models
                     .IsUnicode(false)
                     .IsRequired();
 
-                usuario.HasKey(e => e.FechaNacimiento);
-
             });
 
             modelBuilder.Entity<Post>(post =>
@@ -86,8 +82,6 @@ namespace Rest_API_PWII.Models
                     .HasOne( e => e.Usuario )
                     .WithMany( u => u.Posts )
                     .HasForeignKey( p => p.UsuarioID );
-
-                post.HasKey(e => e.FechaPublicacion);
             });
 
             modelBuilder.Entity<Repost>(repost =>
@@ -142,8 +136,6 @@ namespace Rest_API_PWII.Models
             modelBuilder.Entity<Hashtag>(hashtag =>
             {
                 hashtag.HasKey(e => e.HastagID);
-
-                hashtag.HasKey(e => e.Texto);
             });
 
             modelBuilder.Entity<Follow>(follow =>

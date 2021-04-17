@@ -43,7 +43,7 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError ValidateExists(int id)
         {
-            var res = (from u in db.Usuarios where u.UsuarioID == id select u).First();
+            var res = (from u in db.Usuarios where u.UsuarioID == id.ToString() select u).First();
 
             if (res == null)
                 return new ResponseApiError { Code = 2, HttpStatusCode = (int)HttpStatusCode.NotFound, Message = "El usuario no existe en la base de datos" };
@@ -84,7 +84,7 @@ namespace Rest_API_PWII.Classes
 
         public Usuario GetOne(int id)
         {
-            return db.Usuarios.First(u => u.UsuarioID == id);
+            return db.Usuarios.First(u => u.UsuarioID == id.ToString());
         }
 
         public ResponseApiError Update(int id, Usuario usuario)
@@ -99,7 +99,7 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                Usuario usuarioDb = db.Usuarios.First(u => u.UsuarioID == id);
+                Usuario usuarioDb = db.Usuarios.First(u => u.UsuarioID == id.ToString());
 
                 usuarioDb.Nombre = usuario.Nombre != null ? usuario.Nombre : usuarioDb.Nombre;
                 usuarioDb.Tag = usuario.Tag != null ? usuario.Tag : usuarioDb.Tag;
@@ -124,7 +124,7 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                Usuario usuarioDb = db.Usuarios.First( u => u.UsuarioID == id );
+                Usuario usuarioDb = db.Usuarios.First( u => u.UsuarioID == id.ToString());
 
                 db.Usuarios.Remove( usuarioDb );
 

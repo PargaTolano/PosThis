@@ -14,7 +14,7 @@ namespace Rest_API_PWII.Models
 
         public DateTime FechaPublicacion { get; set; }
 
-        public int UsuarioID { get; set; }
+        public string UsuarioID { get; set; }
 
         public int PostID { get; set; }
 

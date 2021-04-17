@@ -19,7 +19,7 @@ namespace Rest_API_PWII.Controllers
     {
         private PosThisDbContext db;
 
-        PostController( PosThisDbContext db )
+        public PostController( PosThisDbContext db )
         {
             this.db = db;
         }

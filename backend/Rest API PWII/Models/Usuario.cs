@@ -7,7 +7,7 @@ namespace Rest_API_PWII.Models
 {
     public class Usuario : IdentityUser
     {
-        public int UsuarioID { get; set; }
+        public string UsuarioID { get; set; }
 
         public string Nombre { get; set; }
 

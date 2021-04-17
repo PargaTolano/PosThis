@@ -25,7 +25,7 @@ GO
 USE PosThis;
 
 CREATE TABLE Usuarios(
-	UsuarioID			INTEGER PRIMARY KEY IDENTITY,
+	UsuarioID			VARCHAR(16) PRIMARY KEY		,
 	Nombre				VARCHAR(20)					,
 	Tag					VARCHAR(15) UNIQUE			,
 	Correo				VARCHAR(35) UNIQUE			,
@@ -37,7 +37,7 @@ CREATE TABLE Posts(
 	PostID				INTEGER PRIMARY KEY IDENTITY,
 	Texto				VARCHAR(256)				,
 	FechaPublicacion	DATETIME					,
-	UsuarioID			INTEGER						,
+	UsuarioID			VARCHAR(16)					,
 
 	CONSTRAINT fk_Post_Usuario 
 	FOREIGN KEY(UsuarioID)
@@ -49,7 +49,7 @@ CREATE TABLE Reposts(
 	Texto				VARCHAR(256)				,
 	FechaPublicacion	DATETIME					,
 	PostID				INTEGER NOT NULL,
-	UsuarioID			INTEGER NOT NULL,
+	UsuarioID			VARCHAR(16) NOT NULL,
 
 	CONSTRAINT fk_Repost_Post
 	FOREIGN KEY(PostID)
@@ -63,7 +63,7 @@ CREATE TABLE Reposts(
 CREATE TABLE Likes(
 	LikeID				INTEGER PRIMARY KEY IDENTITY,
 	PostID				INTEGER NOT NULL,
-	UsuarioID			INTEGER NOT NULL,
+	UsuarioID			VARCHAR(16) NOT NULL,
 
 	CONSTRAINT fk_Likes_Post
 	FOREIGN KEY(PostID)
@@ -77,7 +77,7 @@ CREATE TABLE Likes(
 CREATE TABLE Replies(
 	ReplyID			INTEGER PRIMARY KEY IDENTITY,
 	PostID				INTEGER NOT NULL,
-	UsuarioID			INTEGER NOT NULL,
+	UsuarioID			VARCHAR(16) NOT NULL,
 
 	CONSTRAINT fk_Replies_Post
 	FOREIGN KEY(PostID)
@@ -95,8 +95,8 @@ CREATE TABLE Hashtags(
 
 CREATE TABLE Follows(
 	FollowID			INTEGER PRIMARY KEY IDENTITY,
-	UsuarioSeguidorID	INTEGER,
-	UsuarioSeguidoID	INTEGER,
+	UsuarioSeguidorID	VARCHAR(16),
+	UsuarioSeguidoID	VARCHAR(16),
 
 	CONSTRAINT fk_Follows_Usuarios_Seguidor
 	FOREIGN KEY(UsuarioSeguidorID)
@@ -121,6 +121,8 @@ ADD
 -- TABLAS RELACIONALES
 
 CREATE TABLE HastagPost(
+
+	HastagPostID			INTEGER,
 	HastagID			INTEGER,
 	PostID				INTEGER,
 
@@ -134,6 +136,7 @@ CREATE TABLE HastagPost(
 );
 
 CREATE TABLE MediaPost(
+	MediaPostID			INTEGER,
 	MediaID				INTEGER,
 	PostID				INTEGER,
 

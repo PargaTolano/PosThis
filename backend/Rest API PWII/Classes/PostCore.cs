@@ -133,7 +133,7 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                Usuario usuarioDb = db.Usuarios.First(u => u.UsuarioID == id);
+                Usuario usuarioDb = db.Usuarios.First(u => u.UsuarioID == id.ToString());
 
                 db.Usuarios.Remove(usuarioDb);
 
