@@ -42,7 +42,7 @@ namespace Rest_API_PWII.Models
 
         protected override void OnModelCreating( ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating( modelBuilder );
 
             modelBuilder.Entity<Usuario>(usuario =>
             {

@@ -115,8 +115,8 @@ CREATE TABLE Media(
 
 ALTER TABLE Usuarios 
 ADD 
-	FotoPerfil INTEGER NULL
-	CONSTRAINT fk_Usuario_Media FOREIGN KEY( FotoPerfil) REFERENCES Media(MediaID);
+	FotoPerfilMediaID INTEGER NULL
+	CONSTRAINT fk_Usuario_Media FOREIGN KEY( FotoPerfilMediaID) REFERENCES Media(MediaID);
 
 -- TABLAS RELACIONALES
 

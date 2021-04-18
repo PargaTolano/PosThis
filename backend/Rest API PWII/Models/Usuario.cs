@@ -7,17 +7,19 @@ namespace Rest_API_PWII.Models
 {
     public class Usuario : IdentityUser
     {
-        public string UsuarioID { get; set; }
+        public virtual string UsuarioID { get; set; }
 
-        public string Nombre { get; set; }
+        public virtual string Nombre { get; set; }
 
-        public string Tag { get; set; }
+        public virtual string Tag { get; set; }
 
-        public string Correo { get; set; }
+        public virtual string Correo { get; set; }
 
-        public string Contrasena { get; set; }
+        public virtual string Contrasena { get; set; }
 
-        public DateTime FechaNacimiento { get; set; }
+        public virtual DateTime FechaNacimiento { get; set; }
+
+        public virtual int FotoPerfilMediaID { get; set; }
 
         [JsonIgnore]
         public virtual Media FotoPerfil { get; set; }
