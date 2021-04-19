@@ -87,8 +87,8 @@ namespace Rest_API_PWII.Classes
         {
             try
             {
-                ResponseApiError err = Validate( usuario );
-                if ( err == null )
+                ResponseApiError err = Validate(usuario);
+                if (err != null)/*estaba == */
                     return err;
 
                 db.Usuarios.Add( usuario );
