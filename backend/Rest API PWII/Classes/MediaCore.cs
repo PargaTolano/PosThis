@@ -67,7 +67,7 @@ namespace Rest_API_PWII.Classes
             try
             {
                 ResponseApiError err = Validate( media );
-                if (err == null)
+                if (err != null) //Diferente para crearlo
                     return err;
 
                 db.Medias.Add( media );
