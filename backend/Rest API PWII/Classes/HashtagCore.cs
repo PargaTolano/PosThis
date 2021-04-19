@@ -48,7 +48,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 3,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = "Error interno del servidor"
+                    Message = ex.Message
                 };
             }
         }

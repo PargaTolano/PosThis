@@ -30,6 +30,22 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
+        public ResponseApiError ValidateCreate(CreatePostModel createPostModel)
+        {
+            bool textoValido = string.IsNullOrEmpty(createPostModel.Texto);
+            bool mediaValido = createPostModel.mediaIDs.Count() > 0;
+
+            if (textoValido || mediaValido)
+                return null;
+
+            return new ResponseApiError
+            {
+                Code = 400,
+                HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                Message = "Post no valido, debe de contener texto o almenos un archivo multimedia"
+            };
+        }
+
         public ResponseApiError ValidateExists( Post post )
         {
             var res = ( from p in db.Posts where p.PostID == post.PostID select p ).First();
@@ -57,7 +73,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError Create( Post post )
+        public ResponseApiError Create(CreatePostModel post )
         {
             try
             {
