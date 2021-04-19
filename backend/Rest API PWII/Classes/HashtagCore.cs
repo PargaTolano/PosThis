@@ -29,6 +29,15 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
+        public int ValidateExists(Hashtag hashtag)
+        {
+            var res = (from h in db.Hashtags where h.Texto == hashtag.Texto select h).FirstOrDefault();
+
+            if (res == null)
+                return 0;
+
+            return 1;
+        }
         public ResponseApiError Create(Hashtag hashtag)
         {
             try
@@ -36,10 +45,13 @@ namespace Rest_API_PWII.Classes
                 ResponseApiError err = Validate(hashtag);
                 if (err != null)
                     return err;
+                int exists = ValidateExists(hashtag);
+                
+                if (exists == 1)
+                    return null;
 
                 db.Hashtags.Add(hashtag);
                 db.SaveChanges();
-
                 return null;
             }
             catch (Exception ex)
