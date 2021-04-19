@@ -30,7 +30,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                UsuarioCore usuarioCore = new UsuarioCore(db);
+                UsuarioCore usuarioCore = new UsuarioCore( db );
                 List<Usuario> usuarios = usuarioCore.GetAll();
 
                 return Ok(
@@ -56,7 +56,7 @@ namespace Rest_API_PWII.Controllers
 
         // GET api/<UsuariosController>/5
         [HttpGet("{id}")]
-        public IActionResult Get( int id )
+        public IActionResult Get( string id )
         {
             try
             {
@@ -118,12 +118,13 @@ namespace Rest_API_PWII.Controllers
 
         // PUT api/<UsuariosController>/5
         [HttpPut("{id}")]
-        public IActionResult Update( int id, [FromBody] Usuario usuario )
+        public IActionResult Update( string id, [FromBody] Usuario usuario )
         {
             try
             {
                 UsuarioCore usuarioCore = new UsuarioCore( db );
-                ResponseApiError err = usuarioCore.Update( id, usuario );
+
+                var err = usuarioCore.Update( id, usuario );
                 if ( err != null )
                     return StatusCode( err.HttpStatusCode, err );
 
@@ -132,7 +133,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = usuario,
-                        Message = "Usuario creado exitosamente"
+                        Message = "Usuario editado exitosamente"
                     });
             }
             catch ( Exception ex )
@@ -149,7 +150,7 @@ namespace Rest_API_PWII.Controllers
 
         // DELETE api/<UsuariosController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete( int id )
+        public IActionResult Delete( string id )
         {
             try
             {

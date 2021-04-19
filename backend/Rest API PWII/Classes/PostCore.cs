@@ -83,7 +83,7 @@ namespace Rest_API_PWII.Classes
 
         public List<Post> GetAll()
         {
-            List<Post> usuarios = (from p in db.Posts select p).ToList();
+            List<Post> usuarios = ( from p in db.Posts select p ).ToList();
 
             return usuarios;
         }
@@ -129,19 +129,19 @@ namespace Rest_API_PWII.Classes
         {
             try
             {
-                ResponseApiError err = ValidateExists(id);
+                ResponseApiError err = ValidateExists( id );
                 if (err != null)
                     return err;
 
-                Usuario usuarioDb = db.Usuarios.First(u => u.UsuarioID == id.ToString());
+                Post postDb = db.Posts.First( p => p.PostID == id );
 
-                db.Usuarios.Remove(usuarioDb);
+                db.Posts.Remove( postDb );
 
                 db.SaveChanges();
 
                 return null;
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 return new ResponseApiError
                 {

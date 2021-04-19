@@ -46,9 +46,9 @@ namespace Rest_API_PWII.Models
 
             modelBuilder.Entity<Usuario>(usuario =>
             {
-                usuario.HasKey(usuario => usuario.UsuarioID);
+                usuario.HasKey(usuario => usuario.Id);
                 
-                usuario.Property(e => e.Nombre)
+                usuario.Property(e => e.UserName)
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .IsRequired();
@@ -58,14 +58,12 @@ namespace Rest_API_PWII.Models
                     .IsUnicode(false)
                     .IsRequired();
 
-                usuario.Property(e => e.Correo)
-                    .HasMaxLength(35)
+                usuario.Property(e => e.Email)
+                    .HasMaxLength(256)
                     .IsUnicode(false)
                     .IsRequired();
 
-                usuario.Property(e => e.Contrasena)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
+                usuario.Property(e => e.PasswordHash)
                     .IsRequired();
 
             });
@@ -144,16 +142,16 @@ namespace Rest_API_PWII.Models
                     .HasKey(e => e.FollowID);
 
                 follow
-                    .HasOne( e=> e.UsuarioSeguido )
+                    .HasOne( e => e.UsuarioSeguido )
                     .WithMany( u => u.Following )
                     .HasForeignKey( f => f.UsuarioSeguidoID )
-                    .HasPrincipalKey( f => f.UsuarioID );
+                    .HasPrincipalKey( f => f.Id );
 
                 follow
                     .HasOne( e => e.UsuarioSeguidor )
                     .WithMany( u => u.Follows )
                     .HasForeignKey( f => f.UsuarioSeguidorID)
-                    .HasPrincipalKey(f => f.UsuarioID);
+                    .HasPrincipalKey( f => f.Id );
             });
 
             modelBuilder.Entity<Media>(media =>
