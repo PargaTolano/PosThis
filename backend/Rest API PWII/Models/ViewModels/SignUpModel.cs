@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Rest_API_PWII.Models.ViewModels
 {
-    public class CreateUserRequest
+    public class SignUpModel
     {
         public string UserName { get; set; }
 

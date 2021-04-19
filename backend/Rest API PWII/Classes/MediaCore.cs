@@ -106,9 +106,9 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                Usuario usuarioDb = db.Usuarios.First(u => Int32.Parse(u.UsuarioID) == id);
+                Media mediaDb = db.Medias.First(m => m.MediaID == id);
 
-                db.Usuarios.Remove(usuarioDb);
+                db.Medias.Remove( mediaDb );
 
                 db.SaveChanges();
 

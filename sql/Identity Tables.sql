@@ -1,10 +1,12 @@
 USE [PosThis];
 GO
 /****** Object:  Table [dbo].[AspNetRoleClaims]    Script Date: 27/03/2021 11:05:23 a. m. ******/
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 CREATE TABLE [dbo].[AspNetRoleClaims](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[RoleId] [nvarchar](450) NOT NULL,
@@ -101,11 +103,7 @@ CREATE TABLE [dbo].[AspNetUsers](
 	[LockoutEnd] [datetimeoffset](7) NULL,
 	[LockoutEnabled] [bit] NOT NULL,
 	[AccessFailedCount] [int] NOT NULL,
-	UsuarioID			VARCHAR(16)					,
-	Nombre				VARCHAR(20)					,
 	Tag					VARCHAR(15) UNIQUE			,
-	Correo				VARCHAR(35) UNIQUE			,
-	Contrasena			VARCHAR(20)					,
 	FechaNacimiento		DATETIME					,
 	FotoPerfilMediaID   INT							,
  CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED 

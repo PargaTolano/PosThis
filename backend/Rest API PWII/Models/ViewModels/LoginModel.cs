@@ -7,10 +7,8 @@ namespace Rest_API_PWII.Models.ViewModels
 {
     public class LoginModel
     {
-        public string UserName;
+        public virtual string UserName { get; set; }
 
-        public string Password;
-
-        public bool isEmail;
+        public virtual string Password { get; set; }
     }
 }

@@ -12,14 +12,14 @@ namespace Rest_API_PWII.Classes
     {
         private PosThisDbContext db;
 
-        public UsuarioCore( PosThisDbContext db)
+        public UsuarioCore( PosThisDbContext db )
         {
             this.db = db;
         }
 
-        public ResponseApiError Validate( Usuario usuario)
+        public ResponseApiError Validate( Usuario usuario )
         {
-            if (usuario.Nombre == null || usuario.Tag == null || usuario.Correo == null)
+            if ( usuario.UserName == null || usuario.Tag == null || usuario.Email == null )
                 return new ResponseApiError { 
                     Code = 1,
                     HttpStatusCode = (int) HttpStatusCode.BadRequest,
@@ -27,104 +27,138 @@ namespace Rest_API_PWII.Classes
                 };
 
             return null;
-            
         }
 
-        public ResponseApiError ValidateExists( Usuario usuario)
+        public ResponseApiError ValidateUpdate( Usuario usuario )
         {
-            var res = (from u in db.Usuarios where u.UsuarioID == usuario.UsuarioID select u).First();
-
-            if (res == null)
-                return new ResponseApiError { Code = 2, HttpStatusCode = (int)HttpStatusCode.NotFound, Message = "El usuario no existe en la base de datos" };
-
+            if( usuario.Email == null )
+                return new ResponseApiError
+                {
+                    Code = 1,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Los datos del usuario no son validos"
+                };
 
             return null;
         }
 
-        public ResponseApiError ValidateExists(int id)
+        public ResponseApiError ValidateNewPassword( Usuario usuario)
         {
-            var res = (from u in db.Usuarios where u.UsuarioID == id.ToString() select u).First();
+            if ( usuario.PasswordHash == null )
+                return new ResponseApiError
+                {
+                    Code = 1,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Los datos del usuario no son validos"
+                };
+
+            return null;
+        }
+
+        public ResponseApiError ValidateExists( Usuario usuario )
+        {
+            var res = (from u in db.Usuarios where u.Id == usuario.Id select u).First();
 
             if (res == null)
-                return new ResponseApiError { Code = 2, HttpStatusCode = (int)HttpStatusCode.NotFound, Message = "El usuario no existe en la base de datos" };
+                return new ResponseApiError { 
+                    Code = 2,
+                    HttpStatusCode = (int)HttpStatusCode.NotFound, 
+                    Message = "El usuario no existe en la base de datos" 
+                };
 
+            return null;
+        }
+
+        public ResponseApiError ValidateExists( string id )
+        {
+            var res = (from u in db.Usuarios where u.Id == id select u).First();
+
+            if (res == null)
+                return new ResponseApiError { 
+                    Code = 2,
+                    HttpStatusCode = (int)HttpStatusCode.NotFound,
+                    Message = "El usuario no existe en la base de datos"
+                };
 
             return null;
         }
         
-        public ResponseApiError Create(Usuario usuario)
+        public ResponseApiError Create( Usuario usuario )
         {
             try
             {
-                ResponseApiError err = Validate(usuario);
-                if (err == null)
+                ResponseApiError err = Validate( usuario );
+                if ( err == null )
                     return err;
 
-                db.Usuarios.Add(usuario);
+                db.Usuarios.Add( usuario );
                 db.SaveChanges();
 
                 return null;
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 return new ResponseApiError { 
                     Code = 3, 
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = "Error interno del servidor" 
+                    Message = ex.Message
                 };
             }
         }
 
         public List<Usuario> GetAll()
         {
-            List<Usuario> usuarios = (from u in db.Usuarios select u).ToList();
-
+            List<Usuario> usuarios = ( from u in db.Usuarios select u ).ToList();
             return usuarios;
         }
 
-        public Usuario GetOne(int id)
+        public Usuario GetOne( string id )
         {
-            return db.Usuarios.First(u => u.UsuarioID == id.ToString());
+            return db.Usuarios.First( u => u.Id == id );
         }
 
-        public ResponseApiError Update(int id, Usuario usuario)
+        public ResponseApiError Update( string id, Usuario usuario )
         {
             try
             {
-                ResponseApiError err = Validate(usuario);
+                ResponseApiError err = ValidateUpdate( usuario );
                 if (err != null)
                     return err;
 
-                err = ValidateExists(id);
+                err = ValidateExists( id );
                 if (err != null)
                     return err;
 
-                Usuario usuarioDb = db.Usuarios.First(u => u.UsuarioID == id.ToString());
+                Usuario usuarioDb = db.Usuarios.First( u => u.Id == id );
 
-                usuarioDb.Nombre = usuario.Nombre != null ? usuario.Nombre : usuarioDb.Nombre;
-                usuarioDb.Tag = usuario.Tag != null ? usuario.Tag : usuarioDb.Tag;
-                usuarioDb.Correo = usuario.Correo != null ? usuario.Tag : usuarioDb.Tag;
-                usuarioDb.Contrasena = usuario.Contrasena != null ? usuario.Contrasena : usuarioDb.Contrasena;
+                usuarioDb.UserName  = usuario.UserName != null ? usuario.UserName : usuarioDb.UserName;
+                usuarioDb.Tag       = usuario.Tag != null ? usuario.Tag : usuarioDb.Tag;
+                usuarioDb.Email     = usuario.Email != null ? usuario.Email : usuarioDb.Email;
 
                 db.SaveChanges();
 
                 return null;
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
-                throw ex;
+                return new ResponseApiError
+                {
+                    Code = 3,
+                    HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                    Message = ex.Message
+                };
             }
         }
 
-        public ResponseApiError Delete(int id)
+        public ResponseApiError Delete( string id )
         {
             try
             {
-                ResponseApiError err = ValidateExists(id);
+                var err = ValidateExists( id );
                 if (err != null)
                     return err;
 
-                Usuario usuarioDb = db.Usuarios.First( u => u.UsuarioID == id.ToString());
+                Usuario usuarioDb = db.Usuarios.First( u => u.Id == id );
 
                 db.Usuarios.Remove( usuarioDb );
 
@@ -134,7 +168,12 @@ namespace Rest_API_PWII.Classes
             }
             catch ( Exception ex )
             {
-                throw ex;
+                return new ResponseApiError
+                {
+                    Code = 3,
+                    HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                    Message = ex.Message
+                };
             }
         }  
     }

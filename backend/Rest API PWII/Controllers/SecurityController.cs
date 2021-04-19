@@ -1,17 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
+using System.Net;
 using System.Text;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Rest_API_PWII.Controllers
 {
@@ -19,7 +17,6 @@ namespace Rest_API_PWII.Controllers
     [ApiController]
     public class SecurityController : ControllerBase
     {
-
         private UserManager<Usuario> _userManager;
         private SignInManager<Usuario> _signInManager;
         private readonly IConfiguration _configuration;
@@ -31,35 +28,102 @@ namespace Rest_API_PWII.Controllers
             _configuration = configuration;
         }
 
+        ResponseApiError ValidateSignUpModel( SignUpModel signup )
+        {
+            if (signup.UserName == null)
+                return new ResponseApiError
+                {
+                    Code = 400,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Nombre de usuario no valido"
+                };
+
+            if (signup.Email == null)
+                return new ResponseApiError
+                {
+                    Code = 400,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Email no valido"
+                };
+
+            if (signup.Tag == null)
+                return new ResponseApiError
+                {
+                    Code = 400,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Tag no valido"
+                };
+
+            if (signup.Password == null)
+                return new ResponseApiError
+                {
+                    Code = 400,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Contraseña no valido"
+                };
+            return null;
+        }
+
+        ResponseApiError ValidateLoginModel( LoginModel login )
+        {
+            if (login.UserName == null)
+                return new ResponseApiError
+                {
+                    Code = 400,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Nombre de usuario no valido"
+                };
+
+            if (login.Password == null)
+                return new ResponseApiError
+                {
+                    Code = 400,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Contraseña no valido"
+                };
+
+            return null;
+        }
+
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest createUserRequest)
+        public async Task<IActionResult> CreateUser( [FromBody] SignUpModel signUpModel )
         {
             try
             {
+                var err = ValidateSignUpModel( signUpModel );
+
+                if (err != null)
+                    return StatusCode( err.HttpStatusCode, err);
+
                 var result = await _userManager.CreateAsync(new Usuario
                 {
-                    Email = createUserRequest.Email,
-                    UserName = createUserRequest.UserName,
-                    Tag = createUserRequest.Tag
-                }, createUserRequest.Password) ;
+                    Email       = signUpModel.Email,
+                    UserName    = signUpModel.UserName,
+                    Tag         = signUpModel.Tag
+                }, signUpModel.Password ) ;
 
                 if ( !result.Succeeded )
                     return StatusCode( 500, "Error en la creacion del usuario" );
 
                 return Ok( "Usuario creado exitosamente" );
             }
-            catch ( Exception )
+            catch ( Exception ex )
             {
-                return StatusCode(500);
+                return StatusCode( 500, ex.Message );
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginModel login)
+        public async Task<IActionResult> Login( [FromBody] LoginModel login )
         {
             try
             {
-                var user = await (login.isEmail ? _userManager.FindByEmailAsync(login.UserName) : _userManager.FindByNameAsync(login.UserName));
+                var err = ValidateLoginModel( login );
+
+                if (err != null)
+                    return StatusCode( err.HttpStatusCode, err );
+
+                var user = await  _userManager.FindByEmailAsync( login.UserName );
 
                 if (user == null)
                     return StatusCode(404);
@@ -92,9 +156,9 @@ namespace Rest_API_PWII.Controllers
 
                 return Ok(tokenHandler.WriteToken(createdToken));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500);
+                return StatusCode(500, ex.Message);
             }
         }
     }
