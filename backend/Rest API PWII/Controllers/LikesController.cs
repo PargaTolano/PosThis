@@ -17,42 +17,131 @@ namespace Rest_API_PWII.Controllers
     public class LikesController : ControllerBase
     {
         private PosThisDbContext db;
-        private LikesCore likesCore;
+
         public LikesController(PosThisDbContext db)
         {
             this.db = db;
         }
 
-        // GET: api/<LikesController>
         [HttpGet]
-        public IActionResult GetLikes()
+        public IActionResult Get()
         {
-            likesCore = new LikesCore(db);
-            List<Likes> likes = likesCore.GetLikes();
-            return Ok(likes);
+            try
+            {
+                var likesCore = new LikesCore(db);
+                var likes = likesCore.GetLikes();
+                return Ok(
+                    new ResponseApiSuccess
+                    {
+                        Code = 200,
+                        Data = likes,
+                        Message = "Likes obtenido exitosamente"
+                    });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    (int)HttpStatusCode.InternalServerError,
+                    new ResponseApiError 
+                    { 
+                        Code = 500,
+                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                        Message = ex.Message 
+                    });
+            }
         }
+
+        [HttpGet("{id}")]
+        public IActionResult Get( int id )
+        {
+            try
+            {
+                var likesCore = new LikesCore( db );
+                var likes = likesCore.GetPostLikeCount( id );
+                return Ok(
+                    new ResponseApiSuccess
+                    {
+                        Code = 200,
+                        Data = likes,
+                        Message = "Cantidad de Likes obtenida exitosamente"
+                    });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    (int)HttpStatusCode.InternalServerError,
+                    new ResponseApiError
+                    {
+                        Code = 500,
+                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                        Message = ex.Message
+                    });
+            }
+        }
+
         [HttpPost]
-        public IActionResult Create([FromBody]Likes likes)
+        public IActionResult Create( [FromBody]CULikeModel likes )
         {
             try 
             {        
-                likesCore = new LikesCore(db);
-                ResponseApiError responseApiError = likesCore.Create(likes);
+                var likesCore = new LikesCore( db );
+                var responseApiError = likesCore.Create( likes );
 
                 if(responseApiError != null)
                 {
-                    return StatusCode(responseApiError.HttpStatusCode,responseApiError);
+                    return StatusCode( responseApiError.HttpStatusCode,responseApiError );
                 }
-                return Ok(new ResponseApiSuccess { Code = 1, Message = "Estudiante creado exitoxamente"});
+                return Ok(
+                    new ResponseApiSuccess 
+                    { 
+                        Code = 200,
+                        Message = "Estudiante creado exitoxamente"
+                    });
             }
-            catch(Exception ex)
+            catch( Exception ex )
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, new ResponseApiError { Code=1001, Message = ex.Message});
+                return StatusCode(
+                    ( int ) HttpStatusCode.InternalServerError,
+                    new ResponseApiError 
+                    { 
+                        Code = 500,
+                        Message = ex.Message
+                    });
             }
     
         }
 
+        [HttpDelete]
+        public IActionResult Delete( [FromBody] CULikeModel likes )
+        {
+            try
+            {
+                var likesCore = new LikesCore( db );
+                var responseApiError = likesCore.Delete( likes );
 
+                if ( responseApiError != null )
+                {
+                    return StatusCode( responseApiError.HttpStatusCode, responseApiError );
+                }
 
+                return Ok(
+                    new ResponseApiSuccess
+                    {
+                        Code = 200,
+                        Message = "Like creado exitoxamente"
+                    });
+            }
+            catch ( Exception ex )
+            {
+                return StatusCode(
+                    ( int ) HttpStatusCode.InternalServerError,
+                    new ResponseApiError
+                    {
+                        Code = 500,
+                        HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
+                        Message = ex.Message
+                    });
+            }
+        }
     }
 }

@@ -24,14 +24,13 @@ namespace Rest_API_PWII.Controllers
             this.db = db;
         }
 
-        // GET: api/<UsuariosController>
         [HttpGet]
         public IActionResult Get()
         {
             try
             {
-                UsuarioCore usuarioCore = new UsuarioCore( db );
-                List<Usuario> usuarios = usuarioCore.GetAll();
+                var usuarioCore = new UsuarioCore( db );
+                var usuarios    = usuarioCore.GetAll();
 
                 return Ok(
                     new ResponseApiSuccess
@@ -54,14 +53,13 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        // GET api/<UsuariosController>/5
         [HttpGet("{id}")]
         public IActionResult Get( string id )
         {
             try
             {
-                UsuarioCore usuarioCore = new UsuarioCore( db );
-                Usuario usuario = usuarioCore.GetOne( id );
+                var usuarioCore = new UsuarioCore( db );
+                var usuario     = usuarioCore.GetOne( id );
 
                 return Ok(
                     new ResponseApiSuccess
@@ -71,7 +69,7 @@ namespace Rest_API_PWII.Controllers
                         Message = "Usuarios Obtenidos Exitosamente"
                     });
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 return StatusCode(
                    (int)HttpStatusCode.InternalServerError,
@@ -85,14 +83,13 @@ namespace Rest_API_PWII.Controllers
            
         }
 
-        // POST api/<UsuariosController>
         [HttpPost]
         public async Task<IActionResult> Create( [FromBody] Usuario usuario )
         {
             try
             {
-                UsuarioCore usuarioCore = new UsuarioCore( db );
-                ResponseApiError err = usuarioCore.Create( usuario );
+                var usuarioCore = new UsuarioCore( db );
+                var err         = usuarioCore.Create( usuario );
                 if ( err != null )
                     return StatusCode( err.HttpStatusCode, err );
 
@@ -103,7 +100,7 @@ namespace Rest_API_PWII.Controllers
                         Message = "Usuario creado exitosamente" 
                     } );
             }
-            catch(Exception ex)
+            catch( Exception ex )
             {
                 return StatusCode(
                     ( int ) HttpStatusCode.InternalServerError,
@@ -116,22 +113,21 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        // PUT api/<UsuariosController>/5
         [HttpPut("{id}")]
         public IActionResult Update( string id, [FromBody] Usuario usuario )
         {
             try
             {
-                UsuarioCore usuarioCore = new UsuarioCore( db );
-
+                var usuarioCore = new UsuarioCore( db );
                 var err = usuarioCore.Update( id, usuario );
+
                 if ( err != null )
                     return StatusCode( err.HttpStatusCode, err );
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
+                        Code = 200,
                         Data = usuario,
                         Message = "Usuario editado exitosamente"
                     });
@@ -142,21 +138,21 @@ namespace Rest_API_PWII.Controllers
                     ( int ) HttpStatusCode.InternalServerError,
                     new ResponseApiError {
                         Code = 3,
-                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                        HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
                         Message = ex.Message 
                     });
             }
         }
 
-        // DELETE api/<UsuariosController>/5
         [HttpDelete("{id}")]
         public IActionResult Delete( string id )
         {
             try
             {
-                UsuarioCore usuarioCore = new UsuarioCore(db);
-                ResponseApiError err = usuarioCore.Delete( id );
-                if (err != null)
+                var usuarioCore = new UsuarioCore(db);
+                var err = usuarioCore.Delete( id );
+
+                if ( err != null )
                     return StatusCode(err.HttpStatusCode, err);
 
                 return Ok(
@@ -167,14 +163,14 @@ namespace Rest_API_PWII.Controllers
                         Message = "Usuario creado exitosamente"
                     });
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 return StatusCode(
-                    (int)HttpStatusCode.InternalServerError,
+                    ( int ) HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
                         Code = 3,
-                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                        HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });
             }

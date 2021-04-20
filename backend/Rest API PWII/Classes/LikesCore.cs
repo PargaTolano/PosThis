@@ -11,43 +11,178 @@ namespace Rest_API_PWII.Classes
     public class LikesCore
     {
         private PosThisDbContext db;
+
         public LikesCore(PosThisDbContext db)
         {
             this.db = db;
         }
-        public ResponseApiError Create(Likes likes)
+        
+        private ResponseApiError Validate(CULikeModel model )
+        {
+            if ( model.PostID == null )
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.BadRequest,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Post de like no puede ser null",
+                };
+
+            if ( model.UsuarioID == null )
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.BadRequest,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Usuario de like no puede ser null",
+                };
+
+            var post = db.Posts.FirstOrDefault(p => p.PostID == model.PostID);
+
+            if ( post == null )
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.NotFound,
+                    HttpStatusCode = (int)HttpStatusCode.NotFound,
+                    Message = "Post dado para el like no existe",
+                };
+
+            var usuario = db.Usuarios.FirstOrDefault(u => u.Id == model.UsuarioID );
+
+            if (usuario == null)
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.NotFound,
+                    HttpStatusCode = (int)HttpStatusCode.NotFound,
+                    Message = "Post dado para el like no existe",
+                };
+
+            var like = db.Likes.FirstOrDefault(l =>
+                   l.PostID == model.PostID &&
+                   l.UsuarioID == model.UsuarioID
+                );
+
+            if (like != null)
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.BadRequest,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Like en el post ya existente",
+                };
+
+            return null;
+        }
+
+        private ResponseApiError ValidateCU( CULikeModel model )
+        {
+            if ( model.PostID == null )
+                return new ResponseApiError 
+                { 
+                    Code = (int)HttpStatusCode.BadRequest,
+                    Message = "PostID de like no puede ser null", 
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest 
+                };
+
+            if ( model.UsuarioID == null )  
+                return new ResponseApiError 
+                { 
+                    Code = (int)HttpStatusCode.BadRequest,
+                    Message = "UsuarioID de like no puede ser null", 
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest 
+                };
+
+            return null;
+        }
+
+        public ResponseApiError Create( CULikeModel model )
         {
             try
             {
-                ResponseApiError responseApiError = Validate(likes);
+                var responseApiError = ValidateCU( model );
 
                 if(responseApiError != null)
                 {
                     return responseApiError;
                 }
 
-                db.Add(likes);
+                responseApiError = Validate(model);
+
+                if (responseApiError != null)
+                {
+                    return responseApiError;
+                }
+
+
+                var post = 
+                    (from p in db.Posts where p.PostID == model.PostID select p)
+                    .First();
+
+                var usuario = 
+                    (from u in db.Usuarios where u.Id == model.UsuarioID select u)
+                    .First();
+
+                var like = new Likes 
+                { 
+                    PostID = post.PostID,
+                    Post = post,
+                    UsuarioID = usuario.Id,
+                    Usuario = usuario
+                };
+
+                db.Add( like );
+
                 db.SaveChanges();
+
                 return null;
             }
-            catch(Exception ex)
+            catch( Exception ex )
             {
-                throw ex;
+                return new ResponseApiError
+                {
+                    Code = ( int ) HttpStatusCode.BadRequest,
+                    HttpStatusCode = ( int ) HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
             }
         }
-        public ResponseApiError Validate(Likes likes)
+
+        public ResponseApiError Delete( CULikeModel model )
         {
             try
             {
-                if(likes.PostID == null || likes.UsuarioID == null)
+                var responseApiError = ValidateCU( model );
+
+                if (responseApiError != null)
                 {
-                    return new ResponseApiError { Code = 2, Message = "Like agregado" ,HttpStatusCode = (int)HttpStatusCode.BadRequest};
+                    return responseApiError;
                 }
+
+
+                var like = db.Likes.First( l => 
+                    l.PostID == model.PostID && 
+                    l.UsuarioID == model.UsuarioID
+                );
+
+                if (like == null)
+                    return new ResponseApiError
+                    {
+                        Code = (int)HttpStatusCode.NotFound,
+                        HttpStatusCode = (int)HttpStatusCode.NotFound,
+                        Message = "Like no encontrado"
+                    };
+
+                db.Remove( like );
+
+                db.SaveChanges();
+
                 return null;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                throw ex;
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.BadRequest,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
             }
         }
 
@@ -55,10 +190,26 @@ namespace Rest_API_PWII.Classes
         {
             try 
             {
-                List<Likes> likes = (from l in db.Likes select l).ToList();
+                List<Likes> likes = ( from l in db.Likes select l ).ToList();
                 return likes;
             }
-            catch(Exception ex)
+            catch( Exception ex )
+            {
+                throw ex;
+            }
+        }
+
+        public int GetPostLikeCount( int id )
+        {
+            try
+            {
+                List<Likes> likes = 
+                    (from l in db.Likes where l.PostID == id select l)
+                    .ToList();
+
+                return likes.Count;
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
