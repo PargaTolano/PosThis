@@ -137,8 +137,8 @@ namespace Rest_API_PWII.Classes
             {
                 return new ResponseApiError
                 {
-                    Code = ( int ) HttpStatusCode.BadRequest,
-                    HttpStatusCode = ( int ) HttpStatusCode.BadRequest,
+                    Code = 3,
+                    HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                     Message = ex.Message
                 };
             }

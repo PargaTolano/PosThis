@@ -35,7 +35,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = likes,
-                        Message = "Likes obtenido exitosamente"
+                        Message = "Likes obtenidos exitosamente"
                     });
             }
             catch (Exception ex)
@@ -95,7 +95,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess 
                     { 
                         Code = 200,
-                        Message = "Estudiante creado exitoxamente"
+                        Message = "Like creado exitosamente"
                     });
             }
             catch( Exception ex )
@@ -105,6 +105,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiError 
                     { 
                         Code = 500,
+                        HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });
             }

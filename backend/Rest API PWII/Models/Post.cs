@@ -18,7 +18,7 @@ namespace Rest_API_PWII.Models
         public virtual Usuario Usuario { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Repost> Reposts { get; set; }
+        public virtual ICollection<Reposts> Reposts { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<Likes> Likes { get; set; }
