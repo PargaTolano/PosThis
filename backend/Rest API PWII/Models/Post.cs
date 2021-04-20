@@ -21,7 +21,7 @@ namespace Rest_API_PWII.Models
         public virtual ICollection<Repost> Reposts { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Like> Likes { get; set; }
+        public virtual ICollection<Likes> Likes { get; set; }
         
         [JsonIgnore]
         public virtual ICollection<Reply> Replies { get; set; }

@@ -25,7 +25,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 1,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Los datos del post no son validos, debe tener contenido de texto y/o media"
+                    Message = "Los datos no son validos, debe tener contenido media"
                 };
 
             return null;
@@ -40,7 +40,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 2,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "El post no existe en la base de datos"
+                    Message = "El contenido Media no existe en la base de datos"
                 };
 
             return null;
@@ -55,7 +55,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 2,
                     HttpStatusCode = ( int ) HttpStatusCode.NotFound,
-                    Message = "El post no existe en la base de datos"
+                    Message = "El contenido Media no existe en la base de datos"
                 };
 
 

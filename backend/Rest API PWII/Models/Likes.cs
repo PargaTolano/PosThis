@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Rest_API_PWII.Models
 {
-    public class Like
+    public class Likes
     {
 
         public int LikeID { get; set; }
