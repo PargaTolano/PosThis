@@ -15,7 +15,7 @@ namespace Rest_API_PWII.Models
 
         public DbSet<Post> Posts { get; set; }
 
-        public DbSet<Repost> Reposts { get; set; }
+        public DbSet<Reposts> Reposts { get; set; }
 
         public DbSet<Likes> Likes { get; set; }
 
@@ -82,7 +82,7 @@ namespace Rest_API_PWII.Models
                     .HasForeignKey( p => p.UsuarioID );
             });
 
-            modelBuilder.Entity<Repost>(repost =>
+            modelBuilder.Entity<Reposts>(repost =>
             {
                 repost.HasKey( e=>e.RepostID);
 

@@ -17,7 +17,7 @@ namespace Rest_API_PWII.Models
 
         public virtual ICollection<Post> Posts { get; set; }
 
-        public virtual ICollection<Repost> Reposts { get; set; }
+        public virtual ICollection<Reposts> Reposts { get; set; }
 
         public virtual ICollection<Likes> Likes { get; set; }
 
