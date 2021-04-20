@@ -31,7 +31,7 @@ namespace Rest_API_PWII.Models
 
         public DbSet<MediaPost> MediaPosts { get; set; }
 
-        public DbSet<MediaReply> mediaReplies { get; set; }
+        public DbSet<MediaReply> MediaReplies { get; set; }
 
         public PosThisDbContext(DbContextOptions<PosThisDbContext> options) : base(options)
         {
