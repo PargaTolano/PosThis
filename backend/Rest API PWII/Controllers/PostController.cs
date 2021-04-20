@@ -31,8 +31,8 @@ namespace Rest_API_PWII.Controllers
             try
             {
 
-                PostCore postCore = new PostCore(db);
-                List<Post> posts = postCore.GetAll();
+                var postCore = new PostCore(db);
+                var posts = postCore.GetAll();
 
                 return Ok(
                     new ResponseApiSuccess
@@ -63,8 +63,17 @@ namespace Rest_API_PWII.Controllers
             try
             {
 
-                PostCore postCore = new PostCore(db);
-                Post post = postCore.GetOne( id );
+                var postCore = new PostCore(db);
+                var post = postCore.GetOne( id );
+
+                if (post == null)
+                    return StatusCode((int)HttpStatusCode.NotFound,
+                        new ResponseApiError 
+                        { 
+                            Code = (int ) HttpStatusCode.NotFound,
+                            HttpStatusCode = (int)HttpStatusCode.NotFound,
+                            Message = "No existe el post buscado"
+                        });
 
                 return Ok(
                     new ResponseApiSuccess
@@ -94,8 +103,8 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                PostCore postCore = new PostCore(db);
-                ResponseApiError err = postCore.Create( post );
+                var postCore = new PostCore(db);
+                var err = postCore.Create( post );
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
 
@@ -104,7 +113,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = post,
-                        Message = "Usuario creado exitosamente"
+                        Message = "Post creado exitosamente"
                     });
             }
             catch (Exception ex)
@@ -126,8 +135,8 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                PostCore postCore= new PostCore(db);
-                ResponseApiError err = postCore.Update(id, post);
+                var postCore= new PostCore(db);
+                var err = postCore.Update(id, post);
 
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
@@ -159,16 +168,15 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                PostCore postCore = new PostCore(db);
-                ResponseApiError err = postCore.Delete( id );
+                var postCore = new PostCore(db);
+                var err = postCore.Delete( id );
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
-                        Data = "Success",
+                        Code = 200,
                         Message = "Usuario creado exitosamente"
                     });
             }

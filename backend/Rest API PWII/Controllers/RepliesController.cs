@@ -18,12 +18,11 @@ namespace Rest_API_PWII.Controllers
     {
         private PosThisDbContext db;
 
-        RepliesController(PosThisDbContext db)
+        public RepliesController(PosThisDbContext db)
         {
             this.db = db;
         }
 
-        // GET: api/<RepliesController>
         [HttpGet]
         public IActionResult Get()
         {
@@ -53,20 +52,29 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        // GET api/<RepliesController>/5
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
             try
             {
-                RepliesCore replyCore = new RepliesCore(db);
-                Reply replies = replyCore.GetOne(id);
+                var replyCore = new RepliesCore(db);
+                var reply   = replyCore.GetOne(id);
+                if ( reply == null )
+                    return StatusCode(
+                        (int)HttpStatusCode.InternalServerError,
+                        new ResponseApiError
+                        {
+                            Code = (int)HttpStatusCode.NotFound,
+                            HttpStatusCode = (int)HttpStatusCode.NotFound,
+                            Message = "Respuesta no encontrada"
+
+                        });
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
-                        Data = replies,
+                        Code = 200,
+                        Data= reply,
                         Message = "Respuestas Obtenidas Exitosamente"
                     });
               
@@ -77,7 +85,7 @@ namespace Rest_API_PWII.Controllers
                    (int)HttpStatusCode.InternalServerError,
                    new ResponseApiError
                    {
-                       Code = 3,
+                       Code = (int)HttpStatusCode.InternalServerError,
                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                        Message = ex.Message
 
@@ -85,22 +93,20 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        // POST api/<RepliesController> //CREATE
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Reply reply)
+        public IActionResult Create([FromBody] CUReplyModel model)
         {
             try
             {
-                RepliesCore repliesCore = new RepliesCore(db);
-                ResponseApiError err = repliesCore.Create(reply);
+                var repliesCore = new RepliesCore(db);
+                var err = repliesCore.Create(model);
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
-                        Data = reply,
+                        Code = 200,
                         Message = "Respuesta creada exitosamente"
                     });
             }
@@ -117,15 +123,36 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        // PUT api/<RepliesController>/5 
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IActionResult Update(int id, [FromBody] CUReplyModel model)
         {
-            //Falta
+            try
+            {
+                var repliesCore = new RepliesCore( db );
+                var err = repliesCore.Update( id, model );
+                if ( err != null )
+                    return StatusCode( err.HttpStatusCode, err );
 
+                return Ok(
+                    new ResponseApiSuccess
+                    {
+                        Code = 200,
+                        Message = "Respuesta editada exitosamente"
+                    });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    (int)HttpStatusCode.InternalServerError,
+                    new ResponseApiError
+                    {
+                        Code = 3,
+                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                        Message = ex.Message
+                    });
+            }
         }
 
-        // DELETE api/<RepliesController>/5
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
@@ -139,8 +166,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
-                        Data = "Success",
+                        Code = (int)HttpStatusCode.OK,
                         Message = "Respuesta eliminada exitosamente"
                     });
             }
@@ -150,7 +176,7 @@ namespace Rest_API_PWII.Controllers
                     (int)HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
-                        Code = 3,
+                        Code = (int)HttpStatusCode.InternalServerError,
                         HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });

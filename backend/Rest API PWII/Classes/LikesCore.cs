@@ -119,7 +119,7 @@ namespace Rest_API_PWII.Classes
                     (from u in db.Usuarios where u.Id == model.UsuarioID select u)
                     .First();
 
-                var like = new Likes 
+                var like = new Like 
                 { 
                     PostID = post.PostID,
                     Post = post,
@@ -186,11 +186,11 @@ namespace Rest_API_PWII.Classes
             }
         }
 
-        public List<Likes> GetLikes()
+        public List<Like> GetLikes()
         {
             try 
             {
-                List<Likes> likes = ( from l in db.Likes select l ).ToList();
+                List<Like> likes = ( from l in db.Likes select l ).ToList();
                 return likes;
             }
             catch( Exception ex )
@@ -203,7 +203,7 @@ namespace Rest_API_PWII.Classes
         {
             try
             {
-                List<Likes> likes = 
+                List<Like> likes = 
                     (from l in db.Likes where l.PostID == id select l)
                     .ToList();
 

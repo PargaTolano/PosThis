@@ -49,11 +49,12 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError ValidateExists( Post post )
         {
-            var res = ( from p in db.Posts where p.PostID == post.PostID select p ).First();
+            var res = ( from p in db.Posts where p.PostID == post.PostID select p ).FirstOrDefault();
 
             if ( res == null )
                 return new ResponseApiError {
-                    Code = 2, HttpStatusCode = (int) HttpStatusCode.NotFound,
+                    Code = (int)HttpStatusCode.NotFound,
+                    HttpStatusCode = (int) HttpStatusCode.NotFound,
                     Message = "El post no existe en la base de datos" 
                 };
 
@@ -62,11 +63,12 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError ValidateExists( int id )
         {
-            var res = (from p in db.Posts where p.PostID == id select p).First();
+            var res = (from p in db.Posts where p.PostID == id select p).FirstOrDefault();
 
             if ( res == null )
                 return new ResponseApiError {
-                    Code = 2, HttpStatusCode = (int) HttpStatusCode.NotFound,
+                    Code = (int)HttpStatusCode.NotFound, 
+                    HttpStatusCode = (int) HttpStatusCode.NotFound,
                     Message = "El post no existe en la base de datos" 
                 };
 
@@ -79,11 +81,21 @@ namespace Rest_API_PWII.Classes
             try
             {
                 var err = ValidateCU(createPostModel);
-                if (err == null)
+                if (err != null)
                     return err;
 
+                var usuarioDb = db.Usuarios.FirstOrDefault(u => u.Id == createPostModel.UsuarioID);
+                if (usuarioDb == null)
+                    return new ResponseApiError
+                    {
+                        Code = (int)HttpStatusCode.NotFound,
+                        HttpStatusCode = (int)HttpStatusCode.NotFound,
+                        Message = "usuario no encontrado"
+                    };
+
                 var post = new Post { 
-                    UsuarioID = createPostModel.UsuarioID,
+                    UsuarioID = usuarioDb.Id,
+                    Usuario = usuarioDb,
                     Texto = createPostModel.Texto,
                 };
 
@@ -93,7 +105,7 @@ namespace Rest_API_PWII.Classes
 
                 postDb.FechaPublicacion = DateTime.Now;
 
-                if (createPostModel.mediaIDs.Count > 0)
+                if (createPostModel.mediaIDs?.Count > 0)
                 {
                     var medias = db.Medias.Where(m => createPostModel.mediaIDs.Contains(m.MediaID)).ToList();
                     var mediaPosts = new List<MediaPost>();
@@ -122,10 +134,9 @@ namespace Rest_API_PWII.Classes
             }
             catch (Exception ex)
             {
-
                 return new ResponseApiError
                 {
-                    Code = 3,
+                    Code = (int)HttpStatusCode.InternalServerError,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                     Message = ex.InnerException.Message
                 };
@@ -134,14 +145,17 @@ namespace Rest_API_PWII.Classes
 
         public List<Post> GetAll()
         {
-            List<Post> usuarios = ( from p in db.Posts select p ).ToList();
+            List<Post> usuarios = 
+                ( from p in db.Posts select p )
+                .DefaultIfEmpty()
+                .ToList();
 
             return usuarios;
         }
 
         public Post GetOne( int id )
         {
-            return db.Posts.First(p => p.PostID == id);
+            return db.Posts.FirstOrDefault(p => p.PostID == id);
         }
 
         public ResponseApiError Update( int id, CUPostModel post )

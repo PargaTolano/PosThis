@@ -29,12 +29,51 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateUpdateReply(UpdateReplyModel reply)
+        public ResponseApiError ValidateCreation(CUReplyModel model)
+        {
+            if (model.PostID == null)
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.BadRequest,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "PostID no puede ser nulo"
+                };
+
+            var post = db.Posts.FirstOrDefault(p => p.PostID == model.PostID);
+            if (post == null)
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.NotFound,
+                    HttpStatusCode = (int)HttpStatusCode.NotFound,
+                    Message = "Post no encontrado"
+                };
+
+            if (model.UsuarioID == null)
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.BadRequest,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "UsuarioID no puede ser nulo"
+                };
+
+            var usuario = db.Usuarios.FirstOrDefault(u => u.Id == model.UsuarioID );
+            if (usuario == null)
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.NotFound,
+                    HttpStatusCode = (int)HttpStatusCode.NotFound,
+                    Message = "Usuario no encontrado"
+                };
+
+            return null;
+        }
+
+        public ResponseApiError ValidateCUReply(CUReplyModel model)
         {
             //si el texto esta vacio
-            bool textoValido = string.IsNullOrEmpty(reply.Texto);
+            bool textoValido = !string.IsNullOrEmpty(model.Texto);
             //y no hay media
-            bool mediaValido = reply.mediaIDs.Count() > 0;
+            bool mediaValido = model.mediaIDs?.Count > 0;
 
             if (textoValido || mediaValido)
                 return null;
@@ -42,9 +81,9 @@ namespace Rest_API_PWII.Classes
             //hay error
             return new ResponseApiError
             {
-                Code = 1,
+                Code = (int)HttpStatusCode.BadRequest,
                 HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                Message = "Los datos de la respuesta no son validos, debe tener contenido de texto"
+                Message = "Los datos de la respuesta no son validos, debe tener contenido de texto o multimedia"
             };
         }
 
@@ -76,26 +115,66 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError Create(Reply reply)
+        public ResponseApiError Create(CUReplyModel model)
         {
             try
             {
-                ResponseApiError err = Validate(reply);
-                if (err != null) 
+                var err = ValidateCUReply(model);
+                if ( err != null )
                     return err;
 
-                db.Replies.Add(reply);
+                err = ValidateCreation( model );
+                if ( err != null )
+                    return err;
+
+                var post = db.Posts.First( p => p.PostID == model.PostID );
+
+                var usuario = db.Usuarios.First( u => u.Id == model.UsuarioID );
+
+                var reply = new Reply {
+                    PostID = post.PostID,
+                    Post = post,
+                    UsuarioID = usuario.Id,
+                    Usuario = usuario,
+                    Texto = model.Texto,
+                };
+
+                var replyEntry = db.Replies.Add(reply);
+
+                var replyDb = replyEntry.Entity;
+
+                if ( model.mediaIDs?.Count > 0 )
+                {
+                    var medias = db.Medias.Where( m => model.mediaIDs.Contains(m.MediaID) ).ToList();
+
+                    var mediaReplies = new List<MediaReply>();
+
+                    foreach (var m in medias)
+                    {
+                        var mediaReply = new MediaReply
+                        {
+                            MediaID = m.MediaID,
+                            Media = m,
+                            ReplyID = replyDb.ReplyID,
+                            Reply = replyDb
+                        };
+
+                        mediaReplies.Add(mediaReply);
+                    }
+
+                    replyDb.MediaReplies = mediaReplies;
+                }
+
                 db.SaveChanges();
 
                 return null;
-
             }
             catch (Exception ex)
             {
                 return new ResponseApiError{
                     Code = 3,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "Error interno del servidor"
+                    Message = ex.Message
                 };
             }
         }
@@ -109,14 +188,16 @@ namespace Rest_API_PWII.Classes
 
         public Reply GetOne(int id)
         {
-            return db.Replies.First(p => p.PostID == id);
+            return 
+                (from r in db.Replies where id == r.ReplyID select r)
+                    .FirstOrDefault();
         }
 
-        public ResponseApiError Update( int id, UpdateReplyModel reply )
+        public ResponseApiError Update( int id, CUReplyModel reply )
         {
             try
             {
-                ResponseApiError err = ValidateUpdateReply( reply );
+                var err = ValidateCUReply( reply );
                 if (err != null)
                     return err;
 
@@ -124,11 +205,11 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                Reply replyDb = db.Replies.First(r => r.ReplyID == id);
+                var replyDb = db.Replies.First( r => r.ReplyID == id );
 
                 replyDb.Texto = reply.Texto;
                 
-                if( reply.mediaIDs.Count() > 0)
+                if( reply.mediaIDs?.Count > 0)
                 {
                     var medias = db.Medias.Where(  m => reply.mediaIDs.Contains(m.MediaID) ).ToList();
 
