@@ -8,25 +8,25 @@ using System.Threading.Tasks;
 
 namespace Rest_API_PWII.Classes
 {
-    public class LikesCore
+    public class HashtagPostCore
     {
         private PosThisDbContext db;
-        public LikesCore(PosThisDbContext db)
+        public HashtagPostCore(PosThisDbContext db)
         {
             this.db = db;
         }
-        public ResponseApiError Create(Likes likes)
+        public ResponseApiError Create(HashtagPost hashtagPost)
         {
             try
             {
-                ResponseApiError responseApiError = Validate(likes);
+                ResponseApiError responseApiError = Validate(hashtagPost);
 
-                if(responseApiError != null)
+                if (responseApiError != null)
                 {
                     return responseApiError;
                 }
 
-                db.Add(likes);
+                db.Add(hashtagPost);
                 db.SaveChanges();
                 return null;
             }
@@ -40,38 +40,38 @@ namespace Rest_API_PWII.Classes
                 };
             }
         }
-        public ResponseApiError Validate(Likes likes)
+        public ResponseApiError Validate(HashtagPost hashtagPost)
         {
             try
             {
-                if(likes.PostID == null || likes.UsuarioID == null)
+                if (hashtagPost.HashtagID == null || hashtagPost.PostID == null)
                 {
-                    return new ResponseApiError 
-                    { 
+                    return new ResponseApiError
+                    {
                         Code = 2,
-                        Message = "Like agregado" ,
+                        Message = "HashtagPost agregado",
                         HttpStatusCode = (int)HttpStatusCode.BadRequest
                     };
                 }
                 return null;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
         }
-
-        public List<Likes> GetLikes()
+        public List<HashtagPost> Get()
         {
-            try 
+            try
             {
-                List<Likes> likes = (from l in db.Likes select l).ToList();
-                return likes;
+                List<HashtagPost> hashtagPost = (from h in db.HashtagPosts select h).ToList();
+                return hashtagPost;
             }
             catch(Exception ex)
             {
                 throw ex;
             }
         }
+        
     }
 }

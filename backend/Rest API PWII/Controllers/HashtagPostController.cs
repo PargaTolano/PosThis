@@ -14,29 +14,28 @@ namespace Rest_API_PWII.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class LikesController : ControllerBase
+    public class HashtagPostController : ControllerBase
     {
         private PosThisDbContext db;
-        private LikesCore likesCore;
-        public LikesController(PosThisDbContext db)
+        private HashtagPostCore hashtagPostCore;
+        public HashtagPostController(PosThisDbContext db)
         {
             this.db = db;
         }
-
-        // GET: api/<LikesController>
+        // GET: api/<HashtagPostController>
         [HttpGet]
-        public IActionResult GetLikes()
+        public IActionResult Get()
         {
             try
             {
-                likesCore = new LikesCore(db);
-                List<Likes> likes = likesCore.GetLikes();
+                hashtagPostCore = new HashtagPostCore(db);
+                List<HashtagPost> hashtagPost = hashtagPostCore.Get();
                 return Ok(
                     new ResponseApiSuccess
                     {
                         Code = 1,
-                        Data = likes,
-                        Message = "Likes obtenidos"
+                        Data = hashtagPost,
+                        Message = "Hashtagpos obtenidos"
                     });
             }
             catch(Exception ex)
@@ -51,26 +50,23 @@ namespace Rest_API_PWII.Controllers
                     });
             }
         }
-        [HttpPost]
-        public IActionResult Create([FromBody]Likes likes)
+        public IActionResult Create([FromBody] HashtagPost hashtagPost)
         {
-            try 
-            {        
-                likesCore = new LikesCore(db);
-                ResponseApiError responseApiError = likesCore.Create(likes);
-
-                if(responseApiError != null)
+            try
+            {
+                hashtagPostCore = new HashtagPostCore(db);
+                ResponseApiError responseApiError = hashtagPostCore.Create(hashtagPost);
+                if (responseApiError != null)
                 {
-                    return StatusCode(responseApiError.HttpStatusCode,responseApiError);
+                    return StatusCode(responseApiError.HttpStatusCode, responseApiError);
                 }
-                return Ok(new ResponseApiSuccess { Code = 1, Message = "Like agregado"});
+                return Ok(new ResponseApiSuccess { Code = 1, Message = "HashtagPost agregado" });
             }
             catch(Exception ex)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, 
-                    new ResponseApiError { Code=1001, Message = ex.Message});
+                    new ResponseApiError { Code = 1001, Message = ex.Message });
             }
-    
         }
     }
 }
