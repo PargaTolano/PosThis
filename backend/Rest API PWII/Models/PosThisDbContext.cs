@@ -31,6 +31,8 @@ namespace Rest_API_PWII.Models
 
         public DbSet<MediaPost> MediaPosts { get; set; }
 
+        public DbSet<MediaReply> mediaReplies { get; set; }
+
         public PosThisDbContext(DbContextOptions<PosThisDbContext> options) : base(options)
         {
         }
@@ -65,16 +67,20 @@ namespace Rest_API_PWII.Models
 
                 usuario.Property(e => e.PasswordHash)
                     .IsRequired();
-
             });
 
             modelBuilder.Entity<Post>(post =>
             {
                 post.HasKey(e => e.PostID);
 
+                post.Property( e => e.PostID )
+                    .ValueGeneratedOnAdd();
+
                 post.Property(e => e.Texto)
                     .HasMaxLength(256)
                     .IsRequired(false);
+
+                post.Property(e => e.FechaPublicacion);
 
                 post
                     .HasOne( e => e.Usuario )
@@ -85,6 +91,9 @@ namespace Rest_API_PWII.Models
             modelBuilder.Entity<Repost>(repost =>
             {
                 repost.HasKey( e=>e.RepostID);
+
+                repost.Property(e => e.RepostID)
+                    .ValueGeneratedOnAdd();
 
                 repost
                     .Property(e => e.Texto)
@@ -105,6 +114,9 @@ namespace Rest_API_PWII.Models
             {
                 like.HasKey(e => e.LikeID);
 
+                like.Property(e => e.LikeID)
+                    .ValueGeneratedOnAdd();
+
                 like
                     .HasOne(e=> e.Post)
                     .WithMany( p=> p.Likes )
@@ -120,6 +132,9 @@ namespace Rest_API_PWII.Models
             {
                 reply.HasKey( e => e.ReplyID );
 
+                reply.Property( e => e.ReplyID )
+                    .ValueGeneratedOnAdd();
+
                 reply
                     .HasOne( e => e.Post )
                     .WithMany( p => p.Replies )
@@ -134,12 +149,18 @@ namespace Rest_API_PWII.Models
             modelBuilder.Entity<Hashtag>(hashtag =>
             {
                 hashtag.HasKey(e => e.HastagID);
+
+                hashtag.Property(e => e.HastagID)
+                    .ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<Follow>(follow =>
             {
                 follow
                     .HasKey(e => e.FollowID);
+
+                follow.Property(e => e.FollowID)
+                    .ValueGeneratedOnAdd();
 
                 follow
                     .HasOne( e => e.UsuarioSeguido )
@@ -159,6 +180,9 @@ namespace Rest_API_PWII.Models
                 media
                     .HasKey(e => e.MediaID);
 
+                media.Property(e => e.MediaID)
+                    .ValueGeneratedOnAdd();
+
                 media
                     .Property(e => e.MIME)
                     .HasMaxLength(20)
@@ -172,7 +196,10 @@ namespace Rest_API_PWII.Models
             modelBuilder.Entity<HashtagPost>(hashtagPost =>
             {
                 hashtagPost
-                .HasKey(hp => hp.HashtagPostID);
+                    .HasKey(hp => hp.HashtagPostID);
+
+                hashtagPost.Property(e => e.HashtagPostID)
+                    .ValueGeneratedOnAdd();
 
                 hashtagPost
                     .HasOne( e=> e.Hashtag )
@@ -188,7 +215,10 @@ namespace Rest_API_PWII.Models
             modelBuilder.Entity<MediaPost>(mediaPost =>
             {
                 mediaPost
-                .HasKey(mp => mp.MediaPostID);
+                    .HasKey(mp => mp.MediaPostID);
+
+                mediaPost.Property(e => e.MediaPostID)
+                    .ValueGeneratedOnAdd();
 
                 mediaPost
                     .HasOne( e => e.Media )
@@ -199,6 +229,25 @@ namespace Rest_API_PWII.Models
                     .HasOne( e => e.Post )
                     .WithMany( p => p.MediaPosts )
                     .HasForeignKey( mp => mp.PostID );
+            });
+
+            modelBuilder.Entity<MediaReply>(mediaReply =>
+            {
+                mediaReply
+                    .HasKey( mp => mp.MediaReplyID );
+
+                mediaReply.Property( e => e.MediaReplyID )
+                    .ValueGeneratedOnAdd();
+
+                mediaReply
+                    .HasOne( mr => mr.Media )
+                    .WithMany(m => m.MediaReplies)
+                    .HasForeignKey(mr => mr.MediaID);
+
+                mediaReply
+                    .HasOne( mr => mr.Reply )
+                    .WithMany( p => p.MediaReplies )
+                    .HasForeignKey( mr => mr.ReplyID );
             });
         }
     }

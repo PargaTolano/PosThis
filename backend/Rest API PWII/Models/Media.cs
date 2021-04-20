@@ -14,5 +14,7 @@ namespace Rest_API_PWII.Models
         public byte[] Contenido { get; set; }
 
         public virtual ICollection<MediaPost> MediaPosts { get; set; }
+
+        public virtual ICollection<MediaReply> MediaReplies { get; set; }
     }
 }

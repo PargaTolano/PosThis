@@ -13,7 +13,7 @@
 -- TABLAS PRIMAS
 
 --Query Modificado 27/03/2021
---Se ha agregado un Drop al script para mejorar el funcionamiento
+--Se ha agragado un Drop al script para mejorar el funcionamiento
 
 USE [master];
 
@@ -231,9 +231,10 @@ CREATE TABLE Likes(
 );
 
 CREATE TABLE Replies(
-	ReplyID			INTEGER PRIMARY KEY IDENTITY,
+	ReplyID				INTEGER PRIMARY KEY IDENTITY,
 	PostID				INTEGER NOT NULL,
 	UsuarioID			[nvarchar](450) NOT NULL,
+	Texto				TEXT NULL,
 
 	CONSTRAINT fk_Replies_Post
 	FOREIGN KEY(PostID)
@@ -278,7 +279,7 @@ ADD
 
 CREATE TABLE HastagPost(
 
-	HastagPostID			INTEGER,
+	HastagPostID		INTEGER PRIMARY KEY,
 	HastagID			INTEGER,
 	PostID				INTEGER,
 
@@ -292,7 +293,7 @@ CREATE TABLE HastagPost(
 );
 
 CREATE TABLE MediaPost(
-	MediaPostID			INTEGER,
+	MediaPostID			INTEGER PRIMARY KEY,
 	MediaID				INTEGER,
 	PostID				INTEGER,
 
@@ -303,6 +304,20 @@ CREATE TABLE MediaPost(
 	CONSTRAINT fk_MediaPost_Post
 	FOREIGN KEY(PostID)
 	REFERENCES Posts( PostID )
+);
+
+CREATE TABLE MediaReply(
+	MediaReplyID		INTEGER PRIMARY KEY,
+	MediaID				INTEGER,
+	ReplyID				INTEGER,
+
+	CONSTRAINT fk_MediaReply_Media
+	FOREIGN KEY( MediaID )
+	REFERENCES Media( MediaID ),
+
+	CONSTRAINT fk_MediaReply_Reply
+	FOREIGN KEY( ReplyID )
+	REFERENCES Replies( ReplyID )
 );
 
 SELECT * FROM [dbo].[AspNetUsers];

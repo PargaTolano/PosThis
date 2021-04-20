@@ -29,6 +29,25 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
+        public ResponseApiError ValidateUpdateReply(UpdateReplyModel reply)
+        {
+            //si el texto esta vacio
+            bool textoValido = string.IsNullOrEmpty(reply.Texto);
+            //y no hay media
+            bool mediaValido = reply.mediaIDs.Count() > 0;
+
+            if (textoValido || mediaValido)
+                return null;
+
+            //hay error
+            return new ResponseApiError
+            {
+                Code = 1,
+                HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                Message = "Los datos de la respuesta no son validos, debe tener contenido de texto"
+            };
+        }
+
         public ResponseApiError ValidateExists(Reply reply)
         {
             var res = (from r in db.Replies where r.ReplyID == reply.ReplyID select r).First();
@@ -93,11 +112,11 @@ namespace Rest_API_PWII.Classes
             return db.Replies.First(p => p.PostID == id);
         }
 
-        public ResponseApiError Update(int id, Reply reply)
+        public ResponseApiError Update( int id, UpdateReplyModel reply )
         {
             try
             {
-                ResponseApiError err = Validate(reply);
+                ResponseApiError err = ValidateUpdateReply( reply );
                 if (err != null)
                     return err;
 
@@ -105,11 +124,31 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                Reply replyDb = db.Replies.First(r => r.ReplyID == id); //Aqui no le puse toStrin por que compara int
+                Reply replyDb = db.Replies.First(r => r.ReplyID == id);
 
-                //FALTA AQUI
+                replyDb.Texto = reply.Texto;
+                
+                if( reply.mediaIDs.Count() > 0)
+                {
+                    var medias = db.Medias.Where(  m => reply.mediaIDs.Contains(m.MediaID) ).ToList();
 
-                //replyDb.Post.Texto = reply.Post.Texto != null ? reply.Post.Texto : replyDb.Post.Texto;
+                    var mediaReplies = new List<MediaReply>();
+
+                    foreach ( var m in medias)
+                    {
+                        var mediaReply = new MediaReply
+                        {
+                            MediaID = m.MediaID,
+                            Media = m,
+                            ReplyID = replyDb.ReplyID,
+                            Reply = replyDb
+                        };
+
+                        mediaReplies.Add( mediaReply );
+                    }
+
+                    replyDb.MediaReplies = mediaReplies;
+                }
 
                 db.SaveChanges();
 

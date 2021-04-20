@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Rest_API_PWII.Models.ViewModels
 {
-    public class CreatePostModel
+    public class CUPostModel
     {
-        public virtual string usuarioID     { get; set; }
+        public virtual string UsuarioID     { get; set; }
         public virtual string Texto         { get; set; }
         public virtual List<int> mediaIDs   { get; set; }
     }

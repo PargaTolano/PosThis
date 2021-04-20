@@ -90,7 +90,7 @@ namespace Rest_API_PWII.Controllers
 
         // POST api/<PostController>
         [HttpPost]
-        public IActionResult Create([FromBody] Post post)
+        public IActionResult Create([FromBody] CUPostModel post)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace Rest_API_PWII.Controllers
 
         // PUT api/<PostController>/5
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] Post post)
+        public IActionResult Update(int id, [FromBody] CUPostModel post)
         {
             try
             {
@@ -137,7 +137,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = post,
-                        Message = "Usuario creado exitosamente"
+                        Message = "Post actualizado exitosamente"
                     });
             }
             catch (Exception ex)
