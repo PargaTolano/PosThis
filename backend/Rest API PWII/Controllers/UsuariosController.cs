@@ -35,7 +35,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
+                        Code = 200,
                         Data = usuarios,
                         Message = "Usuarios Obtenidos Exitosamente"
                     });
@@ -46,7 +46,7 @@ namespace Rest_API_PWII.Controllers
                     (int)HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
-                        Code = 3,
+                        Code = (int)HttpStatusCode.InternalServerError,
                         HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });
@@ -60,11 +60,20 @@ namespace Rest_API_PWII.Controllers
             {
                 var usuarioCore = new UsuarioCore( db );
                 var usuario     = usuarioCore.GetOne( id );
+                if ( usuario == null )
+                    return StatusCode(
+                        (int)HttpStatusCode.InternalServerError,
+                        new ResponseApiError
+                        {
+                            Code = (int)HttpStatusCode.NotFound,
+                            HttpStatusCode = (int)HttpStatusCode.NotFound,
+                            Message = "Usuario no encontrado"
+                        });
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
+                        Code = 200,
                         Data = usuario,
                         Message = "Usuarios Obtenidos Exitosamente"
                     });
@@ -75,42 +84,12 @@ namespace Rest_API_PWII.Controllers
                    (int)HttpStatusCode.InternalServerError,
                    new ResponseApiError
                    {
-                       Code = 3,
+                       Code = (int)HttpStatusCode.InternalServerError,
                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                        Message = ex.Message
                    });
             }
            
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create( [FromBody] Usuario usuario )
-        {
-            try
-            {
-                var usuarioCore = new UsuarioCore( db );
-                var err         = usuarioCore.Create( usuario );
-                if ( err != null )
-                    return StatusCode( err.HttpStatusCode, err );
-
-                return Ok(
-                    new ResponseApiSuccess {
-                        Code = 1, 
-                        Data = usuario,
-                        Message = "Usuario creado exitosamente" 
-                    } );
-            }
-            catch( Exception ex )
-            {
-                return StatusCode(
-                    ( int ) HttpStatusCode.InternalServerError,
-                    new ResponseApiError
-                    {
-                        Code = 3,
-                        HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
-                        Message = ex.Message
-                    });
-            }
         }
 
         [HttpPut("{id}")]
@@ -137,7 +116,7 @@ namespace Rest_API_PWII.Controllers
                 return StatusCode(
                     ( int ) HttpStatusCode.InternalServerError,
                     new ResponseApiError {
-                        Code = 3,
+                        Code = (int)HttpStatusCode.InternalServerError,
                         HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
                         Message = ex.Message 
                     });
@@ -158,7 +137,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
+                        Code = 200,
                         Data = "Success",
                         Message = "Usuario creado exitosamente"
                     });
@@ -169,7 +148,7 @@ namespace Rest_API_PWII.Controllers
                     ( int ) HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
-                        Code = 3,
+                        Code = (int)HttpStatusCode.InternalServerError,
                         HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });

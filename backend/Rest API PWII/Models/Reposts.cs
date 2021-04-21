@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Rest_API_PWII.Models
 {
@@ -12,7 +9,7 @@ namespace Rest_API_PWII.Models
 
         public string Texto { get; set; }
 
-        public DateTime FechaPublicacion { get; set; }
+        public DateTime? FechaPublicacion { get; set; }
 
         public string UsuarioID { get; set; }
 

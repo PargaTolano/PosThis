@@ -24,14 +24,13 @@ namespace Rest_API_PWII.Controllers
             this.db = db;
         }
 
-        // GET: api/<HashtagsController>
         [HttpGet]
         public IActionResult Get()
         {
             try
             {
-                HashtagCore hashtagCore = new HashtagCore(db);
-                List<Hashtag> hashtag = hashtagCore.GetAll();
+                var hashtagCore = new HashtagCore(db);
+                var hashtag = hashtagCore.GetAll();
 
                 return Ok(
                     new ResponseApiSuccess
@@ -54,23 +53,20 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        // POST api/<HashtagsController>
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Hashtag hashtag)
+        [HttpGet("{texto}")]
+        public IActionResult GetPosts( string texto )
         {
             try
             {
-                HashtagCore hashtagCore = new HashtagCore(db);
-                ResponseApiError err = hashtagCore.Create(hashtag);
-                if (err != null)
-                    return StatusCode(err.HttpStatusCode, err);
+                var hashtagCore = new HashtagCore(db);
+                var result = hashtagCore.GetPostsWithHashtag(texto);
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
-                        Data = hashtag,
-                        Message = "Hashtag creado exitosamente"
+                        Code = 200,
+                        Data = result,
+                        Message = "Posts Obtenidos Exitosamente"
                     });
             }
             catch (Exception ex)
@@ -81,6 +77,37 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 3,
                         HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                        Message = ex.Message
+                    });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Create( [FromBody] HashtagViewModel model )
+        {
+            try
+            {
+                HashtagCore hashtagCore = new HashtagCore( db );
+                ResponseApiError err = hashtagCore.Create( model );
+                if ( err != null )
+                    return StatusCode( err.HttpStatusCode, err );
+
+                return Ok(
+                    new ResponseApiSuccess
+                    {
+                        Code = 1,
+                        Data = model,
+                        Message = "Hashtag creado exitosamente"
+                    });
+            }
+            catch ( Exception ex )
+            {
+                return StatusCode(
+                    ( int ) HttpStatusCode.InternalServerError,
+                    new ResponseApiError
+                    {
+                        Code = ( int ) HttpStatusCode.InternalServerError,
+                        HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });
             }

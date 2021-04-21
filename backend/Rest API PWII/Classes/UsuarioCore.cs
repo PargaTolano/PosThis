@@ -29,14 +29,20 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateUpdate( Usuario usuario )
+        public ResponseApiError ValidateUpdate( UserViewModel model )
         {
-            if( usuario.Email == null )
+            if( 
+                model.Nombre == null &&
+                model.Tag == null &&
+                model.Email == null &&
+                model.FotoPerfilID == null &&
+                model.FechaNacimiento == null 
+                )
                 return new ResponseApiError
                 {
-                    Code = 1,
+                    Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Los datos del usuario no son validos"
+                    Message = "Se debe modificar almenos un campo"
                 };
 
             return null;
@@ -106,18 +112,39 @@ namespace Rest_API_PWII.Classes
             }
         }
 
-        public List<Usuario> GetAll()
+        public List<UserViewModel> GetAll()
         {
-            List<Usuario> usuarios = ( from u in db.Usuarios select u ).ToList();
+            List<UserViewModel> usuarios = 
+                (from u 
+                 in db.Usuarios 
+                 select new UserViewModel {
+                     Id = u.Id,
+                     Nombre = u.UserName,
+                     Tag = u.Tag,
+                     Email = u.Email,
+                     FechaNacimiento = u.FechaNacimiento,
+                     FotoPerfilID = u.FotoPerfilMediaID
+                 }).DefaultIfEmpty().ToList();
             return usuarios;
         }
 
-        public Usuario GetOne( string id )
+        public UserViewModel GetOne( string id )
         {
-            return db.Usuarios.First( u => u.Id == id );
+            return (from u
+                    in db.Usuarios
+                    where u.Id == id
+                    select new UserViewModel
+                    {
+                        Id = u.Id,
+                        Nombre = u.UserName,
+                        Tag = u.Tag,
+                        Email = u.Email,
+                        FechaNacimiento = u.FechaNacimiento,
+                        FotoPerfilID = u.FotoPerfilMediaID
+                    }).FirstOrDefault();
         }
 
-        public ResponseApiError Update( string id, Usuario usuario )
+        public ResponseApiError Update( string id, UserViewModel usuario )
         {
             try
             {
@@ -131,7 +158,7 @@ namespace Rest_API_PWII.Classes
 
                 Usuario usuarioDb = db.Usuarios.First( u => u.Id == id );
 
-                usuarioDb.UserName  = usuario.UserName != null ? usuario.UserName : usuarioDb.UserName;
+                usuarioDb.UserName  = usuario.Nombre != null ? usuario.Nombre : usuarioDb.UserName;
                 usuarioDb.Tag       = usuario.Tag != null ? usuario.Tag : usuarioDb.Tag;
                 usuarioDb.Email     = usuario.Email != null ? usuario.Email : usuarioDb.Email;
 

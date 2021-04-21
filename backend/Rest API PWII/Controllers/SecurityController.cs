@@ -161,5 +161,55 @@ namespace Rest_API_PWII.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        //TODO terminar modificacion de contrasena
+        /*
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ChangePassword( string id, [FromBody] string Password ){
+            try
+            {
+                var err = ValidateLoginModel(login);
+
+                if (err != null)
+                    return StatusCode(err.HttpStatusCode, err);
+
+                var user = await _userManager.FindByEmailAsync(login.UserName);
+
+                if (user == null)
+                    return StatusCode(404);
+
+                var result = await _signInManager.CheckPasswordSignInAsync(user, login.Password, false);
+
+                if (!result.Succeeded)
+                    return StatusCode(404);
+
+                var secretKey = _configuration.GetValue<string>("SecretKey");
+
+                var key = Encoding.ASCII.GetBytes(secretKey);
+
+
+                var claims = new ClaimsIdentity(new[] {
+                    new Claim( ClaimTypes.NameIdentifier, user.Id),
+                    new Claim( ClaimTypes.Name, user.UserName )
+                });
+
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = claims,
+                    Expires = DateTime.UtcNow.AddDays(1),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+
+                var createdToken = tokenHandler.CreateToken(tokenDescriptor);
+
+                return Ok(tokenHandler.WriteToken(createdToken));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }*/
     }
 }

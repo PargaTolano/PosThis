@@ -76,7 +76,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError Create(CUPostModel createPostModel )
+        public ResponseApiError Create( CUPostModel createPostModel )
         {
             try
             {
