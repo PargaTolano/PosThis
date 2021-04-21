@@ -10,10 +10,12 @@
 -- Insert de registros en tabla X
 -- Query Creado el 2021-02-27 por José Antonio Parga Tolano
 
--- TABLAS PRIMAS
 
 --Query Modificado 27/03/2021
 --Se ha agragado un Drop al script para mejorar el funcionamiento
+
+--Query modificado 21/04/21
+--Se ha modificado los nombres de tablas a idioma inglés
 
 USE [master];
 
@@ -72,7 +74,9 @@ CREATE TABLE [dbo].[AspNetUserClaims](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
+
 /****** Object:  Table [dbo].[AspNetUserLogins]    Script Date: 27/03/2021 11:05:23 a. m. ******/
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -104,7 +108,9 @@ CREATE TABLE [dbo].[AspNetUserRoles](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+
 /****** Object:  Table [dbo].[AspNetUsers]    Script Date: 27/03/2021 11:05:23 a. m. ******/
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -126,7 +132,7 @@ CREATE TABLE [dbo].[AspNetUsers](
 	[LockoutEnabled] [bit] NOT NULL,
 	[AccessFailedCount] [int] NOT NULL,
 	Tag					VARCHAR(15) UNIQUE			,
-	FechaNacimiento		DATETIME					,
+	BirthDate			DATETIME					,
  CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -190,101 +196,102 @@ GO
 
 CREATE TABLE Posts(
 	PostID				INTEGER PRIMARY KEY IDENTITY,
-	Texto				VARCHAR(256)				,
-	FechaPublicacion	DATETIME	DEFAULT(CURRENT_TIMESTAMP),
-	UsuarioID			[nvarchar](450) NOT NULL	,
+	Content				VARCHAR(256)				,
+	PostDate			DATETIME	DEFAULT(CURRENT_TIMESTAMP),
+	UserID				[nvarchar](450) NOT NULL	,
 
-	CONSTRAINT fk_Post_Usuario 
-	FOREIGN KEY(UsuarioID)
+	CONSTRAINT fk_Post_User
+	FOREIGN KEY(UserID)
 	REFERENCES [dbo].[AspNetUsers]( [Id] )
 );
 
 CREATE TABLE Reposts(
 	RepostID			INTEGER PRIMARY KEY IDENTITY,
-	Texto				VARCHAR(256)				,
-	FechaPublicacion	DATETIME					,
+	Content				VARCHAR(256)				,
+	RepostDate	DATETIME					,
 	PostID				INTEGER NOT NULL,
-	UsuarioID			[nvarchar](450) NOT NULL,
+	UserID			[nvarchar](450) NOT NULL,
 
 	CONSTRAINT fk_Repost_Post
 	FOREIGN KEY(PostID)
 	REFERENCES Posts( PostID ),
 
-	CONSTRAINT fk_Repost_Usuario
-	FOREIGN KEY(UsuarioID)
+	CONSTRAINT fk_Repost_User
+	FOREIGN KEY(UserID)
 	REFERENCES [dbo].[AspNetUsers]( [Id] )
 );
 
 CREATE TABLE Likes(
 	LikeID				INTEGER PRIMARY KEY IDENTITY,
 	PostID				INTEGER NOT NULL,
-	UsuarioID			[nvarchar](450) NOT NULL,
+	UserID			[nvarchar](450) NOT NULL,
 
 	CONSTRAINT fk_Likes_Post
 	FOREIGN KEY(PostID)
 	REFERENCES Posts( PostID ),
 
-	CONSTRAINT fk_Likes_Usuario
-	FOREIGN KEY(UsuarioID)
+	CONSTRAINT fk_Likes_User
+	FOREIGN KEY(UserID)
 	REFERENCES [dbo].[AspNetUsers]( [Id] )
 );
 
 CREATE TABLE Replies(
-	ReplyID				INTEGER PRIMARY KEY IDENTITY,
-	PostID				INTEGER NOT NULL,
-	UsuarioID			[nvarchar](450) NOT NULL,
-	Texto				TEXT NULL,
+	ReplyID						INTEGER PRIMARY KEY IDENTITY,
+	PostID						INTEGER NOT NULL,
+	UserID						[nvarchar](450) NOT NULL,
+	ContentReplies				TEXT NULL,
 
 	CONSTRAINT fk_Replies_Post
 	FOREIGN KEY(PostID)
 	REFERENCES Posts( PostID ),
 
-	CONSTRAINT fk_Replies_Usuario
-	FOREIGN KEY(UsuarioID)
+	CONSTRAINT fk_Replies_User
+	FOREIGN KEY(UserID)
 	REFERENCES [dbo].[AspNetUsers]( [Id] )
 );
 
 CREATE TABLE Hashtags(
-	HastagID			INTEGER PRIMARY KEY IDENTITY,
-	Texto				TEXT
+	HashtagID			INTEGER PRIMARY KEY IDENTITY,
+	ContentHashtag		TEXT
 );
 
 CREATE TABLE Follows(
 	FollowID			INTEGER PRIMARY KEY IDENTITY,
-	UsuarioSeguidorID	[nvarchar](450),
-	UsuarioSeguidoID	[nvarchar](450),
+	UserFollowerID	[nvarchar](450),
+	UserFollowID	[nvarchar](450),
 
-	CONSTRAINT fk_Follows_Usuarios_Seguidor
-	FOREIGN KEY(UsuarioSeguidorID)
+	CONSTRAINT fk_Follows_User_Follower
+	FOREIGN KEY(UserFollowerID)
 	REFERENCES [dbo].[AspNetUsers]( [Id] ),
 
-	CONSTRAINT fk_Follows_Usuarios_Seguido
-	FOREIGN KEY(UsuarioSeguidoID)
+	CONSTRAINT fk_Follows_User_Follows
+	FOREIGN KEY(UserFollowID)
 	REFERENCES [dbo].[AspNetUsers]( [Id] ),
 );
 
 CREATE TABLE Media(
 	MediaID				INTEGER PRIMARY KEY IDENTITY,
 	MIME				VARCHAR(20)					,
-	Contenido			VARBINARY(MAX)
+	Content			VARBINARY(MAX)
 );
 
 ALTER TABLE [dbo].[AspNetUsers] 
 ADD 
-	FotoPerfilMediaID INT NULL
-	CONSTRAINT fk_Usuario_Media FOREIGN KEY( FotoPerfilMediaID ) REFERENCES Media(MediaID);
+	ProfilePhotoMediaID INT NULL
+	CONSTRAINT fk_User_Media FOREIGN KEY( ProfilePhotoMediaID ) REFERENCES Media(MediaID);
+
 
 -- TABLAS RELACIONALES
 
-CREATE TABLE HastagPost(
+CREATE TABLE HashtagPost(
 
-	HastagPostID		INTEGER PRIMARY KEY,
-	HastagID			INTEGER,
+	HashtagPostID		INTEGER PRIMARY KEY,
+	HashtagID			INTEGER,
 	PostID				INTEGER,
 
 	CONSTRAINT fk_HashtagPost_Hashtag
-	FOREIGN KEY(HastagID)
-	REFERENCES Hashtags( HastagID ),
+	FOREIGN KEY(HashtagID)
+	REFERENCES Hashtags( HashtagID ),
 
 	CONSTRAINT fk_HashtagPost_Post
 	FOREIGN KEY(PostID)
