@@ -15,7 +15,7 @@ namespace Rest_API_PWII.Models
         public DateTime FechaPublicacion { get; set; }
 
         [JsonIgnore]
-        public virtual Usuario Usuario { get; set; }
+        public virtual User Usuario { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<Reposts> Reposts { get; set; }

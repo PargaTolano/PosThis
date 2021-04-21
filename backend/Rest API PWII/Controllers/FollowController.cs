@@ -11,7 +11,7 @@ using Rest_API_PWII.Classes;
 
 namespace Rest_API_PWII.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class FollowController : ControllerBase
     {

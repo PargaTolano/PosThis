@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Rest_API_PWII.Models
 {
-    public class Usuario : IdentityUser
+    public class User : IdentityUser
     {
         public virtual string Tag { get; set; }
 

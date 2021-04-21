@@ -49,7 +49,7 @@ namespace Rest_API_PWII
                 options.UseSqlServer(connectionString)
             );
 
-            services.AddIdentity<Usuario, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<PosThisDbContext>();
 
             services.AddAuthentication( x =>

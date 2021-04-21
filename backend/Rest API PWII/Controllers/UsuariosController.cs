@@ -93,7 +93,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update( string id, [FromBody] Usuario usuario )
+        public IActionResult Update( string id, [FromBody] UserViewModel usuario )
         {
             try
             {
@@ -139,7 +139,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = "Success",
-                        Message = "Usuario creado exitosamente"
+                        Message = "Usuario borrado exitosamente"
                     });
             }
             catch ( Exception ex )

@@ -84,7 +84,7 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                var usuarioDb = db.Usuarios.FirstOrDefault(u => u.Id == createPostModel.UsuarioID);
+                var usuarioDb = db.Users.FirstOrDefault(u => u.Id == createPostModel.UsuarioID);
                 if (usuarioDb == null)
                     return new ResponseApiError
                     {

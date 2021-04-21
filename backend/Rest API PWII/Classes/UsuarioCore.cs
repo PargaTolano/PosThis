@@ -17,7 +17,7 @@ namespace Rest_API_PWII.Classes
             this.db = db;
         }
 
-        public ResponseApiError Validate( Usuario usuario )
+        public ResponseApiError Validate( User usuario )
         {
             if ( usuario.UserName == null || usuario.Tag == null || usuario.Email == null )
                 return new ResponseApiError { 
@@ -48,7 +48,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateNewPassword( Usuario usuario)
+        public ResponseApiError ValidateNewPassword( User usuario)
         {
             if ( usuario.PasswordHash == null )
                 return new ResponseApiError
@@ -61,9 +61,9 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateExists( Usuario usuario )
+        public ResponseApiError ValidateExists( User usuario )
         {
-            var res = (from u in db.Usuarios where u.Id == usuario.Id select u).First();
+            var res = (from u in db.Users where u.Id == usuario.Id select u).First();
 
             if (res == null)
                 return new ResponseApiError { 
@@ -77,7 +77,7 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError ValidateExists( string id )
         {
-            var res = (from u in db.Usuarios where u.Id == id select u).First();
+            var res = (from u in db.Users where u.Id == id select u).First();
 
             if (res == null)
                 return new ResponseApiError { 
@@ -89,7 +89,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
         
-        public ResponseApiError Create( Usuario usuario )
+        public ResponseApiError Create( User usuario )
         {
             try
             {
@@ -97,7 +97,7 @@ namespace Rest_API_PWII.Classes
                 if (err != null)/*estaba == */
                     return err;
 
-                db.Usuarios.Add( usuario );
+                db.Users.Add( usuario );
                 db.SaveChanges();
 
                 return null;
@@ -116,7 +116,7 @@ namespace Rest_API_PWII.Classes
         {
             List<UserViewModel> usuarios = 
                 (from u 
-                 in db.Usuarios 
+                 in db.Users 
                  select new UserViewModel {
                      Id = u.Id,
                      Nombre = u.UserName,
@@ -131,7 +131,7 @@ namespace Rest_API_PWII.Classes
         public UserViewModel GetOne( string id )
         {
             return (from u
-                    in db.Usuarios
+                    in db.Users
                     where u.Id == id
                     select new UserViewModel
                     {
@@ -156,7 +156,7 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                Usuario usuarioDb = db.Usuarios.First( u => u.Id == id );
+                User usuarioDb = db.Users.First( u => u.Id == id );
 
                 usuarioDb.UserName  = usuario.Nombre != null ? usuario.Nombre : usuarioDb.UserName;
                 usuarioDb.Tag       = usuario.Tag != null ? usuario.Tag : usuarioDb.Tag;
@@ -185,9 +185,9 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                Usuario usuarioDb = db.Usuarios.First( u => u.Id == id );
+                User usuarioDb = db.Users.First( u => u.Id == id );
 
-                db.Usuarios.Remove( usuarioDb );
+                db.Users.Remove( usuarioDb );
 
                 db.SaveChanges();
 

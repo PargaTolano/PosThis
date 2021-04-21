@@ -45,7 +45,7 @@ namespace Rest_API_PWII.Classes
                     Message = "Post dado para el like no existe",
                 };
 
-            var usuario = db.Usuarios.FirstOrDefault(u => u.Id == model.UsuarioID );
+            var usuario = db.Users.FirstOrDefault(u => u.Id == model.UsuarioID );
 
             if (usuario == null)
                 return new ResponseApiError
@@ -116,7 +116,7 @@ namespace Rest_API_PWII.Classes
                     .First();
 
                 var usuario = 
-                    (from u in db.Usuarios where u.Id == model.UsuarioID select u)
+                    (from u in db.Users where u.Id == model.UsuarioID select u)
                     .First();
 
                 var like = new Like 

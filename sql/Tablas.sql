@@ -188,7 +188,6 @@ GO
 ALTER TABLE [dbo].[AspNetUserTokens] CHECK CONSTRAINT [FK_AspNetUserTokens_AspNetUsers_UserId]
 GO
 
-
 CREATE TABLE Posts(
 	PostID				INTEGER PRIMARY KEY IDENTITY,
 	Texto				VARCHAR(256)				,

@@ -114,7 +114,7 @@ namespace Rest_API_PWII.Controllers
                     (int)HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
-                        Code= 3,
+                        Code= (int)HttpStatusCode.InternalServerError,
                         HttpStatusCode = (int) HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });

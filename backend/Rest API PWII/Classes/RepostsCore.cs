@@ -43,7 +43,7 @@ namespace Rest_API_PWII.Classes
                     Message = "UsuarioID no puede ser null"
                 };
             
-            var usuario = db.Usuarios.FirstOrDefault(u => u.Id == model.UsuarioID);
+            var usuario = db.Users.FirstOrDefault(u => u.Id == model.UsuarioID);
             if (usuario == null)
                 return new ResponseApiError
                 {
@@ -108,7 +108,7 @@ namespace Rest_API_PWII.Classes
                     return err;
 
                 var post    = db.Posts.First( p => p.PostID == model.PostID );
-                var usuario = db.Usuarios.First(u => u.Id == model.UsuarioID);
+                var usuario = db.Users.First(u => u.Id == model.UsuarioID);
 
                 var repost = new Reposts 
                     {

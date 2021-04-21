@@ -14,7 +14,7 @@ namespace Rest_API_PWII.Models
 
         public int PostID { get; set; }
 
-        public virtual Usuario Usuario { get; set; }
+        public virtual User Usuario { get; set; }
 
         public virtual Post Post { get; set; }
 

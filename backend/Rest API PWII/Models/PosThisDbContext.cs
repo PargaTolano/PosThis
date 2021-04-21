@@ -9,10 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Rest_API_PWII.Models
 {
-    public class PosThisDbContext : IdentityDbContext<Usuario>
+    public class PosThisDbContext : IdentityDbContext<User>
     {
-        public DbSet<Usuario> Usuarios { get; set; }
-
         public DbSet<Post> Posts { get; set; }
 
         public DbSet<Reposts> Reposts { get; set; }
@@ -46,7 +44,7 @@ namespace Rest_API_PWII.Models
         {
             base.OnModelCreating( modelBuilder );
 
-            modelBuilder.Entity<Usuario>(usuario =>
+            modelBuilder.Entity<User>(usuario =>
             {
                 usuario.HasKey(usuario => usuario.Id);
                 

@@ -17,7 +17,7 @@ namespace Rest_API_PWII.Models
 
         public virtual Post Post { get; set; }
 
-        public virtual Usuario Usuario { get; set; }
+        public virtual User Usuario { get; set; }
 
         public virtual ICollection<MediaReply> MediaReplies { get; set; }
 

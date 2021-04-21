@@ -17,11 +17,11 @@ namespace Rest_API_PWII.Controllers
     [ApiController]
     public class SecurityController : ControllerBase
     {
-        private UserManager<Usuario> _userManager;
-        private SignInManager<Usuario> _signInManager;
+        private UserManager<User> _userManager;
+        private SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
 
-        public SecurityController( UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, IConfiguration configuration )
+        public SecurityController( UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration )
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -95,7 +95,7 @@ namespace Rest_API_PWII.Controllers
                 if (err != null)
                     return StatusCode( err.HttpStatusCode, err);
 
-                var result = await _userManager.CreateAsync(new Usuario
+                var result = await _userManager.CreateAsync(new User
                 {
                     Email       = signUpModel.Email,
                     UserName    = signUpModel.UserName,

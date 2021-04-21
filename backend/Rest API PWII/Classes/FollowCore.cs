@@ -40,7 +40,7 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError ValidateFollowExists( FollowViewModel model )
         {
-            var follower = db.Usuarios.FirstOrDefault( u => u.Id == model.FollowerID );
+            var follower = db.Users.FirstOrDefault( u => u.Id == model.FollowerID );
             if ( follower == null )
                 return new ResponseApiError
                 {
@@ -49,7 +49,7 @@ namespace Rest_API_PWII.Classes
                     Message = "Follower no puede ser null"
                 };
 
-            var followed = db.Usuarios.FirstOrDefault( u => u.Id == model.FollowedID );
+            var followed = db.Users.FirstOrDefault( u => u.Id == model.FollowedID );
             if ( followed == null )
                 return new ResponseApiError
                 {
@@ -65,14 +65,15 @@ namespace Rest_API_PWII.Classes
 
         public List<UserViewModel> GetFollowers( string FollowedID )
         {
-            var usuario = db.Usuarios.FirstOrDefault( u => u.Id == FollowedID );
+            var usuario = db.Users.FirstOrDefault( u => u.Id == FollowedID );
             if ( usuario == null )
                 throw new Exception("No existe el usuario del cual se buscan followers");
 
             var follows = 
                 (from f in db.Follows
-                 join u in db.Usuarios
-                 on f.UsuarioSeguidoID equals u.Id
+                 join u in db.Users
+                 on f.UsuarioSeguidorID equals u.Id
+                 where f.UsuarioSeguidoID == FollowedID
                  select new UserViewModel { 
                     Id = f.UsuarioSeguidorID,
                     Nombre = u.UserName,
@@ -90,14 +91,15 @@ namespace Rest_API_PWII.Classes
 
         public List<UserViewModel> GetFollowing( string FollowerID )
         {
-            var usuario = db.Usuarios.FirstOrDefault(u => u.Id == FollowerID);
+            var usuario = db.Users.FirstOrDefault(u => u.Id == FollowerID);
             if (usuario == null)
                 throw new Exception("No existe el usuario del cual se buscan followings");
 
             var follows =
                 (from f in db.Follows
-                 join u in db.Usuarios
-                 on f.UsuarioSeguidorID equals u.Id
+                 join u in db.Users
+                 on f.UsuarioSeguidoID equals u.Id
+                 where f.UsuarioSeguidorID == FollowerID
                  select new UserViewModel
                  {
                      Id = f.UsuarioSeguidorID,
@@ -116,23 +118,11 @@ namespace Rest_API_PWII.Classes
 
         public int GetFollowersCount( string FollowedID )
         {
-            var usuario = db.Usuarios.FirstOrDefault(u => u.Id == FollowedID);
+            var usuario = db.Users.FirstOrDefault(u => u.Id == FollowedID);
             if (usuario == null)
                 throw new Exception("No existe el usuario del cual se buscan followers");
 
-            var follows =
-                (from f in db.Follows
-                 join u in db.Usuarios
-                 on f.UsuarioSeguidoID equals u.Id
-                 select new UserViewModel
-                 {
-                     Id = f.UsuarioSeguidorID,
-                     Nombre = u.UserName,
-                     Tag = u.Tag,
-                     Email = u.Email,
-                     FechaNacimiento = u.FechaNacimiento,
-                     FotoPerfilID = u.FotoPerfilMediaID
-                 }).DefaultIfEmpty().ToList();
+            var follows = GetFollowers( FollowedID );
 
             if (follows == null)
                 return 0;
@@ -140,25 +130,13 @@ namespace Rest_API_PWII.Classes
             return follows.Count;
         }
 
-        public int GetFollowingCount( string FollowedID )
+        public int GetFollowingCount( string FollowerID )
         {
-            var usuario = db.Usuarios.FirstOrDefault(u => u.Id == FollowedID);
+            var usuario = db.Users.FirstOrDefault(u => u.Id == FollowerID);
             if (usuario == null)
                 throw new Exception("No existe el usuario del cual se buscan followings");
 
-            var follows =
-                (from f in db.Follows
-                 join u in db.Usuarios
-                 on f.UsuarioSeguidorID equals u.Id
-                 select new UserViewModel
-                 {
-                     Id = f.UsuarioSeguidorID,
-                     Nombre = u.UserName,
-                     Tag = u.Tag,
-                     Email = u.Email,
-                     FechaNacimiento = u.FechaNacimiento,
-                     FotoPerfilID = u.FotoPerfilMediaID
-                 }).DefaultIfEmpty().ToList();
+            var follows = GetFollowing( FollowerID );
 
             if (follows == null)
                 return 0;
@@ -178,8 +156,8 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                var follower = db.Usuarios.First( u => u.Id == model.FollowerID );
-                var followed = db.Usuarios.First( u => u.Id == model.FollowedID );
+                var follower = db.Users.First( u => u.Id == model.FollowerID );
+                var followed = db.Users.First( u => u.Id == model.FollowedID );
 
                 var follow = new Follow
                 {
