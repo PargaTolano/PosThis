@@ -15,11 +15,11 @@ namespace Rest_API_PWII.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class UsuariosController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private PosThisDbContext db;
 
-        public UsuariosController( PosThisDbContext db )
+        public UsersController( PosThisDbContext db )
         {
             this.db = db;
         }
