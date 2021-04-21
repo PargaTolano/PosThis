@@ -95,7 +95,7 @@ namespace Rest_API_PWII.Classes
 
         public Media GetOne( int id )
         {
-            return db.Medias.First( m => m.MediaID == id );
+            return db.Medias.FirstOrDefault( m => m.MediaID == id );
         }
 
         public ResponseApiError Delete( int id )

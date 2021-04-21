@@ -124,7 +124,7 @@ namespace Rest_API_PWII.Classes
                      Email = u.Email,
                      FechaNacimiento = u.FechaNacimiento,
                      FotoPerfilID = u.FotoPerfilMediaID
-                 }).DefaultIfEmpty().ToList();
+                 }).ToList();
             return usuarios;
         }
 
@@ -148,7 +148,7 @@ namespace Rest_API_PWII.Classes
         {
             try
             {
-                ResponseApiError err = ValidateUpdate( usuario );
+                var err = ValidateUpdate( usuario );
                 if (err != null)
                     return err;
 
