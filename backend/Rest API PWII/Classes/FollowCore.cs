@@ -18,7 +18,6 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError Validate( FollowViewModel model )
         {
-
             if ( model.FollowerID == null )
                 return new ResponseApiError
                 {
@@ -41,8 +40,8 @@ namespace Rest_API_PWII.Classes
         public ResponseApiError ValidateFollowExists( FollowViewModel model )
         {
             var follow = db.Follows.FirstOrDefault(f =>
-                            f.UsuarioSeguidoID == model.FollowedID &&
-                            f.UsuarioSeguidorID == model.FollowerID);
+                            f.UserFollowID == model.FollowedID &&
+                            f.UserFollowerID == model.FollowerID);
 
             if ( follow != null )
                 return new ResponseApiError
