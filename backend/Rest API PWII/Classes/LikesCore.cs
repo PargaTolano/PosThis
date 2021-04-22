@@ -57,7 +57,7 @@ namespace Rest_API_PWII.Classes
 
             var like = db.Likes.FirstOrDefault(l =>
                    l.PostID == model.PostID &&
-                   l.UsuarioID == model.UsuarioID
+                   l.UserID == model.UsuarioID
                 );
 
             if (like != null)
@@ -123,7 +123,7 @@ namespace Rest_API_PWII.Classes
                 { 
                     PostID = post.PostID,
                     Post = post,
-                    UsuarioID = usuario.Id,
+                    UserID = usuario.Id,
                     Usuario = usuario
                 };
 
@@ -158,7 +158,7 @@ namespace Rest_API_PWII.Classes
 
                 var like = db.Likes.First( l => 
                     l.PostID == model.PostID && 
-                    l.UsuarioID == model.UsuarioID
+                    l.UserID == model.UsuarioID
                 );
 
                 if (like == null)

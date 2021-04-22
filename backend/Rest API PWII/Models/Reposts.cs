@@ -7,11 +7,11 @@ namespace Rest_API_PWII.Models
 
         public int RepostID { get; set; }
 
-        public string Texto { get; set; }
+        public string Content { get; set; }
 
-        public DateTime? FechaPublicacion { get; set; }
+        public DateTime? RepostDate { get; set; }
 
-        public string UsuarioID { get; set; }
+        public string UserID { get; set; }
 
         public int PostID { get; set; }
 

@@ -8,11 +8,11 @@ namespace Rest_API_PWII.Models
     {
         public int PostID { get; set; }
 
-        public string Texto { get; set; }
+        public string Content { get; set; }
 
-        public string UsuarioID { get; set; }
+        public string UserID { get; set; }
 
-        public DateTime FechaPublicacion { get; set; }
+        public DateTime PostDate { get; set; }
 
         [JsonIgnore]
         public virtual User Usuario { get; set; }

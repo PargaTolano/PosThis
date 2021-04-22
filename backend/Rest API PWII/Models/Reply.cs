@@ -11,9 +11,9 @@ namespace Rest_API_PWII.Models
 
         public int PostID { get; set; }
 
-        public string UsuarioID { get; set; }
+        public string UserID { get; set; }
 
-        public string Texto { get; set; }
+        public string ContentReplies { get; set; }
 
         public virtual Post Post { get; set; }
 

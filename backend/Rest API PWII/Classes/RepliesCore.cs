@@ -19,7 +19,7 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError Validate(Reply reply)
         {
-            if (reply.Post.Texto == null || reply.Post.Texto == "")
+            if (reply.Post.Content == null || reply.Post.Content == "")
                 return new ResponseApiError{
                     Code = 1,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
@@ -134,9 +134,9 @@ namespace Rest_API_PWII.Classes
                 var reply = new Reply {
                     PostID = post.PostID,
                     Post = post,
-                    UsuarioID = usuario.Id,
+                    UserID = usuario.Id,
                     Usuario = usuario,
-                    Texto = model.Texto,
+                    ContentReplies = model.Texto,
                 };
 
                 var replyEntry = db.Replies.Add(reply);
@@ -207,7 +207,7 @@ namespace Rest_API_PWII.Classes
 
                 var replyDb = db.Replies.First( r => r.ReplyID == id );
 
-                replyDb.Texto = reply.Texto;
+                replyDb.ContentReplies = reply.Texto;
                 
                 if( reply.mediaIDs?.Count > 0)
                 {

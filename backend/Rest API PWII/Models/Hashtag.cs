@@ -7,9 +7,9 @@ namespace Rest_API_PWII.Models
 {
     public class Hashtag
     {
-        public int HastagID { get; set; }
+        public int HashtagID { get; set; }
 
-        public string Texto { get; set; }
+        public string ContentHashtag { get; set; }
 
         public virtual ICollection<HashtagPost> HashtagPosts { get; set; }
     }
