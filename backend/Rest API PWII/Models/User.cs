@@ -13,7 +13,7 @@ namespace Rest_API_PWII.Models
 
         public virtual int? ProfilePhotoMediaID { get; set; }
 
-        public virtual Media FotoPerfil { get; set; }
+        public virtual Media ProfilePhotoMedia { get; set; }
 
         public virtual ICollection<Post> Posts { get; set; }
 

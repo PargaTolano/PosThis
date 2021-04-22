@@ -17,12 +17,12 @@ namespace Rest_API_PWII.Models
 
         public virtual Post Post { get; set; }
 
-        public virtual User Usuario { get; set; }
+        public virtual User User { get; set; }
 
         public virtual ICollection<MediaReply> MediaReplies { get; set; }
 
         public static readonly string ForeignKeyPost = "fk_Replies_Post";
 
-        public static readonly string ForeignKeyUsuario = "fk_Replies_Usuario";
+        public static readonly string ForeignKeyUsuario = "fk_Replies_User";
     }
 }

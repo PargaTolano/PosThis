@@ -48,7 +48,7 @@ namespace Rest_API_PWII.Classes
                     Message = "Post no encontrado"
                 };
 
-            if (model.UsuarioID == null)
+            if (model.UserID == null)
                 return new ResponseApiError
                 {
                     Code = (int)HttpStatusCode.BadRequest,
@@ -56,7 +56,7 @@ namespace Rest_API_PWII.Classes
                     Message = "UsuarioID no puede ser nulo"
                 };
 
-            var usuario = db.Users.FirstOrDefault(u => u.Id == model.UsuarioID );
+            var usuario = db.Users.FirstOrDefault(u => u.Id == model.UserID );
             if (usuario == null)
                 return new ResponseApiError
                 {
@@ -71,7 +71,7 @@ namespace Rest_API_PWII.Classes
         public ResponseApiError ValidateCUReply(CUReplyModel model)
         {
             //si el texto esta vacio
-            bool textoValido = !string.IsNullOrEmpty(model.Texto);
+            bool textoValido = !string.IsNullOrEmpty(model.Content);
             //y no hay media
             bool mediaValido = model.mediaIDs?.Count > 0;
 
@@ -129,14 +129,14 @@ namespace Rest_API_PWII.Classes
 
                 var post = db.Posts.First( p => p.PostID == model.PostID );
 
-                var usuario = db.Users.First( u => u.Id == model.UsuarioID );
+                var usuario = db.Users.First( u => u.Id == model.UserID );
 
                 var reply = new Reply {
                     PostID = post.PostID,
                     Post = post,
                     UserID = usuario.Id,
-                    Usuario = usuario,
-                    ContentReplies = model.Texto,
+                    User = usuario,
+                    ContentReplies = model.Content,
                 };
 
                 var replyEntry = db.Replies.Add(reply);
@@ -207,7 +207,7 @@ namespace Rest_API_PWII.Classes
 
                 var replyDb = db.Replies.First( r => r.ReplyID == id );
 
-                replyDb.ContentReplies = reply.Texto;
+                replyDb.ContentReplies = reply.Content;
                 
                 if( reply.mediaIDs?.Count > 0)
                 {

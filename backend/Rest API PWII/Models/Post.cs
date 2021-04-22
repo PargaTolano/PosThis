@@ -15,7 +15,7 @@ namespace Rest_API_PWII.Models
         public DateTime PostDate { get; set; }
 
         [JsonIgnore]
-        public virtual User Usuario { get; set; }
+        public virtual User User { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<Reposts> Reposts { get; set; }
@@ -33,6 +33,6 @@ namespace Rest_API_PWII.Models
         public virtual ICollection<MediaPost> MediaPosts { get; set; }
         
         [JsonIgnore]
-        public static readonly string ForeignKeyUsuario = "fk_Post_Usuario";
+        public static readonly string ForeignKeyUsuario = "fk_Post_User";
     }
 }

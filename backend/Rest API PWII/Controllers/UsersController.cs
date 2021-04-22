@@ -29,14 +29,14 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var usuarioCore = new UsuarioCore( db );
-                var usuarios    = usuarioCore.GetAll();
+                var userCore = new UsuarioCore( db );
+                var users    = userCore.GetAll();
 
                 return Ok(
                     new ResponseApiSuccess
                     {
                         Code = 200,
-                        Data = usuarios,
+                        Data = users,
                         Message = "Usuarios Obtenidos Exitosamente"
                     });
             }
@@ -58,9 +58,9 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var usuarioCore = new UsuarioCore( db );
-                var usuario     = usuarioCore.GetOne( id );
-                if ( usuario == null )
+                var userCore = new UsuarioCore( db );
+                var user     = userCore.GetOne( id );
+                if ( user == null )
                     return StatusCode(
                         (int)HttpStatusCode.InternalServerError,
                         new ResponseApiError
@@ -74,7 +74,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess
                     {
                         Code = 200,
-                        Data = usuario,
+                        Data = user,
                         Message = "Usuarios Obtenidos Exitosamente"
                     });
             }
@@ -93,12 +93,12 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update( string id, [FromBody] UserViewModel usuario )
+        public IActionResult Update( string id, [FromBody] UserViewModel user )
         {
             try
             {
-                var usuarioCore = new UsuarioCore( db );
-                var err = usuarioCore.Update( id, usuario );
+                var userCore = new UsuarioCore( db );
+                var err = userCore.Update( id, user );
 
                 if ( err != null )
                     return StatusCode( err.HttpStatusCode, err );
@@ -107,7 +107,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess
                     {
                         Code = 200,
-                        Data = usuario,
+                        Data = user,
                         Message = "Usuario editado exitosamente"
                     });
             }
@@ -128,8 +128,8 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var usuarioCore = new UsuarioCore(db);
-                var err = usuarioCore.Delete( id );
+                var userCore = new UsuarioCore(db);
+                var err = userCore.Delete( id );
 
                 if ( err != null )
                     return StatusCode(err.HttpStatusCode, err);

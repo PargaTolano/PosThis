@@ -17,8 +17,8 @@ namespace Rest_API_PWII.Models
 
         public virtual Reply Reply { get; set; }
 
-        public static readonly string ForeignkeyMedia = "fk_MediaPost_Media";
+        public static readonly string ForeignkeyMedia = "fk_MediaReply_Media";
 
-        public static readonly string ForeignkeyPost = "fk_MediaPost_Post";
+        public static readonly string ForeignkeyPost = "fk_MediaReply_Reply";
     }
 }

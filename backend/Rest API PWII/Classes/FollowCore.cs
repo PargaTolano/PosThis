@@ -76,11 +76,11 @@ namespace Rest_API_PWII.Classes
                  where f.UserFollowID == FollowedID
                  select new UserViewModel { 
                     Id = f.UserFollowerID,
-                    Nombre = u.UserName,
+                    Name = u.UserName,
                     Tag = u.Tag,
                     Email = u.Email,
-                    FechaNacimiento = u.BirthDate,
-                    FotoPerfilID = u.ProfilePhotoMediaID
+                    BirthDate = u.BirthDate,
+                    ProfilePhotoMediaID = u.ProfilePhotoMediaID
                  }).DefaultIfEmpty().ToList();
 
             if (follows == null)
@@ -103,11 +103,11 @@ namespace Rest_API_PWII.Classes
                  select new UserViewModel
                  {
                      Id = f.UserFollowerID,
-                     Nombre = u.UserName,
+                     Name = u.UserName,
                      Tag = u.Tag,
                      Email = u.Email,
-                     FechaNacimiento = u.BirthDate,
-                     FotoPerfilID = u.ProfilePhotoMediaID
+                     BirthDate = u.BirthDate,
+                     ProfilePhotoMediaID = u.ProfilePhotoMediaID
                  }).DefaultIfEmpty().ToList();
 
             if (follows == null)
@@ -162,9 +162,9 @@ namespace Rest_API_PWII.Classes
                 var follow = new Follow
                 {
                     UserFollowID    = followed.Id,
-                    UsuarioSeguido      = followed,
+                    UserFollow      = followed,
                     UserFollowerID   = follower.Id,
-                    UsuarioSeguidor     = follower
+                    UserFollower     = follower
                 };
 
                 db.Follows.Add( follow );

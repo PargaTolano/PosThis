@@ -18,7 +18,7 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError Validate( HashtagViewModel model )
         {
-            if ( string.IsNullOrWhiteSpace( model.Texto ) )
+            if ( string.IsNullOrWhiteSpace( model.Content ) )
                 return new ResponseApiError
                 {
                     Code = (int)HttpStatusCode.BadRequest,
@@ -34,7 +34,7 @@ namespace Rest_API_PWII.Classes
             var res = 
                 (from h
                 in db.Hashtags
-                where h.ContentHashtag == model.Texto
+                where h.ContentHashtag == model.Content
                 select h).FirstOrDefault();
 
             return res != null;
@@ -113,7 +113,7 @@ namespace Rest_API_PWII.Classes
                 var exists = ValidateExists( model );
                 if ( !exists ) {
 
-                    var hashtag = new Hashtag { ContentHashtag = model.Texto };
+                    var hashtag = new Hashtag { ContentHashtag = model.Content };
 
                     var entry = db.Hashtags.Add( hashtag );
                     hashtagDb = entry.Entity;
@@ -122,7 +122,7 @@ namespace Rest_API_PWII.Classes
                         throw new Exception("No se pudo crear nuevo hashtag");
                 }
                 else
-                    hashtagDb = db.Hashtags.First( h => h.ContentHashtag == model.Texto );
+                    hashtagDb = db.Hashtags.First( h => h.ContentHashtag == model.Content );
 
                 var post = db.Posts.First( p => p.PostID == model.PostID );
 

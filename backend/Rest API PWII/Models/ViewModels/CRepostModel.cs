@@ -7,7 +7,7 @@ namespace Rest_API_PWII.Models.ViewModels
 {
     public class CRepostModel
     {
-        public string UsuarioID { get; set; }
+        public string UserID { get; set; }
 
         public int? PostID { get; set; }
     }

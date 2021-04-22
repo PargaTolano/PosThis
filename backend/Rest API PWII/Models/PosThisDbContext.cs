@@ -44,26 +44,26 @@ namespace Rest_API_PWII.Models
         {
             base.OnModelCreating( modelBuilder );
 
-            modelBuilder.Entity<User>(usuario =>
+            modelBuilder.Entity<User>(user =>
             {
-                usuario.HasKey(usuario => usuario.Id);
+                user.HasKey(user => user.Id);
                 
-                usuario.Property(e => e.UserName)
+                user.Property(e => e.UserName)
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .IsRequired();
 
-                usuario.Property(e => e.Tag)
+                user.Property(e => e.Tag)
                     .HasMaxLength(15)
                     .IsUnicode(false)
                     .IsRequired();
 
-                usuario.Property(e => e.Email)
+                user.Property(e => e.Email)
                     .HasMaxLength(256)
                     .IsUnicode(false)
                     .IsRequired();
 
-                usuario.Property(e => e.PasswordHash)
+                user.Property(e => e.PasswordHash)
                     .IsRequired();
             });
 
@@ -81,7 +81,7 @@ namespace Rest_API_PWII.Models
                 post.Property(e => e.PostDate);
 
                 post
-                    .HasOne( e => e.Usuario )
+                    .HasOne( e => e.User )
                     .WithMany( u => u.Posts )
                     .HasForeignKey( p => p.UserID );
             });
@@ -103,7 +103,7 @@ namespace Rest_API_PWII.Models
                     .HasForeignKey( r => r.PostID );
 
                 repost
-                    .HasOne( e => e.Usuario )
+                    .HasOne( e => e.User )
                     .WithMany( r => r.Reposts )
                     .HasForeignKey( r => r.UserID );
             });
@@ -121,7 +121,7 @@ namespace Rest_API_PWII.Models
                     .HasForeignKey( l => l.PostID );
 
                 like
-                    .HasOne( e => e.Usuario )
+                    .HasOne( e => e.User )
                     .WithMany( u => u.Likes )
                     .HasForeignKey( l => l.UserID );
             });
@@ -139,7 +139,7 @@ namespace Rest_API_PWII.Models
                     .HasForeignKey( r => r.PostID );
 
                 reply
-                    .HasOne( e => e.Usuario )
+                    .HasOne( e => e.User )
                     .WithMany( u => u.Replies )
                     .HasForeignKey( r => r.UserID );
             });
@@ -161,13 +161,13 @@ namespace Rest_API_PWII.Models
                     .ValueGeneratedOnAdd();
 
                 follow
-                    .HasOne( e => e.UsuarioSeguido )
+                    .HasOne( e => e.UserFollow )
                     .WithMany( u => u.Following )
                     .HasForeignKey( f => f.UserFollowID )
                     .HasPrincipalKey( f => f.Id );
 
                 follow
-                    .HasOne( e => e.UsuarioSeguidor )
+                    .HasOne( e => e.UserFollower )
                     .WithMany( u => u.Follows )
                     .HasForeignKey( f => f.UserFollowerID)
                     .HasPrincipalKey( f => f.Id );

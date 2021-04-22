@@ -27,7 +27,7 @@ namespace Rest_API_PWII.Classes
                     Message = "Post de like no puede ser null",
                 };
 
-            if ( model.UsuarioID == null )
+            if ( model.UserID == null )
                 return new ResponseApiError
                 {
                     Code = (int)HttpStatusCode.BadRequest,
@@ -45,7 +45,7 @@ namespace Rest_API_PWII.Classes
                     Message = "Post dado para el like no existe",
                 };
 
-            var usuario = db.Users.FirstOrDefault(u => u.Id == model.UsuarioID );
+            var usuario = db.Users.FirstOrDefault(u => u.Id == model.UserID );
 
             if (usuario == null)
                 return new ResponseApiError
@@ -57,7 +57,7 @@ namespace Rest_API_PWII.Classes
 
             var like = db.Likes.FirstOrDefault(l =>
                    l.PostID == model.PostID &&
-                   l.UserID == model.UsuarioID
+                   l.UserID == model.UserID
                 );
 
             if (like != null)
@@ -81,7 +81,7 @@ namespace Rest_API_PWII.Classes
                     HttpStatusCode = (int)HttpStatusCode.BadRequest 
                 };
 
-            if ( model.UsuarioID == null )  
+            if ( model.UserID == null )  
                 return new ResponseApiError 
                 { 
                     Code = (int)HttpStatusCode.BadRequest,
@@ -116,7 +116,7 @@ namespace Rest_API_PWII.Classes
                     .First();
 
                 var usuario = 
-                    (from u in db.Users where u.Id == model.UsuarioID select u)
+                    (from u in db.Users where u.Id == model.UserID select u)
                     .First();
 
                 var like = new Like 
@@ -124,7 +124,7 @@ namespace Rest_API_PWII.Classes
                     PostID = post.PostID,
                     Post = post,
                     UserID = usuario.Id,
-                    Usuario = usuario
+                    User = usuario
                 };
 
                 db.Add( like );
@@ -158,7 +158,7 @@ namespace Rest_API_PWII.Classes
 
                 var like = db.Likes.First( l => 
                     l.PostID == model.PostID && 
-                    l.UserID == model.UsuarioID
+                    l.UserID == model.UserID
                 );
 
                 if (like == null)

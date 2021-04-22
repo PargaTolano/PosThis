@@ -9,6 +9,6 @@ namespace Rest_API_PWII.Models.ViewModels
     {
         public virtual int? PostID { get; set; }
 
-        public virtual string UsuarioID { get; set; }
+        public virtual string UserID { get; set; }
     }
 }
