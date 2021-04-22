@@ -197,6 +197,7 @@ namespace Rest_API_PWII.Classes
                     };
 
                 db.Follows.Remove( followDb );
+                db.SaveChanges();
 
                 return null;
             }
