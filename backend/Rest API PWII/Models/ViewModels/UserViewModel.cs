@@ -9,14 +9,14 @@ namespace Rest_API_PWII.Models.ViewModels
     {
         public string   Id                  { get; set; }
 
-        public string   Nombre              { get; set; }
+        public string   Name              { get; set; }
 
         public string   Tag                 { get; set; }
 
         public string   Email              { get; set; }
 
-        public int?     FotoPerfilID        { get; set; }
+        public int?     ProfilePhotoMediaID        { get; set; }
 
-        public DateTime? FechaNacimiento    { get; set; }
+        public DateTime? BirthDate    { get; set; }
     }
 }

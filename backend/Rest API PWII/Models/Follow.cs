@@ -13,12 +13,12 @@ namespace Rest_API_PWII.Models
 
         public string UserFollowID { get; set; }
 
-        public virtual User UsuarioSeguidor { get; set; }
+        public virtual User UserFollower { get; set; }
 
-        public virtual User UsuarioSeguido { get; set;  }
+        public virtual User UserFollow { get; set;  }
 
-        public static readonly string ForeignKeyUsuarioSeguidor = "fk_Follows_Usuarios_Seguidor";
+        public static readonly string ForeignKeyUsuarioSeguidor = "fk_Follows_User_Follower";
 
-        public static readonly string ForeignKeyUsuarioSeguido = "fk_Follows_Usuarios_Seguido";
+        public static readonly string ForeignKeyUsuarioSeguido = "fk_Follows_User_Follows";
     }
 }

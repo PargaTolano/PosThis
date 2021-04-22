@@ -33,7 +33,7 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError ValidateCU(CUPostModel createPostModel)
         {
-            bool textoValido = !string.IsNullOrEmpty(createPostModel.Texto);
+            bool textoValido = !string.IsNullOrEmpty(createPostModel.Content);
             bool mediaValido = createPostModel.mediaIDs?.Count > 0;
 
             if (textoValido || mediaValido)
@@ -84,7 +84,7 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                var usuarioDb = db.Users.FirstOrDefault(u => u.Id == createPostModel.UsuarioID);
+                var usuarioDb = db.Users.FirstOrDefault(u => u.Id == createPostModel.UserID);
                 if (usuarioDb == null)
                     return new ResponseApiError
                     {
@@ -95,8 +95,8 @@ namespace Rest_API_PWII.Classes
 
                 var post = new Post { 
                     UserID = usuarioDb.Id,
-                    Usuario = usuarioDb,
-                    Content = createPostModel.Texto,
+                    User = usuarioDb,
+                    Content = createPostModel.Content,
                 };
 
                 var entry = db.Posts.Add( post );
@@ -172,7 +172,7 @@ namespace Rest_API_PWII.Classes
 
                 Post postDb = db.Posts.First(u => u.PostID == id);
 
-                postDb.Content = post.Texto;
+                postDb.Content = post.Content;
 
                 if ( postDb.MediaPosts?.Count > 0)
                 {

@@ -35,7 +35,7 @@ namespace Rest_API_PWII.Classes
                     Message = "Post dado no existe"
                 };
 
-            if ( model.UsuarioID == null )
+            if ( model.UserID == null )
                 return new ResponseApiError
                 {
                     Code = (int)HttpStatusCode.BadRequest,
@@ -43,7 +43,7 @@ namespace Rest_API_PWII.Classes
                     Message = "UsuarioID no puede ser null"
                 };
             
-            var usuario = db.Users.FirstOrDefault(u => u.Id == model.UsuarioID);
+            var usuario = db.Users.FirstOrDefault(u => u.Id == model.UserID);
             if (usuario == null)
                 return new ResponseApiError
                 {
@@ -53,7 +53,7 @@ namespace Rest_API_PWII.Classes
                 };
 
             var repost = db.Reposts.FirstOrDefault(rp => 
-                            rp.UserID == model.UsuarioID && 
+                            rp.UserID == model.UserID && 
                             rp.PostID == model.PostID);
             if ( repost != null )
                 return new ResponseApiError
@@ -108,14 +108,14 @@ namespace Rest_API_PWII.Classes
                     return err;
 
                 var post    = db.Posts.First( p => p.PostID == model.PostID );
-                var usuario = db.Users.First(u => u.Id == model.UsuarioID);
+                var usuario = db.Users.First(u => u.Id == model.UserID);
 
                 var repost = new Reposts 
                     {
                         PostID = (int)model.PostID,
                         Post = post,
-                        UserID = model.UsuarioID,
-                        Usuario = usuario
+                        UserID = model.UserID,
+                        User = usuario
                     };
 
                 db.Reposts.Add( repost );

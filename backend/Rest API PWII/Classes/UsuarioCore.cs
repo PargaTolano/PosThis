@@ -32,11 +32,11 @@ namespace Rest_API_PWII.Classes
         public ResponseApiError ValidateUpdate( UserViewModel model )
         {
             if( 
-                model.Nombre == null &&
+                model.Name == null &&
                 model.Tag == null &&
                 model.Email == null &&
-                model.FotoPerfilID == null &&
-                model.FechaNacimiento == null 
+                model.ProfilePhotoMediaID == null &&
+                model.BirthDate == null 
                 )
                 return new ResponseApiError
                 {
@@ -119,11 +119,11 @@ namespace Rest_API_PWII.Classes
                  in db.Users 
                  select new UserViewModel {
                      Id = u.Id,
-                     Nombre = u.UserName,
+                     Name = u.UserName,
                      Tag = u.Tag,
                      Email = u.Email,
-                     FechaNacimiento = u.BirthDate,
-                     FotoPerfilID = u.ProfilePhotoMediaID
+                     BirthDate = u.BirthDate,
+                     ProfilePhotoMediaID = u.ProfilePhotoMediaID
                  }).ToList();
             return usuarios;
         }
@@ -136,11 +136,11 @@ namespace Rest_API_PWII.Classes
                     select new UserViewModel
                     {
                         Id = u.Id,
-                        Nombre = u.UserName,
+                        Name = u.UserName,
                         Tag = u.Tag,
                         Email = u.Email,
-                        FechaNacimiento = u.BirthDate,
-                        FotoPerfilID = u.ProfilePhotoMediaID
+                        BirthDate = u.BirthDate,
+                        ProfilePhotoMediaID = u.ProfilePhotoMediaID
                     }).FirstOrDefault();
         }
 
@@ -158,7 +158,7 @@ namespace Rest_API_PWII.Classes
 
                 User usuarioDb = db.Users.First( u => u.Id == id );
 
-                usuarioDb.UserName  = usuario.Nombre != null ? usuario.Nombre : usuarioDb.UserName;
+                usuarioDb.UserName  = usuario.Name != null ? usuario.Name : usuarioDb.UserName;
                 usuarioDb.Tag       = usuario.Tag != null ? usuario.Tag : usuarioDb.Tag;
                 usuarioDb.Email     = usuario.Email != null ? usuario.Email : usuarioDb.Email;
 

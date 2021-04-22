@@ -7,7 +7,7 @@ namespace Rest_API_PWII.Models.ViewModels
 {
     public class HashtagViewModel
     {
-        public string Texto { get; set; }
+        public string Content { get; set; }
 
         public int? PostID { get; set; }
     }
