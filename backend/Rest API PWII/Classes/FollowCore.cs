@@ -66,15 +66,15 @@ namespace Rest_API_PWII.Classes
             var follows = 
                 (from f in db.Follows
                  join u in db.Users
-                 on f.UsuarioSeguidorID equals u.Id
-                 where f.UsuarioSeguidoID == FollowedID
+                 on f.UserFollowerID equals u.Id
+                 where f.UserFollowID == FollowedID
                  select new UserViewModel { 
-                    Id = f.UsuarioSeguidorID,
+                    Id = f.UserFollowerID,
                     Nombre = u.UserName,
                     Tag = u.Tag,
                     Email = u.Email,
-                    FechaNacimiento = u.FechaNacimiento,
-                    FotoPerfilID = u.FotoPerfilMediaID
+                    FechaNacimiento = u.BirthDate,
+                    FotoPerfilID = u.ProfilePhotoMediaID
                  }).DefaultIfEmpty().ToList();
 
             if (follows == null)
@@ -92,16 +92,16 @@ namespace Rest_API_PWII.Classes
             var follows =
                 (from f in db.Follows
                  join u in db.Users
-                 on f.UsuarioSeguidoID equals u.Id
-                 where f.UsuarioSeguidorID == FollowerID
+                 on f.UserFollowID equals u.Id
+                 where f.UserFollowerID == FollowerID
                  select new UserViewModel
                  {
-                     Id = f.UsuarioSeguidorID,
+                     Id = f.UserFollowerID,
                      Nombre = u.UserName,
                      Tag = u.Tag,
                      Email = u.Email,
-                     FechaNacimiento = u.FechaNacimiento,
-                     FotoPerfilID = u.FotoPerfilMediaID
+                     FechaNacimiento = u.BirthDate,
+                     FotoPerfilID = u.ProfilePhotoMediaID
                  }).DefaultIfEmpty().ToList();
 
             if (follows == null)
@@ -155,9 +155,9 @@ namespace Rest_API_PWII.Classes
 
                 var follow = new Follow
                 {
-                    UsuarioSeguidoID    = followed.Id,
+                    UserFollowID    = followed.Id,
                     UsuarioSeguido      = followed,
-                    UsuarioSeguidorID   = follower.Id,
+                    UserFollowerID   = follower.Id,
                     UsuarioSeguidor     = follower
                 };
 

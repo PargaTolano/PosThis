@@ -9,9 +9,9 @@ namespace Rest_API_PWII.Models
     {
         public virtual string Tag { get; set; }
 
-        public virtual DateTime? FechaNacimiento { get; set; }
+        public virtual DateTime? BirthDate { get; set; }
 
-        public virtual int? FotoPerfilMediaID { get; set; }
+        public virtual int? ProfilePhotoMediaID { get; set; }
 
         public virtual Media FotoPerfil { get; set; }
 

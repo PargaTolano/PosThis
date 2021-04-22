@@ -74,16 +74,16 @@ namespace Rest_API_PWII.Models
                 post.Property( e => e.PostID )
                     .ValueGeneratedOnAdd();
 
-                post.Property(e => e.Texto)
+                post.Property(e => e.Content)
                     .HasMaxLength(256)
                     .IsRequired(false);
 
-                post.Property(e => e.FechaPublicacion);
+                post.Property(e => e.PostDate);
 
                 post
                     .HasOne( e => e.Usuario )
                     .WithMany( u => u.Posts )
-                    .HasForeignKey( p => p.UsuarioID );
+                    .HasForeignKey( p => p.UserID );
             });
 
             modelBuilder.Entity<Reposts>(repost =>
@@ -94,7 +94,7 @@ namespace Rest_API_PWII.Models
                     .ValueGeneratedOnAdd();
 
                 repost
-                    .Property(e => e.Texto)
+                    .Property(e => e.Content)
                     .HasMaxLength(256);
 
                 repost
@@ -105,7 +105,7 @@ namespace Rest_API_PWII.Models
                 repost
                     .HasOne( e => e.Usuario )
                     .WithMany( r => r.Reposts )
-                    .HasForeignKey( r => r.UsuarioID );
+                    .HasForeignKey( r => r.UserID );
             });
 
             modelBuilder.Entity<Like>(like =>
@@ -123,7 +123,7 @@ namespace Rest_API_PWII.Models
                 like
                     .HasOne( e => e.Usuario )
                     .WithMany( u => u.Likes )
-                    .HasForeignKey( l => l.UsuarioID );
+                    .HasForeignKey( l => l.UserID );
             });
 
             modelBuilder.Entity<Reply>(reply =>
@@ -141,14 +141,14 @@ namespace Rest_API_PWII.Models
                 reply
                     .HasOne( e => e.Usuario )
                     .WithMany( u => u.Replies )
-                    .HasForeignKey( r => r.UsuarioID );
+                    .HasForeignKey( r => r.UserID );
             });
 
             modelBuilder.Entity<Hashtag>(hashtag =>
             {
-                hashtag.HasKey(e => e.HastagID);
+                hashtag.HasKey(e => e.HashtagID);
 
-                hashtag.Property(e => e.HastagID)
+                hashtag.Property(e => e.HashtagID)
                     .ValueGeneratedOnAdd();
             });
 
@@ -163,13 +163,13 @@ namespace Rest_API_PWII.Models
                 follow
                     .HasOne( e => e.UsuarioSeguido )
                     .WithMany( u => u.Following )
-                    .HasForeignKey( f => f.UsuarioSeguidoID )
+                    .HasForeignKey( f => f.UserFollowID )
                     .HasPrincipalKey( f => f.Id );
 
                 follow
                     .HasOne( e => e.UsuarioSeguidor )
                     .WithMany( u => u.Follows )
-                    .HasForeignKey( f => f.UsuarioSeguidorID)
+                    .HasForeignKey( f => f.UserFollowerID)
                     .HasPrincipalKey( f => f.Id );
             });
 
@@ -187,7 +187,7 @@ namespace Rest_API_PWII.Models
                     .IsRequired();
 
                 media
-                    .Property(e => e.Contenido)
+                    .Property(e => e.Content)
                     .IsRequired();
             });
 

@@ -10,7 +10,7 @@ namespace Rest_API_PWII.Models
 
         public int LikeID { get; set; }
 
-        public string UsuarioID { get; set; }
+        public string UserID { get; set; }
 
         public int PostID { get; set; }
 

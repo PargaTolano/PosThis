@@ -20,7 +20,8 @@ Carpetas generales
 	Tablas.sql  
 	     	Tablas de la base de datos de la aplicación, 
 		aquí se crean las tablas con sus atributos y 
-		la relación entre las mismas.
+		la relación entre las mismas. Se necesita
+		para poder correr los endpoints.
 
 * **BACKEND**
 
@@ -29,9 +30,11 @@ Carpetas generales
 		programa. Contien:
 
 			Classes:
+			Clases referenciales de las tablas de la 
+			base de datos con atributos y llaves.
 
 			Controllers:
-			Controladores del programa
+			Controladores del programa.
 
 			Models:
 			Interpreta los registros de la base de datos.
@@ -95,16 +98,18 @@ se estará guardando el contenido del mismo.
 _Para poder tener la base de datos, es necesario que posea SQL Server Managment Studio._
 
 	Acceda a la carpeta con el nombre que le haya dado al contenido del repositorio 
-	en su ordenador, ejemplo si lo ha nombrado "PostThis"
-	seleccione la carpeta, y acontinuación la carpeta llamada "sql", dentro podrá
-	encontrar el script de la base de datos, proceda a abrirla.
+	en su ordenador, ejemplo si lo ha nombrado "PostThis" seleccione la carpeta, 
+	y acontinuación la carpeta llamada "sql", dentro podrá encontrar el script 
+	de la base de datos llamado "Tablas", proceda a abrirla.
 
 	Al iniciar la conexión con sql con el administrador o su usuario, note que hay 
 	un botón llamada "Execute", sin más presionelo para que el script ejecute y cree
 	las tablas de la misma base, si no hay ningún problema, proceda a seleccionar en 
 	el panel izquierdo (Object Explorer) la opción "refresh" (F5), y dentro del 
 	apartado de "Database" aparecerá la base de datos con el nombre de "PosThis",
-	donde se podrá ver las tablas y sus atributos para su futuro uso. 
+	donde se podrá ver las tablas y sus atributos para su futuro uso.
+
+	 
 
 
 

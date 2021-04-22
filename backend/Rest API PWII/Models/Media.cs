@@ -11,7 +11,7 @@ namespace Rest_API_PWII.Models
 
         public string MIME { get; set; }
 
-        public byte[] Contenido { get; set; }
+        public byte[] Content { get; set; }
 
         public virtual ICollection<MediaPost> MediaPosts { get; set; }
 

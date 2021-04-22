@@ -20,7 +20,7 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError Validate( Media media )
         {
-            if ( media.Contenido != null && media.Contenido.Length != 0 )
+            if ( media.Content != null && media.Content.Length != 0 )
                 return new ResponseApiError
                 {
                     Code = 1,

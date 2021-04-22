@@ -53,7 +53,7 @@ namespace Rest_API_PWII.Classes
                 };
 
             var repost = db.Reposts.FirstOrDefault(rp => 
-                            rp.UsuarioID == model.UsuarioID && 
+                            rp.UserID == model.UsuarioID && 
                             rp.PostID == model.PostID);
             if ( repost != null )
                 return new ResponseApiError
@@ -114,7 +114,7 @@ namespace Rest_API_PWII.Classes
                     {
                         PostID = (int)model.PostID,
                         Post = post,
-                        UsuarioID = model.UsuarioID,
+                        UserID = model.UsuarioID,
                         Usuario = usuario
                     };
 

@@ -34,7 +34,7 @@ namespace Rest_API_PWII.Classes
             var res = 
                 (from h
                 in db.Hashtags
-                where h.Texto == model.Texto
+                where h.ContentHashtag == model.Texto
                 select h).FirstOrDefault();
 
             return res != null;
@@ -73,7 +73,7 @@ namespace Rest_API_PWII.Classes
                 var hastagDb =
                     (from h
                      in db.Hashtags
-                     where texto == h.Texto
+                     where texto == h.ContentHashtag
                      select h).FirstOrDefault();
 
                 if ( hastagDb == null )
@@ -82,7 +82,7 @@ namespace Rest_API_PWII.Classes
                 var posts =
                     (from hp
                      in db.HashtagPosts
-                     where texto == hp.Hashtag.Texto
+                     where texto == hp.Hashtag.ContentHashtag
                      select hp.Post).DefaultIfEmpty().ToList();
 
                 if ( posts == null )
@@ -113,7 +113,7 @@ namespace Rest_API_PWII.Classes
                 var exists = ValidateExists( model );
                 if ( !exists ) {
 
-                    var hashtag = new Hashtag { Texto = model.Texto };
+                    var hashtag = new Hashtag { ContentHashtag = model.Texto };
 
                     var entry = db.Hashtags.Add( hashtag );
                     hashtagDb = entry.Entity;
@@ -122,13 +122,13 @@ namespace Rest_API_PWII.Classes
                         throw new Exception("No se pudo crear nuevo hashtag");
                 }
                 else
-                    hashtagDb = db.Hashtags.First( h => h.Texto == model.Texto );
+                    hashtagDb = db.Hashtags.First( h => h.ContentHashtag == model.Texto );
 
                 var post = db.Posts.First( p => p.PostID == model.PostID );
 
                 var hp = new HashtagPost 
                     {
-                        HashtagID = hashtagDb.HastagID,
+                        HashtagID = hashtagDb.HashtagID,
                         Hashtag = hashtagDb,
                         PostID = post.PostID,
                         Post = post

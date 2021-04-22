@@ -20,7 +20,7 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError Validate( Post post )
         {
-            if ( post.Texto == null && post.MediaPosts.Count == 0 )
+            if ( post.Content == null && post.MediaPosts.Count == 0 )
                 return new ResponseApiError
                 {
                     Code = 1,
@@ -94,16 +94,16 @@ namespace Rest_API_PWII.Classes
                     };
 
                 var post = new Post { 
-                    UsuarioID = usuarioDb.Id,
+                    UserID = usuarioDb.Id,
                     Usuario = usuarioDb,
-                    Texto = createPostModel.Texto,
+                    Content = createPostModel.Texto,
                 };
 
                 var entry = db.Posts.Add( post );
 
                 var postDb = entry.Entity;
 
-                postDb.FechaPublicacion = DateTime.Now;
+                postDb.PostDate = DateTime.Now;
 
                 if (createPostModel.mediaIDs?.Count > 0)
                 {
@@ -172,7 +172,7 @@ namespace Rest_API_PWII.Classes
 
                 Post postDb = db.Posts.First(u => u.PostID == id);
 
-                postDb.Texto = post.Texto;
+                postDb.Content = post.Texto;
 
                 if ( postDb.MediaPosts?.Count > 0)
                 {

@@ -122,8 +122,8 @@ namespace Rest_API_PWII.Classes
                      Nombre = u.UserName,
                      Tag = u.Tag,
                      Email = u.Email,
-                     FechaNacimiento = u.FechaNacimiento,
-                     FotoPerfilID = u.FotoPerfilMediaID
+                     FechaNacimiento = u.BirthDate,
+                     FotoPerfilID = u.ProfilePhotoMediaID
                  }).ToList();
             return usuarios;
         }
@@ -139,8 +139,8 @@ namespace Rest_API_PWII.Classes
                         Nombre = u.UserName,
                         Tag = u.Tag,
                         Email = u.Email,
-                        FechaNacimiento = u.FechaNacimiento,
-                        FotoPerfilID = u.FotoPerfilMediaID
+                        FechaNacimiento = u.BirthDate,
+                        FotoPerfilID = u.ProfilePhotoMediaID
                     }).FirstOrDefault();
         }
 
