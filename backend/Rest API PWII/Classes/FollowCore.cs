@@ -69,7 +69,7 @@ namespace Rest_API_PWII.Classes
                  where f.UserFollowID == FollowedID
                  select new UserViewModel { 
                     Id = f.UserFollowerID,
-                    Name = u.UserName,
+                    UserName = u.UserName,
                     Tag = u.Tag,
                     Email = u.Email,
                     BirthDate = u.BirthDate,
@@ -96,7 +96,7 @@ namespace Rest_API_PWII.Classes
                  select new UserViewModel
                  {
                      Id = f.UserFollowerID,
-                     Name = u.UserName,
+                     UserName = u.UserName,
                      Tag = u.Tag,
                      Email = u.Email,
                      BirthDate = u.BirthDate,

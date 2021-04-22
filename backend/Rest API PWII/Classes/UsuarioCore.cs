@@ -32,7 +32,7 @@ namespace Rest_API_PWII.Classes
         public ResponseApiError ValidateUpdate( UserViewModel model )
         {
             if( 
-                model.Name == null &&
+                model.UserName == null &&
                 model.Tag == null &&
                 model.Email == null &&
                 model.ProfilePhotoMediaID == null &&
@@ -119,7 +119,7 @@ namespace Rest_API_PWII.Classes
                  in db.Users 
                  select new UserViewModel {
                      Id = u.Id,
-                     Name = u.UserName,
+                     UserName = u.UserName,
                      Tag = u.Tag,
                      Email = u.Email,
                      BirthDate = u.BirthDate,
@@ -136,7 +136,7 @@ namespace Rest_API_PWII.Classes
                     select new UserViewModel
                     {
                         Id = u.Id,
-                        Name = u.UserName,
+                        UserName = u.UserName,
                         Tag = u.Tag,
                         Email = u.Email,
                         BirthDate = u.BirthDate,
@@ -158,9 +158,10 @@ namespace Rest_API_PWII.Classes
 
                 User usuarioDb = db.Users.First( u => u.Id == id );
 
-                usuarioDb.UserName  = usuario.Name != null ? usuario.Name : usuarioDb.UserName;
+                usuarioDb.UserName  = usuario.UserName != null ? usuario.UserName : usuarioDb.UserName;
                 usuarioDb.Tag       = usuario.Tag != null ? usuario.Tag : usuarioDb.Tag;
                 usuarioDb.Email     = usuario.Email != null ? usuario.Email : usuarioDb.Email;
+                usuarioDb.BirthDate = usuario.BirthDate != null ? usuario.BirthDate : usuarioDb.BirthDate;
 
                 db.SaveChanges();
 
