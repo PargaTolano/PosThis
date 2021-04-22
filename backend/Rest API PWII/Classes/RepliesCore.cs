@@ -23,7 +23,7 @@ namespace Rest_API_PWII.Classes
                 return new ResponseApiError{
                     Code = 1,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Los datos de la respuesta no son validos, debe tener contenido de texto"
+                    Message = "Reply data not valid, must have text content"
                 };
 
             return null;
@@ -36,7 +36,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "PostID no puede ser nulo"
+                    Message = "PostID does not accept null"
                 };
 
             var post = db.Posts.FirstOrDefault(p => p.PostID == model.PostID);
@@ -45,7 +45,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.NotFound,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "Post no encontrado"
+                    Message = "Post not found"
                 };
 
             if (model.UserID == null)
@@ -53,16 +53,16 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "UsuarioID no puede ser nulo"
+                    Message = "UsuarioID does not accept null"
                 };
 
-            var usuario = db.Users.FirstOrDefault(u => u.Id == model.UserID );
-            if (usuario == null)
+            var user = db.Users.FirstOrDefault(u => u.Id == model.UserID );
+            if (user == null)
                 return new ResponseApiError
                 {
                     Code = (int)HttpStatusCode.NotFound,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "Usuario no encontrado"
+                    Message = "User not found"
                 };
 
             return null;
@@ -83,7 +83,7 @@ namespace Rest_API_PWII.Classes
             {
                 Code = (int)HttpStatusCode.BadRequest,
                 HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                Message = "Los datos de la respuesta no son validos, debe tener contenido de texto o multimedia"
+                Message = "Reply data not valid, must contain text or media"
             };
         }
 
@@ -95,7 +95,7 @@ namespace Rest_API_PWII.Classes
                 return new ResponseApiError{
                     Code = 2,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "El reply no existe en la base de datos"
+                    Message = "Reply does not exist in database"
                 };
 
             return null;
@@ -109,7 +109,7 @@ namespace Rest_API_PWII.Classes
                 return new ResponseApiError { 
                     Code = 2, 
                     HttpStatusCode = (int)HttpStatusCode.NotFound, 
-                    Message = "El reply específico no existe en la base de datos" 
+                    Message = "Requested reply does not exist in database"
                 };
 
             return null;
@@ -129,13 +129,13 @@ namespace Rest_API_PWII.Classes
 
                 var post = db.Posts.First( p => p.PostID == model.PostID );
 
-                var usuario = db.Users.First( u => u.Id == model.UserID );
+                var user = db.Users.First( u => u.Id == model.UserID );
 
                 var reply = new Reply {
                     PostID = post.PostID,
                     Post = post,
-                    UserID = usuario.Id,
-                    User = usuario,
+                    UserID = user.Id,
+                    User = user,
                     ContentReplies = model.Content,
                 };
 

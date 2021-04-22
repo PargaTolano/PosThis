@@ -25,7 +25,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 1,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Los datos del post no son validos, debe tener contenido de texto y/o media"
+                    Message = "Post data not valid, must have text content and/or media"
                 };
 
             return null;
@@ -43,7 +43,7 @@ namespace Rest_API_PWII.Classes
             {
                 Code = 400,
                 HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                Message = "Post no valido, debe de contener texto o almenos un archivo multimedia"
+                Message = "Invalid post, must have text centent and at least one media file"
             };
         }
 
@@ -55,7 +55,7 @@ namespace Rest_API_PWII.Classes
                 return new ResponseApiError {
                     Code = (int)HttpStatusCode.NotFound,
                     HttpStatusCode = (int) HttpStatusCode.NotFound,
-                    Message = "El post no existe en la base de datos" 
+                    Message = "Post does not exist in database" 
                 };
 
             return null;
@@ -69,7 +69,7 @@ namespace Rest_API_PWII.Classes
                 return new ResponseApiError {
                     Code = (int)HttpStatusCode.NotFound, 
                     HttpStatusCode = (int) HttpStatusCode.NotFound,
-                    Message = "El post no existe en la base de datos" 
+                    Message = "Post does not exist in database"
                 };
 
 
@@ -84,18 +84,18 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                var usuarioDb = db.Users.FirstOrDefault(u => u.Id == createPostModel.UserID);
-                if (usuarioDb == null)
+                var userDb = db.Users.FirstOrDefault(u => u.Id == createPostModel.UserID);
+                if (userDb == null)
                     return new ResponseApiError
                     {
                         Code = (int)HttpStatusCode.NotFound,
                         HttpStatusCode = (int)HttpStatusCode.NotFound,
-                        Message = "usuario no encontrado"
+                        Message = "User not found"
                     };
 
                 var post = new Post { 
-                    UserID = usuarioDb.Id,
-                    User = usuarioDb,
+                    UserID = userDb.Id,
+                    User = userDb,
                     Content = createPostModel.Content,
                 };
 
@@ -245,7 +245,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 3,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = "Error interno del servidor"
+                    Message = "Internal server error"
                 };
             }
         }

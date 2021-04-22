@@ -35,7 +35,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = mediaPosts,
-                        Message = "MediaPost obtenidos"
+                        Message = "MediaPost retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -62,7 +62,7 @@ namespace Rest_API_PWII.Controllers
                 {
                     return StatusCode(responseApiError.HttpStatusCode, responseApiError);
                 }
-                return Ok(new ResponseApiSuccess { Code = 1, Message = "Mediapost agregado" });
+                return Ok(new ResponseApiSuccess { Code = 1, Message = "Mediapost create successful" });
             }
             catch (Exception ex)
             {

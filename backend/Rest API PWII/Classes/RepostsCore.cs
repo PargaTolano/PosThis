@@ -23,7 +23,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "PostID no puede ser null"
+                    Message = "PostID does not accept null"
                 };
 
             var post = db.Posts.FirstOrDefault(p => p.PostID == model.PostID);
@@ -32,7 +32,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.NotFound,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "Post dado no existe"
+                    Message = "Post does not exist"
                 };
 
             if ( model.UserID == null )
@@ -40,16 +40,16 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "UsuarioID no puede ser null"
+                    Message = "UserID does not accept null"
                 };
             
-            var usuario = db.Users.FirstOrDefault(u => u.Id == model.UserID);
-            if (usuario == null)
+            var user = db.Users.FirstOrDefault(u => u.Id == model.UserID);
+            if (user == null)
                 return new ResponseApiError
                 {
                     Code = (int)HttpStatusCode.NotFound,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "Usuario dado no existe"
+                    Message = "User does not exist"
                 };
 
             var repost = db.Reposts.FirstOrDefault(rp => 
@@ -60,7 +60,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Este Repost ya existe"
+                    Message = "Repost already exists"
                 };
 
             return null;
@@ -75,7 +75,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.NotFound,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "Repost no encontrado en la base de datos"
+                    Message = "Repost not found in database"
                 };
 
             return null;
@@ -108,14 +108,14 @@ namespace Rest_API_PWII.Classes
                     return err;
 
                 var post    = db.Posts.First( p => p.PostID == model.PostID );
-                var usuario = db.Users.First(u => u.Id == model.UserID);
+                var user = db.Users.First(u => u.Id == model.UserID);
 
                 var repost = new Reposts 
                     {
                         PostID = (int)model.PostID,
                         Post = post,
                         UserID = model.UserID,
-                        User = usuario
+                        User = user
                     };
 
                 db.Reposts.Add( repost );

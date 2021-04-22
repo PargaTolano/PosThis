@@ -37,7 +37,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = medias,
-                        Message = "Imagenes obtenidas exitosamente"
+                        Message = "Media retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -67,7 +67,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = media,
-                        Message = "Imagen Obtenida exitosamente"
+                        Message = "Media retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -99,7 +99,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = media,
-                        Message = "Imagen creada exitosamente"
+                        Message = "Media create successful"
                     });
             }
             catch (Exception ex)
@@ -138,7 +138,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = "Success",
-                        Message = "Media eliminada exitosamente"
+                        Message = "Media delete successful"
                     });
             }
             catch (Exception ex)

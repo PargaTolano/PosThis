@@ -35,7 +35,7 @@ namespace Rest_API_PWII.Controllers
                 {
                     Code = 400,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Nombre de usuario no valido"
+                    Message = "User name not valid"
                 };
 
             if (signup.Email == null)
@@ -43,7 +43,7 @@ namespace Rest_API_PWII.Controllers
                 {
                     Code = 400,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Email no valido"
+                    Message = "Email not valid"
                 };
 
             if (signup.Tag == null)
@@ -51,7 +51,7 @@ namespace Rest_API_PWII.Controllers
                 {
                     Code = 400,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Tag no valido"
+                    Message = "Tag not valid"
                 };
 
             if (signup.Password == null)
@@ -59,7 +59,7 @@ namespace Rest_API_PWII.Controllers
                 {
                     Code = 400,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Contraseña no valido"
+                    Message = "Password not valid"
                 };
             return null;
         }
@@ -71,7 +71,7 @@ namespace Rest_API_PWII.Controllers
                 {
                     Code = 400,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Nombre de usuario no valido"
+                    Message = "Username not valid"
                 };
 
             if (login.Password == null)
@@ -79,7 +79,7 @@ namespace Rest_API_PWII.Controllers
                 {
                     Code = 400,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Contraseña no valido"
+                    Message = "Password not valid"
                 };
 
             return null;
@@ -103,9 +103,9 @@ namespace Rest_API_PWII.Controllers
                 }, signUpModel.Password ) ;
 
                 if ( !result.Succeeded )
-                    return StatusCode( 500, "Error en la creacion del usuario" );
+                    return StatusCode( 500, "User create failed" );
 
-                return Ok( "Usuario creado exitosamente" );
+                return Ok( "User create successful" );
             }
             catch ( Exception ex )
             {

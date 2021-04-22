@@ -37,7 +37,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = hashtag,
-                        Message = "Hashtags Obtenidos Exitosamente"
+                        Message = "Hashtags retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -66,7 +66,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = result,
-                        Message = "Posts Obtenidos Exitosamente"
+                        Message = "Posts retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -97,7 +97,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = model,
-                        Message = "Hashtag creado exitosamente"
+                        Message = "Hashtag create successful"
                     });
             }
             catch ( Exception ex )

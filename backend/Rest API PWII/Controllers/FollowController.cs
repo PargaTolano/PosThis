@@ -34,7 +34,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = followers,
-                        Message = "Seguidores Obtenidos Exitosamente"
+                        Message = "Followers retrieve successful"
                     });
             }
             catch ( Exception ex )
@@ -63,7 +63,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = following,
-                        Message = "Seguidores Obtenidos Exitosamente"
+                        Message = "Followed users retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -92,7 +92,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = count,
-                        Message = "Seguidores Obtenidos Exitosamente"
+                        Message = "Follower count retrieve successfull"
                     });
             }
             catch (Exception ex)
@@ -121,7 +121,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = count,
-                        Message = "Seguidores Obtenidos Exitosamente"
+                        Message = "Followed users count retrieve successfull"
                     });
             }
             catch (Exception ex)
@@ -151,7 +151,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess
                     {
                         Code = 200,
-                        Message = "Follow creado exitosamente"
+                        Message = "Follow successful"
                     });
             }
             catch (Exception ex)
@@ -181,7 +181,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess
                     {
                         Code = 200,
-                        Message = "Follow creado exitosamente"
+                        Message = "Unfollow successful"
                     });
             }
             catch (Exception ex)

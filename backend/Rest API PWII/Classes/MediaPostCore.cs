@@ -36,7 +36,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 3,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = "Error interno del servidor"
+                    Message = "Internal server error"
                 };
             }
         }
@@ -49,7 +49,7 @@ namespace Rest_API_PWII.Classes
                     return new ResponseApiError
                     {
                         Code = 2,
-                        Message = "MediaPost agregado",
+                        Message = "MediaPost added",
                         HttpStatusCode = (int)HttpStatusCode.BadRequest
                     };
                 }

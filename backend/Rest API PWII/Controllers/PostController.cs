@@ -39,7 +39,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = posts,
-                        Message = "Posts Obtenidos Exitosamente"
+                        Message = "Posts retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -72,7 +72,7 @@ namespace Rest_API_PWII.Controllers
                         { 
                             Code = (int ) HttpStatusCode.NotFound,
                             HttpStatusCode = (int)HttpStatusCode.NotFound,
-                            Message = "No existe el post buscado"
+                            Message = "Post not found"
                         });
 
                 return Ok(
@@ -80,7 +80,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = post,
-                        Message = "Posts Obtenidos Exitosamente"
+                        Message = "Post retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -113,7 +113,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = post,
-                        Message = "Post creado exitosamente"
+                        Message = "Post create successful"
                     });
             }
             catch (Exception ex)
@@ -146,7 +146,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = post,
-                        Message = "Post actualizado exitosamente"
+                        Message = "Post update successful"
                     });
             }
             catch (Exception ex)
@@ -177,7 +177,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess
                     {
                         Code = 200,
-                        Message = "Usuario creado exitosamente"
+                        Message = "Post delete successful"
                     });
             }
             catch (Exception ex)

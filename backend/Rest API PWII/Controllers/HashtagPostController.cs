@@ -35,7 +35,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = hashtagPost,
-                        Message = "Hashtagpos obtenidos"
+                        Message = "Hashtagpost retrieve susccessful"
                     });
             }
             catch(Exception ex)
@@ -60,7 +60,7 @@ namespace Rest_API_PWII.Controllers
                 {
                     return StatusCode(responseApiError.HttpStatusCode, responseApiError);
                 }
-                return Ok(new ResponseApiSuccess { Code = 1, Message = "HashtagPost agregado" });
+                return Ok(new ResponseApiSuccess { Code = 1, Message = "HashtagPost added" });
             }
             catch(Exception ex)
             {

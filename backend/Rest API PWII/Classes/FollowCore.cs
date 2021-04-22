@@ -24,7 +24,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = ( int ) HttpStatusCode.BadRequest,
                     HttpStatusCode = ( int ) HttpStatusCode.BadRequest,
-                    Message = "FollowerID no puede ser null"
+                    Message = "FollowerID does not accept null"
                 };
 
             if ( model.FollowedID == null )
@@ -32,7 +32,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = ( int ) HttpStatusCode.BadRequest,
                     HttpStatusCode = ( int ) HttpStatusCode.BadRequest,
-                    Message = "FollowedID no puede ser null"
+                    Message = "FollowedID does not accept null"
                 };
 
             return null;
@@ -46,7 +46,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Follower no puede ser null"
+                    Message = "Follower does not accept null"
                 };
 
             var followed = db.Users.FirstOrDefault( u => u.Id == model.FollowedID );
@@ -55,7 +55,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Followed no puede ser null"
+                    Message = "Followed does not accept null"
                 };
 
             return null;
@@ -67,7 +67,7 @@ namespace Rest_API_PWII.Classes
         {
             var usuario = db.Users.FirstOrDefault( u => u.Id == FollowedID );
             if ( usuario == null )
-                throw new Exception("No existe el usuario del cual se buscan followers");
+                throw new Exception("User not found, can not retrieve followers");
 
             var follows = 
                 (from f in db.Follows
@@ -93,7 +93,7 @@ namespace Rest_API_PWII.Classes
         {
             var usuario = db.Users.FirstOrDefault(u => u.Id == FollowerID);
             if (usuario == null)
-                throw new Exception("No existe el usuario del cual se buscan followings");
+                throw new Exception("User not found, can not retrieve followed users");
 
             var follows =
                 (from f in db.Follows
@@ -120,7 +120,7 @@ namespace Rest_API_PWII.Classes
         {
             var usuario = db.Users.FirstOrDefault(u => u.Id == FollowedID);
             if (usuario == null)
-                throw new Exception("No existe el usuario del cual se buscan followers");
+                throw new Exception("User not found, can not retrieve followers");
 
             var follows = GetFollowers( FollowedID );
 
@@ -134,7 +134,7 @@ namespace Rest_API_PWII.Classes
         {
             var usuario = db.Users.FirstOrDefault(u => u.Id == FollowerID);
             if (usuario == null)
-                throw new Exception("No existe el usuario del cual se buscan followings");
+                throw new Exception("User not found, can not retrieve followed users");
 
             var follows = GetFollowing( FollowerID );
 
@@ -193,7 +193,7 @@ namespace Rest_API_PWII.Classes
                     {
                         Code = (int)HttpStatusCode.NotFound,
                         HttpStatusCode = (int)HttpStatusCode.NotFound,
-                        Message = "Hashtag no existe"
+                        Message = "Hashtag does not exist"
                     };
 
                 db.Follows.Remove( followDb );

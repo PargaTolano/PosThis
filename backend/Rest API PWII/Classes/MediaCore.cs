@@ -25,7 +25,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 1,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Los datos no son validos, debe tener contenido media"
+                    Message = "Invalid data, must have media files"
                 };
 
             return null;
@@ -40,7 +40,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 2,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "El contenido Media no existe en la base de datos"
+                    Message = "Media does not exists in database"
                 };
 
             return null;
@@ -55,7 +55,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 2,
                     HttpStatusCode = ( int ) HttpStatusCode.NotFound,
-                    Message = "El contenido Media no existe en la base de datos"
+                    Message = "Media does not exists in database"
                 };
 
 
@@ -67,7 +67,7 @@ namespace Rest_API_PWII.Classes
             try
             {
                 ResponseApiError err = Validate( media );
-                if (err != null) //Diferente para crearlo
+                if (err != null) 
                     return err;
 
                 db.Medias.Add( media );
@@ -81,7 +81,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 3,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = "Error interno del servidor"
+                    Message = "Internal server error"
                 };
             }
         }
@@ -120,7 +120,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 3,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = "Error interno del servidor"
+                    Message = "Internal server error"
                 };
             }
         }
