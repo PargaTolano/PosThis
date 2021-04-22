@@ -24,7 +24,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Post de like no puede ser null",
+                    Message = "Liked post can not be null",
                 };
 
             if ( model.UserID == null )
@@ -32,7 +32,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Usuario de like no puede ser null",
+                    Message = "Like's user can not be null",
                 };
 
             var post = db.Posts.FirstOrDefault(p => p.PostID == model.PostID);
@@ -42,17 +42,17 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.NotFound,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "Post dado para el like no existe",
+                    Message = "Post does not exist, can not like",
                 };
 
-            var usuario = db.Users.FirstOrDefault(u => u.Id == model.UserID );
+            var user = db.Users.FirstOrDefault(u => u.Id == model.UserID );
 
-            if (usuario == null)
+            if (user == null)
                 return new ResponseApiError
                 {
                     Code = (int)HttpStatusCode.NotFound,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "Post dado para el like no existe",
+                    Message = "User does not exist, can not like",
                 };
 
             var like = db.Likes.FirstOrDefault(l =>
@@ -65,7 +65,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Like en el post ya existente",
+                    Message = "Like already exists",
                 };
 
             return null;
@@ -77,7 +77,7 @@ namespace Rest_API_PWII.Classes
                 return new ResponseApiError 
                 { 
                     Code = (int)HttpStatusCode.BadRequest,
-                    Message = "PostID de like no puede ser null", 
+                    Message = "Like's PostID can not be null", 
                     HttpStatusCode = (int)HttpStatusCode.BadRequest 
                 };
 
@@ -85,7 +85,7 @@ namespace Rest_API_PWII.Classes
                 return new ResponseApiError 
                 { 
                     Code = (int)HttpStatusCode.BadRequest,
-                    Message = "UsuarioID de like no puede ser null", 
+                    Message = "Like's UserID can not be bull", 
                     HttpStatusCode = (int)HttpStatusCode.BadRequest 
                 };
 
@@ -115,7 +115,7 @@ namespace Rest_API_PWII.Classes
                     (from p in db.Posts where p.PostID == model.PostID select p)
                     .First();
 
-                var usuario = 
+                var user = 
                     (from u in db.Users where u.Id == model.UserID select u)
                     .First();
 
@@ -123,8 +123,8 @@ namespace Rest_API_PWII.Classes
                 { 
                     PostID = post.PostID,
                     Post = post,
-                    UserID = usuario.Id,
-                    User = usuario
+                    UserID = user.Id,
+                    User = user
                 };
 
                 db.Add( like );
@@ -166,7 +166,7 @@ namespace Rest_API_PWII.Classes
                     {
                         Code = (int)HttpStatusCode.NotFound,
                         HttpStatusCode = (int)HttpStatusCode.NotFound,
-                        Message = "Like no encontrado"
+                        Message = "Like not found"
                     };
 
                 db.Remove( like );

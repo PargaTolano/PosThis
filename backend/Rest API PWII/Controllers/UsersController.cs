@@ -29,7 +29,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var userCore = new UsuarioCore( db );
+                var userCore = new UserCore( db );
                 var users    = userCore.GetAll();
 
                 return Ok(
@@ -37,7 +37,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = users,
-                        Message = "Usuarios Obtenidos Exitosamente"
+                        Message = "Users retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -58,7 +58,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var userCore = new UsuarioCore( db );
+                var userCore = new UserCore( db );
                 var user     = userCore.GetOne( id );
                 if ( user == null )
                     return StatusCode(
@@ -67,7 +67,7 @@ namespace Rest_API_PWII.Controllers
                         {
                             Code = (int)HttpStatusCode.NotFound,
                             HttpStatusCode = (int)HttpStatusCode.NotFound,
-                            Message = "Usuario no encontrado"
+                            Message = "User not found"
                         });
 
                 return Ok(
@@ -75,7 +75,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = user,
-                        Message = "Usuarios Obtenidos Exitosamente"
+                        Message = "User retrieve successful"
                     });
             }
             catch ( Exception ex )
@@ -97,7 +97,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var userCore = new UsuarioCore( db );
+                var userCore = new UserCore( db );
                 var err = userCore.Update( id, user );
 
                 if ( err != null )
@@ -108,7 +108,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = user,
-                        Message = "Usuario editado exitosamente"
+                        Message = "User data update successful"
                     });
             }
             catch ( Exception ex )
@@ -128,7 +128,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var userCore = new UsuarioCore(db);
+                var userCore = new UserCore(db);
                 var err = userCore.Delete( id );
 
                 if ( err != null )
@@ -139,7 +139,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = "Success",
-                        Message = "Usuario borrado exitosamente"
+                        Message = "User delete successful"
                     });
             }
             catch ( Exception ex )

@@ -35,7 +35,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = reposts,
-                        Message = "Reposts obtenidos"
+                        Message = "Reposts retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -65,7 +65,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess 
                     { 
                         Code = 200, 
-                        Message = "Repost creado exitosamente" 
+                        Message = "Repost create successful"
                     });
             }
             catch ( Exception ex )
@@ -96,7 +96,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess 
                     { 
                         Code = 200, 
-                        Message = "Repost borrado exitosamente" 
+                        Message = "Repost delete successful"
                     });
             }
             catch (Exception ex)

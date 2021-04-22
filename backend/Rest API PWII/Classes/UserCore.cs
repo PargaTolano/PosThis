@@ -8,22 +8,22 @@ using Rest_API_PWII.Models.ViewModels;
 
 namespace Rest_API_PWII.Classes
 {
-    public class UsuarioCore
+    public class UserCore
     {
         private PosThisDbContext db;
 
-        public UsuarioCore( PosThisDbContext db )
+        public UserCore( PosThisDbContext db )
         {
             this.db = db;
         }
 
-        public ResponseApiError Validate( User usuario )
+        public ResponseApiError Validate( User user )
         {
-            if ( usuario.UserName == null || usuario.Tag == null || usuario.Email == null )
+            if ( user.UserName == null || user.Tag == null || user.Email == null )
                 return new ResponseApiError { 
                     Code = 1,
                     HttpStatusCode = (int) HttpStatusCode.BadRequest,
-                    Message = "Los datos del usuario no son validos" 
+                    Message = "User data not valid" 
                 };
 
             return null;
@@ -42,34 +42,34 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Se debe modificar almenos un campo"
+                    Message = "Must edit at least one field" 
                 };
 
             return null;
         }
 
-        public ResponseApiError ValidateNewPassword( User usuario)
+        public ResponseApiError ValidateNewPassword( User user)
         {
-            if ( usuario.PasswordHash == null )
+            if ( user.PasswordHash == null )
                 return new ResponseApiError
                 {
                     Code = 1,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Los datos del usuario no son validos"
+                    Message = "User data not valid"
                 };
 
             return null;
         }
 
-        public ResponseApiError ValidateExists( User usuario )
+        public ResponseApiError ValidateExists( User user )
         {
-            var res = (from u in db.Users where u.Id == usuario.Id select u).First();
+            var res = (from u in db.Users where u.Id == user.Id select u).First();
 
             if (res == null)
                 return new ResponseApiError { 
                     Code = 2,
                     HttpStatusCode = (int)HttpStatusCode.NotFound, 
-                    Message = "El usuario no existe en la base de datos" 
+                    Message = "User not found in database" 
                 };
 
             return null;
@@ -83,21 +83,21 @@ namespace Rest_API_PWII.Classes
                 return new ResponseApiError { 
                     Code = 2,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "El usuario no existe en la base de datos"
+                    Message = "User not found in database"
                 };
 
             return null;
         }
         
-        public ResponseApiError Create( User usuario )
+        public ResponseApiError Create( User user )
         {
             try
             {
-                ResponseApiError err = Validate(usuario);
-                if (err != null)/*estaba == */
+                ResponseApiError err = Validate(user);
+                if (err != null)
                     return err;
 
-                db.Users.Add( usuario );
+                db.Users.Add( user );
                 db.SaveChanges();
 
                 return null;
@@ -114,7 +114,7 @@ namespace Rest_API_PWII.Classes
 
         public List<UserViewModel> GetAll()
         {
-            List<UserViewModel> usuarios = 
+            List<UserViewModel> users = 
                 (from u 
                  in db.Users 
                  select new UserViewModel {
@@ -125,7 +125,7 @@ namespace Rest_API_PWII.Classes
                      BirthDate = u.BirthDate,
                      ProfilePhotoMediaID = u.ProfilePhotoMediaID
                  }).ToList();
-            return usuarios;
+            return users;
         }
 
         public UserViewModel GetOne( string id )
@@ -144,11 +144,11 @@ namespace Rest_API_PWII.Classes
                     }).FirstOrDefault();
         }
 
-        public ResponseApiError Update( string id, UserViewModel usuario )
+        public ResponseApiError Update( string id, UserViewModel user )
         {
             try
             {
-                var err = ValidateUpdate( usuario );
+                var err = ValidateUpdate( user );
                 if (err != null)
                     return err;
 
@@ -156,7 +156,7 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                User usuarioDb = db.Users.First( u => u.Id == id );
+                User userDb = db.Users.First( u => u.Id == id );
 
                 usuarioDb.UserName  = usuario.UserName != null ? usuario.UserName : usuarioDb.UserName;
                 usuarioDb.Tag       = usuario.Tag != null ? usuario.Tag : usuarioDb.Tag;
@@ -186,9 +186,9 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                User usuarioDb = db.Users.First( u => u.Id == id );
+                User userDb = db.Users.First( u => u.Id == id );
 
-                db.Users.Remove( usuarioDb );
+                db.Users.Remove( userDb );
 
                 db.SaveChanges();
 

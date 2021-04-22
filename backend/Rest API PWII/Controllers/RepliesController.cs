@@ -34,7 +34,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 1,
                         Data = replies,
-                        Message = "Respuestas obtenidas exitosamente"
+                        Message = "Replies retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -64,7 +64,7 @@ namespace Rest_API_PWII.Controllers
                         {
                             Code = (int)HttpStatusCode.NotFound,
                             HttpStatusCode = (int)HttpStatusCode.NotFound,
-                            Message = "Respuesta no encontrada"
+                            Message = "Reply not found"
 
                         });
 
@@ -73,7 +73,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data= reply,
-                        Message = "Respuestas Obtenidas Exitosamente"
+                        Message = "Replies retrieve successful"
                     });
               
             }
@@ -105,7 +105,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess
                     {
                         Code = 200,
-                        Message = "Respuesta creada exitosamente"
+                        Message = "Reply create successful"
                     });
             }
             catch(Exception ex)
@@ -135,7 +135,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess
                     {
                         Code = 200,
-                        Message = "Respuesta editada exitosamente"
+                        Message = "Reply update successful"
                     });
             }
             catch (Exception ex)
@@ -165,7 +165,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess
                     {
                         Code = (int)HttpStatusCode.OK,
-                        Message = "Respuesta eliminada exitosamente"
+                        Message = "Reply delete successful"
                     });
             }
             catch (Exception ex)

@@ -23,7 +23,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "El hashtag no puede ser vacio"
+                    Message = "Hashtag can not be empty"
                 };
 
             return null;
@@ -53,7 +53,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "El hashtag no puede ser vacio"
+                    Message = "Hashtag can not be empty"
                 };
 
             return null;
@@ -77,7 +77,7 @@ namespace Rest_API_PWII.Classes
                      select h).FirstOrDefault();
 
                 if ( hastagDb == null )
-                    throw new Exception("El hashtag no existe");
+                    throw new Exception("Hashtag does not exist");
 
                 var posts =
                     (from hp
@@ -119,7 +119,7 @@ namespace Rest_API_PWII.Classes
                     hashtagDb = entry.Entity;
 
                     if ( hashtagDb == null )
-                        throw new Exception("No se pudo crear nuevo hashtag");
+                        throw new Exception("Create hashtag failed");
                 }
                 else
                     hashtagDb = db.Hashtags.First( h => h.ContentHashtag == model.Content );

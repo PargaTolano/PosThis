@@ -35,7 +35,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = likes,
-                        Message = "Likes obtenidos exitosamente"
+                        Message = "Likes retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -63,7 +63,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = likes,
-                        Message = "Cantidad de Likes obtenida exitosamente"
+                        Message = "Likes count retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -95,7 +95,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess 
                     { 
                         Code = 200,
-                        Message = "Like creado exitosamente"
+                        Message = "Like create successful"
                     });
             }
             catch( Exception ex )
@@ -129,7 +129,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess
                     {
                         Code = 200,
-                        Message = "Like creado exitoxamente"
+                        Message = "Unlike successful"
                     });
             }
             catch ( Exception ex )
