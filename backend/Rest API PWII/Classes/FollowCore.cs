@@ -40,22 +40,16 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError ValidateFollowExists( FollowViewModel model )
         {
-            var follower = db.Users.FirstOrDefault( u => u.Id == model.FollowerID );
-            if ( follower == null )
-                return new ResponseApiError
-                {
-                    Code = (int)HttpStatusCode.BadRequest,
-                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Follower no puede ser null"
-                };
+            var follow = db.Follows.FirstOrDefault(f =>
+                            f.UsuarioSeguidoID == model.FollowedID &&
+                            f.UsuarioSeguidorID == model.FollowerID);
 
-            var followed = db.Users.FirstOrDefault( u => u.Id == model.FollowedID );
-            if ( followed == null )
+            if ( follow != null )
                 return new ResponseApiError
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Followed no puede ser null"
+                    Message = "Ya existe este follow"
                 };
 
             return null;
