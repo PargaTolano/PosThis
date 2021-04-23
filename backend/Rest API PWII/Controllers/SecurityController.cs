@@ -159,7 +159,13 @@ namespace Rest_API_PWII.Controllers
 
                 var createdToken = tokenHandler.CreateToken(tokenDescriptor);
 
-                return Ok(tokenHandler.WriteToken(createdToken));
+                return Ok(
+                    new ResponseApiSuccess
+                    {
+                        Code = 200,
+                        Data = tokenHandler.WriteToken(createdToken),
+                        Message = "Login Successful"
+                    });
             }
             catch (Exception ex)
             {

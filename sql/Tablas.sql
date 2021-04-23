@@ -239,7 +239,7 @@ CREATE TABLE Replies(
 	ReplyID						INTEGER PRIMARY KEY IDENTITY,
 	PostID						INTEGER NOT NULL,
 	UserID						[nvarchar](450) NOT NULL,
-	ContentReplies				TEXT NULL,
+	ContentReplies				[nvarchar](max) NULL,
 
 	CONSTRAINT fk_Replies_Post
 	FOREIGN KEY(PostID)
@@ -252,7 +252,7 @@ CREATE TABLE Replies(
 
 CREATE TABLE Hashtags(
 	HashtagID			INTEGER PRIMARY KEY IDENTITY,
-	ContentHashtag		TEXT
+	ContentHashtag		[nvarchar](max)
 );
 
 CREATE TABLE Follows(
@@ -272,7 +272,7 @@ CREATE TABLE Follows(
 CREATE TABLE Media(
 	MediaID				INTEGER PRIMARY KEY IDENTITY,
 	MIME				VARCHAR(20)					,
-	Content			VARBINARY(MAX)
+	Content				VARBINARY(MAX)
 );
 
 ALTER TABLE [dbo].[AspNetUsers] 
@@ -283,9 +283,9 @@ ADD
 
 -- TABLAS RELACIONALES
 
-CREATE TABLE HashtagPost(
+CREATE TABLE HashtagPosts(
 
-	HashtagPostID		INTEGER PRIMARY KEY,
+	HashtagPostID		INTEGER PRIMARY KEY IDENTITY,
 	HashtagID			INTEGER,
 	PostID				INTEGER,
 
@@ -298,8 +298,8 @@ CREATE TABLE HashtagPost(
 	REFERENCES Posts( PostID ),
 );
 
-CREATE TABLE MediaPost(
-	MediaPostID			INTEGER PRIMARY KEY,
+CREATE TABLE MediaPosts(
+	MediaPostID			INTEGER PRIMARY KEY IDENTITY,
 	MediaID				INTEGER,
 	PostID				INTEGER,
 
@@ -312,8 +312,8 @@ CREATE TABLE MediaPost(
 	REFERENCES Posts( PostID )
 );
 
-CREATE TABLE MediaReply(
-	MediaReplyID		INTEGER PRIMARY KEY,
+CREATE TABLE MediaReplies(
+	MediaReplyID		INTEGER PRIMARY KEY IDENTITY,
 	MediaID				INTEGER,
 	ReplyID				INTEGER,
 

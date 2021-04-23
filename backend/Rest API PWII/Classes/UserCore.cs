@@ -138,12 +138,13 @@ namespace Rest_API_PWII.Classes
                     (from p in db.Posts
                      join u in db.Users
                      on p.UserID equals u.Id
-                     where p.Content.ToLower().Contains(model.Query.ToLower().Trim()) &&
-                           model.Hashtags.Any( )
+                     where p.Content.ToLower().Contains(model.Query.ToLower().Trim())
                      select new SearchResultPostModel 
                      {
                          Content = p.Content,
                          PublisherID = u.Id,
+                         PublisherUserName = u.UserName,
+                         PublisherTag = u.Tag,
 
                      });
 
