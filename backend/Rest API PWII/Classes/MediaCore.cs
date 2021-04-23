@@ -55,7 +55,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 2,
                     HttpStatusCode = ( int ) HttpStatusCode.NotFound,
-                    Message = "Media does not exists in database"
+                    Message = "Media does not exist in database"
                 };
 
 
