@@ -89,7 +89,43 @@ namespace Rest_API_PWII.Controllers
                        Message = ex.Message
                    });
             }
-           
+        }
+
+        [HttpGet]
+        public IActionResult GetSearch( [FromQuery] SearchRequestModel model) {
+            try
+            {
+                var userCore = new UserCore( db );
+                var searchResult = userCore.GetSearch( model );
+                if (searchResult == null)
+                    return StatusCode(
+                        (int)HttpStatusCode.InternalServerError,
+                        new ResponseApiError
+                        {
+                            Code = (int)HttpStatusCode.NotFound,
+                            HttpStatusCode = (int)HttpStatusCode.NotFound,
+                            Message = "Tiene que buscar almenos un campo"
+                        });
+
+                return Ok(
+                    new ResponseApiSuccess
+                    {
+                        Code = 200,
+                        Data = searchResult,
+                        Message = "User retrieve successful"
+                    });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                   (int)HttpStatusCode.InternalServerError,
+                   new ResponseApiError
+                   {
+                       Code = (int)HttpStatusCode.InternalServerError,
+                       HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                       Message = ex.Message
+                   });
+            }
         }
 
         [HttpPut("{id}")]

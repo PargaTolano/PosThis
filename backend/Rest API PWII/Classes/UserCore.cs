@@ -79,7 +79,7 @@ namespace Rest_API_PWII.Classes
         {
             var res = (from u in db.Users where u.Id == id select u).First();
 
-            if (res == null)
+            if ( res == null )
                 return new ResponseApiError { 
                     Code = 2,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
@@ -87,6 +87,11 @@ namespace Rest_API_PWII.Classes
                 };
 
             return null;
+        }
+
+        public bool ValidateSearch (SearchRequestModel model)
+        {
+            return model.SearchPosts || model.SearchUsers;
         }
         
         public ResponseApiError Create( User user )
@@ -130,30 +135,43 @@ namespace Rest_API_PWII.Classes
 
         public SearchResultModel GetSearch( SearchRequestModel model )
         {
-            try
-            {
-                var searchResultModel = new SearchResultModel();
+            var valid = ValidateSearch( model );
 
-                var postQuery =
+            if ( !valid )
+                return null;
+
+            var searchResultModel = new SearchResultModel();
+
+            if ( model.SearchPosts )
+                searchResultModel.posts =
                     (from p in db.Posts
                      join u in db.Users
                      on p.UserID equals u.Id
-                     where p.Content.ToLower().Contains(model.Query.ToLower().Trim())
-                     select new SearchResultPostModel 
+                     where p.Content.ToLower().Contains( model.Query.ToLower().Trim() )
+                     select new SearchResultPostModel
                      {
-                         Content = p.Content,
-                         PublisherID = u.Id,
-                         PublisherUserName = u.UserName,
-                         PublisherTag = u.Tag,
-                         PublishingTime = p.PostDate,
-                     });
+                         Content            = p.Content,
+                         PublisherID        = u.Id,
+                         PublisherUserName  = u.UserName,
+                         PublisherTag       = u.Tag,
+                         PublishingTime     = p.PostDate,
+                     }).ToList();
 
-                return null;
-            }
-            catch ( Exception ex )
-            {
-                throw ex;
-            }
+            if ( model.SearchUsers )
+                searchResultModel.users =
+                    (from  u in db.Users
+                     where u.NormalizedUserName.Contains( model.Query.ToUpper())
+                     select new SearchResultUserModel
+                     {
+                         UserName       = u.UserName,
+                         Tag            = u.Tag,
+                         ProfilePicID   = u.ProfilePhotoMediaID,
+                         FollowerCount  = (from   f in db.Follows
+                                           where  f.UserFollowID == u.Id
+                                           select f).Count()
+                     }).ToList();
+
+            return searchResultModel;
         }
 
         public UserViewModel GetOne( string id )

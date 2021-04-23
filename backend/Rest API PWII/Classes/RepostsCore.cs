@@ -88,7 +88,8 @@ namespace Rest_API_PWII.Classes
                  select new CRepostModel 
                 {
                      UserID = rp.UserID,
-                     PostID = rp.PostID
+                     PostID = rp.PostID,
+                     RepostDate = rp.RepostDate
                 }).ToList();
 
             return reposts;
