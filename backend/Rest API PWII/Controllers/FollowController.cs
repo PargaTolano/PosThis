@@ -34,7 +34,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = followers,
-                        Message = "Followers retrieved successful"
+                        Message = "Followers retrieve successful"
                     });
             }
             catch ( Exception ex )
@@ -63,7 +63,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = following,
-                        Message = "Followed users retrieved successful"
+                        Message = "Followed users retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -92,7 +92,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = count,
-                        Message = "Follower count retrieved successful"
+                        Message = "Follower count retrieve successful"
                     });
             }
             catch (Exception ex)
@@ -121,7 +121,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = count,
-                        Message = "Followed users count retrieved successful"
+                        Message = "Followed users count retrieve successful"
                     });
             }
             catch (Exception ex)
