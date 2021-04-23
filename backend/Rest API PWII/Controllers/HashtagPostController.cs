@@ -50,6 +50,8 @@ namespace Rest_API_PWII.Controllers
                     });
             }
         }
+        // POST: api/<HashtagPostController>
+        [HttpPost]
         public IActionResult Create([FromBody] HashtagPost hashtagPost)
         {
             try
