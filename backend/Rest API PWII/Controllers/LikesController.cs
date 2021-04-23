@@ -18,17 +18,17 @@ namespace Rest_API_PWII.Controllers
     {
         private PosThisDbContext db;
 
-        public LikesController(PosThisDbContext db)
+        public  LikesController(PosThisDbContext db)
         {
             this.db = db;
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public  IActionResult Get()
         {
             try
             {
-                var likesCore = new LikesCore(db);
+                var likesCore = new LikesCore( db );
                 var likes = likesCore.GetLikes();
                 return Ok(
                     new ResponseApiSuccess
@@ -38,7 +38,7 @@ namespace Rest_API_PWII.Controllers
                         Message = "Likes retrieve successful"
                     });
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 return StatusCode(
                     (int)HttpStatusCode.InternalServerError,
@@ -52,12 +52,23 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get( int id )
+        public  IActionResult Get( int id )
         {
             try
             {
                 var likesCore = new LikesCore( db );
-                var likes = likesCore.GetPostLikeCount( id );
+                var likes = likesCore.GetPostLikes( id );
+
+                if ( likes == null )
+                    return StatusCode(
+                    (int)HttpStatusCode.NotFound,
+                    new ResponseApiError
+                    {
+                        Code = 500,
+                        HttpStatusCode = (int)HttpStatusCode.NotFound,
+                        Message = "Este post no tiene likes"
+                    });
+
                 return Ok(
                     new ResponseApiSuccess
                     {
@@ -66,7 +77,7 @@ namespace Rest_API_PWII.Controllers
                         Message = "Likes count retrieve successful"
                     });
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 return StatusCode(
                     (int)HttpStatusCode.InternalServerError,
@@ -80,17 +91,16 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create( [FromBody]CULikeModel likes )
+        public  IActionResult Create( [FromBody]LikeViewModel likes )
         {
             try 
             {        
                 var likesCore = new LikesCore( db );
-                var responseApiError = likesCore.Create( likes );
+                var err = likesCore.Create( likes );
 
-                if(responseApiError != null)
-                {
-                    return StatusCode( responseApiError.HttpStatusCode,responseApiError );
-                }
+                if( err != null )
+                    return StatusCode( err.HttpStatusCode, err );
+
                 return Ok(
                     new ResponseApiSuccess 
                     { 
@@ -113,7 +123,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpDelete]
-        public IActionResult Delete( [FromBody] CULikeModel likes )
+        public  IActionResult Delete( [FromBody] LikeViewModel likes )
         {
             try
             {

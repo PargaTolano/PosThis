@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Rest_API_PWII.Models.ViewModels
 {
-    public class CULikeModel
+    public class LikeViewModel
     {
         public virtual int? PostID { get; set; }
 

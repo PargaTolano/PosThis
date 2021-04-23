@@ -29,7 +29,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateCreation(CUReplyModel model)
+        public ResponseApiError ValidateCreation(ReplyViewModel model)
         {
             if (model.PostID == null)
                 return new ResponseApiError
@@ -68,7 +68,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateCUReply(CUReplyModel model)
+        public ResponseApiError ValidateCUReply(ReplyViewModel model)
         {
             //si el texto esta vacio
             bool textoValido = !string.IsNullOrEmpty(model.Content);
@@ -115,7 +115,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError Create(CUReplyModel model)
+        public ResponseApiError Create(ReplyViewModel model)
         {
             try
             {
@@ -179,21 +179,38 @@ namespace Rest_API_PWII.Classes
             }
         }
 
-        public List<Reply> GetAll()
+        public List<ReplyViewModel> GetAll()
         {
-            List<Reply> reply = (from r in db.Replies select r).ToList();
+            var reply = 
+                (from r in db.Replies 
+                 join p in db.Posts
+                 on r.PostID equals p.PostID
+                 select new ReplyViewModel 
+                 {
+                    ReplyID = r.ReplyID,
+                    Content = r.ContentReplies,
+                    PostID  = r.PostID,
+                    UserID  = r.UserID,
+                 }).ToList();
 
             return reply;
         }
 
-        public Reply GetOne(int id)
+        public ReplyViewModel GetOne(int id)
         {
             return 
-                (from r in db.Replies where id == r.ReplyID select r)
-                    .FirstOrDefault();
+                (from r in db.Replies 
+                 where id == r.ReplyID
+                 select new ReplyViewModel
+                 {
+                     ReplyID = r.ReplyID,
+                     Content = r.ContentReplies,
+                     PostID = r.PostID,
+                     UserID = r.UserID,
+                 }).FirstOrDefault();
         }
 
-        public ResponseApiError Update( int id, CUReplyModel reply )
+        public ResponseApiError Update( int id, ReplyViewModel reply )
         {
             try
             {
@@ -237,7 +254,12 @@ namespace Rest_API_PWII.Classes
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.InternalServerError,
+                    HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                    Message = ex.Message
+                };
             }
         }
 
@@ -259,9 +281,13 @@ namespace Rest_API_PWII.Classes
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.InternalServerError,
+                    HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                    Message = ex.Message
+                };
             }
         }
-
     }
 }

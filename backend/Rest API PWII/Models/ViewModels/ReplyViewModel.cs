@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Rest_API_PWII.Models.ViewModels
 {
     //modelo para update reply
-    public class CUReplyModel
+    public class ReplyViewModel
     {
         public virtual int?         ReplyID          { get; set; }
 

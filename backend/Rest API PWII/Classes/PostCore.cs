@@ -143,19 +143,54 @@ namespace Rest_API_PWII.Classes
             }
         }
 
-        public List<Post> GetAll()
+        public List<PostViewModel> GetAll()
         {
-            List<Post> usuarios = 
-                ( from p in db.Posts select p )
-                .DefaultIfEmpty()
-                .ToList();
+            List<PostViewModel> posts = 
+                ( from p in db.Posts 
+                  join u in db.Users
+                  on p.UserID equals u.Id
+                  select new PostViewModel
+                  {
+                      PostID    = p.PostID,
+                      Content   = p.Content,
+                      UserID    = u.Id,
+                      UserName  = u.UserName,
+                      UserTag   = u.Tag,
+                      UserProfilePicID = u.ProfilePhotoMediaID,
+                      MediaIDs = (from mp in db.MediaPosts
+                                  join po in db.Posts
+                                  on mp.PostID equals po.PostID
+                                  join m in db.Medias
+                                  on mp.MediaID equals m.MediaID
+                                  where po.PostID == p.PostID
+                                  select m.MediaID).ToList()
+                  }).ToList();
 
-            return usuarios;
+            return posts;
         }
 
-        public Post GetOne( int id )
+        public PostViewModel GetOne( int id )
         {
-            return db.Posts.FirstOrDefault(p => p.PostID == id);
+            return (from p in db.Posts
+                    join u in db.Users
+                    on p.UserID equals u.Id
+                    where id == p.PostID
+                    select new PostViewModel
+                    {
+                        PostID = p.PostID,
+                        Content = p.Content,
+                        UserID = u.Id,
+                        UserName = u.UserName,
+                        UserTag = u.Tag,
+                        UserProfilePicID = u.ProfilePhotoMediaID,
+                        MediaIDs = (from mp in db.MediaPosts
+                                    join po in db.Posts
+                                    on mp.PostID equals po.PostID
+                                    join m in db.Medias
+                                    on mp.MediaID equals m.MediaID
+                                    where po.PostID == id
+                                    select m.MediaID).ToList()
+                    }).FirstOrDefault();
         }
 
         public ResponseApiError Update( int id, CUPostModel post )
@@ -216,7 +251,7 @@ namespace Rest_API_PWII.Classes
             {
                 return new ResponseApiError
                 {
-                    Code = 3,
+                    Code = (int)HttpStatusCode.InternalServerError,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                     Message = ex.Message
                 };
@@ -243,9 +278,9 @@ namespace Rest_API_PWII.Classes
             {
                 return new ResponseApiError
                 {
-                    Code = 3,
+                    Code = (int)HttpStatusCode.InternalServerError,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = "Internal server error"
+                    Message = ex.Message
                 };
             }
         }

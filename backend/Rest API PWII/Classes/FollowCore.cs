@@ -74,7 +74,7 @@ namespace Rest_API_PWII.Classes
                     Email = u.Email,
                     BirthDate = u.BirthDate,
                     ProfilePhotoMediaID = u.ProfilePhotoMediaID
-                 }).DefaultIfEmpty().ToList();
+                 }).ToList();
 
             if (follows == null)
                 return new List<UserViewModel>();
@@ -101,7 +101,7 @@ namespace Rest_API_PWII.Classes
                      Email = u.Email,
                      BirthDate = u.BirthDate,
                      ProfilePhotoMediaID = u.ProfilePhotoMediaID
-                 }).DefaultIfEmpty().ToList();
+                 }).ToList();
 
             if (follows == null)
                 return new List<UserViewModel>();

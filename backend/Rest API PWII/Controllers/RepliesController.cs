@@ -26,8 +26,8 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                RepliesCore replyCore = new RepliesCore(db);
-                List<Reply> replies = replyCore.GetAll();
+                var replyCore = new RepliesCore( db );
+                var replies = replyCore.GetAll();
 
                 return Ok(
                     new ResponseApiSuccess
@@ -37,7 +37,7 @@ namespace Rest_API_PWII.Controllers
                         Message = "Replies retrieve successful"
                     });
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 return StatusCode(
                     (int)HttpStatusCode.InternalServerError,
@@ -92,7 +92,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] CUReplyModel model)
+        public IActionResult Create([FromBody] ReplyViewModel model)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] CUReplyModel model)
+        public IActionResult Update(int id, [FromBody] ReplyViewModel model)
         {
             try
             {

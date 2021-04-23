@@ -68,32 +68,26 @@ namespace Rest_API_PWII.Classes
 
         public List<Post> GetPostsWithHashtag( string texto )
         {
-            try
-            {
-                var hastagDb =
-                    (from h
-                     in db.Hashtags
-                     where texto == h.ContentHashtag
-                     select h).FirstOrDefault();
+            
+            var hastagDb =
+                (from h
+                    in db.Hashtags
+                    where texto == h.ContentHashtag
+                    select h).FirstOrDefault();
 
-                if ( hastagDb == null )
-                    throw new Exception("Hashtag does not exist");
+            if ( hastagDb == null )
+                throw new Exception("Hashtag does not exist");
 
-                var posts =
-                    (from hp
-                     in db.HashtagPosts
-                     where texto == hp.Hashtag.ContentHashtag
-                     select hp.Post).DefaultIfEmpty().ToList();
+            var posts =
+                (from hp
+                    in db.HashtagPosts
+                    where texto == hp.Hashtag.ContentHashtag
+                    select hp.Post).ToList();
 
-                if ( posts == null )
-                    posts = new List<Post>();
+            if ( posts == null )
+                posts = new List<Post>();
 
-                return posts;
-            }
-            catch ( Exception ex )
-            {
-                throw ex;
-            }
+            return posts;
         }
 
         public ResponseApiError Create( HashtagViewModel model )

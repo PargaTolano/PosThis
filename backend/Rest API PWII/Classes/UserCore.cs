@@ -145,7 +145,7 @@ namespace Rest_API_PWII.Classes
                          PublisherID = u.Id,
                          PublisherUserName = u.UserName,
                          PublisherTag = u.Tag,
-
+                         PublishingTime = p.PostDate,
                      });
 
                 return null;

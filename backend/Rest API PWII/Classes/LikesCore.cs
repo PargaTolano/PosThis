@@ -12,12 +12,12 @@ namespace Rest_API_PWII.Classes
     {
         private PosThisDbContext db;
 
-        public LikesCore(PosThisDbContext db)
+        public  LikesCore(PosThisDbContext db)
         {
             this.db = db;
         }
         
-        private ResponseApiError Validate(CULikeModel model )
+        private ResponseApiError ValidateCreation(LikeViewModel model )
         {
             if ( model.PostID == null )
                 return new ResponseApiError
@@ -71,7 +71,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        private ResponseApiError ValidateCU( CULikeModel model )
+        private ResponseApiError ValidateDeletion( LikeViewModel model )
         {
             if ( model.PostID == null )
                 return new ResponseApiError 
@@ -92,24 +92,13 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError Create( CULikeModel model )
+        public  ResponseApiError Create( LikeViewModel model )
         {
             try
             {
-                var responseApiError = ValidateCU( model );
-
-                if(responseApiError != null)
-                {
-                    return responseApiError;
-                }
-
-                responseApiError = Validate(model);
-
-                if (responseApiError != null)
-                {
-                    return responseApiError;
-                }
-
+                var err = ValidateCreation(model);
+                if ( err != null )
+                    return err;
 
                 var post = 
                     (from p in db.Posts where p.PostID == model.PostID select p)
@@ -144,19 +133,16 @@ namespace Rest_API_PWII.Classes
             }
         }
 
-        public ResponseApiError Delete( CULikeModel model )
+        public  ResponseApiError Delete( LikeViewModel model )
         {
             try
             {
-                var responseApiError = ValidateCU( model );
+                var err = ValidateDeletion( model );
 
-                if (responseApiError != null)
-                {
-                    return responseApiError;
-                }
+                if (err != null)
+                    return err;
 
-
-                var like = db.Likes.First( l => 
+                var like = db.Likes.FirstOrDefault( l => 
                     l.PostID == model.PostID && 
                     l.UserID == model.UserID
                 );
@@ -186,33 +172,29 @@ namespace Rest_API_PWII.Classes
             }
         }
 
-        public List<Like> GetLikes()
+        public  List<LikeViewModel> GetLikes()
         {
-            try 
-            {
-                List<Like> likes = ( from l in db.Likes select l ).ToList();
-                return likes;
-            }
-            catch( Exception ex )
-            {
-                throw ex;
-            }
+            var likes = ( from l in db.Likes 
+                          select new LikeViewModel
+                          {
+                            PostID = l.PostID,
+                            UserID = l.UserID
+                          } ).ToList();
+            return likes;
         }
 
-        public int GetPostLikeCount( int id )
+        public  List<LikeViewModel> GetPostLikes( int id )
         {
-            try
-            {
-                List<Like> likes = 
-                    (from l in db.Likes where l.PostID == id select l)
-                    .ToList();
+            var likes = 
+                (from l in db.Likes
+                 where l.PostID == id 
+                 select new LikeViewModel {
+                     PostID = l.PostID,
+                     UserID = l.UserID
+                 })
+                .ToList();
 
-                return likes.Count;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return likes;
         }
     }
 }

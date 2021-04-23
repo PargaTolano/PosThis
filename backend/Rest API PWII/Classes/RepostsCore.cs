@@ -81,21 +81,17 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public List<Repost> Get()
+        public List<CRepostModel> Get()
         {
-            try
-            {
-                List<Repost> reposts = 
-                    (from rp in db.Reposts select rp)
-                    .DefaultIfEmpty()
-                    .ToList();
+            var reposts = 
+                (from rp in db.Reposts
+                 select new CRepostModel 
+                {
+                     UserID = rp.UserID,
+                     PostID = rp.PostID
+                }).ToList();
 
-                return reposts;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return reposts;
         } 
         
         public ResponseApiError Create( CRepostModel model )
@@ -135,16 +131,16 @@ namespace Rest_API_PWII.Classes
             }
         }
 
-        public ResponseApiError Delete( int id )
+        public ResponseApiError Delete( CRepostModel model )
         {
             try
             {
-                var err = ValidateExists( id );
+                var err = Validate( model );
 
                 if (err != null)
                     return err;
 
-                var repost = db.Reposts.FirstOrDefault( rp => rp.RepostID == id );
+                var repost = db.Reposts.FirstOrDefault( rp => rp.RepostID == model.PostID );
 
                 db.Remove( repost );
 

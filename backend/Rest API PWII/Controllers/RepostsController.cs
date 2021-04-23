@@ -83,12 +83,12 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete( int id )
+        public IActionResult Delete( CRepostModel model )
         {
             try
             {
                 var repostsCore = new RepostsCore( db );
-                var err = repostsCore.Delete( id );
+                var err = repostsCore.Delete( model );
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
 
