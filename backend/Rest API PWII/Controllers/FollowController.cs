@@ -85,7 +85,7 @@ namespace Rest_API_PWII.Controllers
             try
             {
                 var followCore = new FollowCore(db);
-                var count = followCore.GetFollowingCount(id);
+                var count = followCore.GetFollowersCount(id);
 
                 return Ok(
                     new ResponseApiSuccess
