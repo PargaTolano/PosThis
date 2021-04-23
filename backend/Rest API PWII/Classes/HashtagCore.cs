@@ -53,7 +53,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Hashtag can not be empty"
+                    Message = "Post does not exist"
                 };
 
             return null;
