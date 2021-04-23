@@ -48,7 +48,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Ya existe este follow"
+                    Message = "Follow already exists in database"
                 };
 
             return null;
@@ -186,7 +186,7 @@ namespace Rest_API_PWII.Classes
                     {
                         Code = (int)HttpStatusCode.NotFound,
                         HttpStatusCode = (int)HttpStatusCode.NotFound,
-                        Message = "Hashtag does not exist"
+                        Message = "Follow does not exist"
                     };
 
                 db.Follows.Remove( followDb );

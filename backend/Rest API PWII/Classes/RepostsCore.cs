@@ -111,7 +111,9 @@ namespace Rest_API_PWII.Classes
                         PostID = (int)model.PostID,
                         Post = post,
                         UserID = model.UserID,
-                        User = user
+                        User = user,
+                        Content = model.Content,
+                        RepostDate = model.RepostDate
                     };
 
                 db.Reposts.Add( repost );
