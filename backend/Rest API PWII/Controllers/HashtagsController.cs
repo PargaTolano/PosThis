@@ -53,13 +53,13 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        [HttpGet("{texto}")]
-        public IActionResult GetPosts( string texto )
+        [HttpGet("{text}")]
+        public IActionResult GetPosts( string text )
         {
             try
             {
                 var hashtagCore = new HashtagCore(db);
-                var result = hashtagCore.GetPostsWithHashtag(texto);
+                var result = hashtagCore.GetPostsWithHashtag(text);
 
                 return Ok(
                     new ResponseApiSuccess
