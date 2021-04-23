@@ -66,7 +66,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 500,
                         HttpStatusCode = (int)HttpStatusCode.NotFound,
-                        Message = "Este post no tiene likes"
+                        Message = "This post does not have likes"
                     });
 
                 return Ok(
@@ -74,7 +74,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = likes,
-                        Message = "Likes count retrieve successful"
+                        Message = "Post's likes retrieve successful"
                     });
             }
             catch ( Exception ex )
@@ -139,7 +139,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess
                     {
                         Code = 200,
-                        Message = "Unlike successful"
+                        Message = "Dislike successful"
                     });
             }
             catch ( Exception ex )

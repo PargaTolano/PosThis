@@ -73,7 +73,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data= reply,
-                        Message = "Replies retrieve successful"
+                        Message = "Reply retrieve successful"
                     });
               
             }

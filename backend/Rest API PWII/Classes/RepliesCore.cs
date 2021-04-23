@@ -53,7 +53,7 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "UsuarioID does not accept null"
+                    Message = "UserID does not accept null"
                 };
 
             var user = db.Users.FirstOrDefault(u => u.Id == model.UserID );
