@@ -15,8 +15,8 @@ namespace Rest_API_PWII.Models.ViewModels
 
         public string   Email               { get; set; }
 
-        public int?     ProfilePhotoMediaID        { get; set; }
+        public int?     ProfilePhotoMediaID { get; set; }
 
-        public DateTime? BirthDate    { get; set; }
+        public DateTime? BirthDate          { get; set; }
     }
 }

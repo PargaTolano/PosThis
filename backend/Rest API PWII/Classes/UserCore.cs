@@ -128,6 +128,33 @@ namespace Rest_API_PWII.Classes
             return users;
         }
 
+        public SearchResultModel GetSearch( SearchRequestModel model )
+        {
+            try
+            {
+                var searchResultModel = new SearchResultModel();
+
+                var postQuery =
+                    (from p in db.Posts
+                     join u in db.Users
+                     on p.UserID equals u.Id
+                     where p.Content.ToLower().Contains(model.Query.ToLower().Trim()) &&
+                           model.Hashtags.Any( )
+                     select new SearchResultPostModel 
+                     {
+                         Content = p.Content,
+                         PublisherID = u.Id,
+
+                     });
+
+                return null;
+            }
+            catch ( Exception ex )
+            {
+                throw ex;
+            }
+        }
+
         public UserViewModel GetOne( string id )
         {
             return (from u
@@ -158,10 +185,15 @@ namespace Rest_API_PWII.Classes
 
                 User userDb = db.Users.First( u => u.Id == id );
 
-                usuarioDb.UserName  = usuario.UserName != null ? usuario.UserName : usuarioDb.UserName;
-                usuarioDb.Tag       = usuario.Tag != null ? usuario.Tag : usuarioDb.Tag;
-                usuarioDb.Email     = usuario.Email != null ? usuario.Email : usuarioDb.Email;
-                usuarioDb.BirthDate = usuario.BirthDate != null ? usuario.BirthDate : usuarioDb.BirthDate;
+                userDb.Tag       = user.Tag != null ? user.Tag : userDb.Tag;
+
+                userDb.UserName  = user.UserName != null ? user.UserName : userDb.UserName;
+                userDb.NormalizedUserName = user.UserName != null ? user.UserName.ToUpper() : userDb.NormalizedUserName;
+
+                userDb.Email     = user.Email != null ? user.Email : userDb.Email;
+                userDb.NormalizedEmail = user.Email != null ? user.Email.ToUpper() : userDb.NormalizedEmail;
+
+                userDb.BirthDate = user.BirthDate != null ? user.BirthDate : userDb.BirthDate;
 
                 db.SaveChanges();
 

@@ -123,12 +123,18 @@ namespace Rest_API_PWII.Controllers
                 if (err != null)
                     return StatusCode( err.HttpStatusCode, err );
 
-                var user = await  _userManager.FindByEmailAsync( login.UserName );
+                bool IsEmail = true;
 
-                if (user == null)
+                var user = await  _userManager.FindByEmailAsync( login.UserName );
+                var userUN = await _userManager.FindByNameAsync( login.UserName.ToUpper() );
+
+                if ( user == null && userUN == null )
                     return StatusCode(404);
 
-                var result = await _signInManager.CheckPasswordSignInAsync(user, login.Password, false );
+                if ( user == null )
+                    IsEmail = false;
+                
+                var result = await _signInManager.CheckPasswordSignInAsync(IsEmail ? user : userUN , login.Password, false );
 
                 if (!result.Succeeded)
                     return StatusCode(404);
@@ -137,10 +143,9 @@ namespace Rest_API_PWII.Controllers
 
                 var key = Encoding.ASCII.GetBytes( secretKey );
 
-
                 var claims = new ClaimsIdentity( new[] {
-                    new Claim( ClaimTypes.NameIdentifier, user.Id),
-                    new Claim( ClaimTypes.Name, user.UserName )
+                    new Claim( ClaimTypes.NameIdentifier, IsEmail ? user.Id : userUN.Id),
+                    new Claim( ClaimTypes.Name, IsEmail ? user.UserName : userUN.UserName )
                 });
 
                 var tokenDescriptor = new SecurityTokenDescriptor

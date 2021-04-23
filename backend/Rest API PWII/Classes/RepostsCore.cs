@@ -81,11 +81,11 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public List<Reposts> Get()
+        public List<Repost> Get()
         {
             try
             {
-                List<Reposts> reposts = 
+                List<Repost> reposts = 
                     (from rp in db.Reposts select rp)
                     .DefaultIfEmpty()
                     .ToList();
@@ -110,7 +110,7 @@ namespace Rest_API_PWII.Classes
                 var post    = db.Posts.First( p => p.PostID == model.PostID );
                 var user = db.Users.First(u => u.Id == model.UserID);
 
-                var repost = new Reposts 
+                var repost = new Repost 
                     {
                         PostID = (int)model.PostID,
                         Post = post,
