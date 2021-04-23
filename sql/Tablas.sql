@@ -203,7 +203,6 @@ CREATE TABLE Posts(
 	CONSTRAINT fk_Post_User
 	FOREIGN KEY(UserID)
 	REFERENCES [dbo].[AspNetUsers]( [Id] )
-	ON DELETE CASCADE
 );
 
 CREATE TABLE Reposts(
@@ -214,13 +213,11 @@ CREATE TABLE Reposts(
 
 	CONSTRAINT fk_Repost_Post
 	FOREIGN KEY(PostID)
-	REFERENCES Posts( PostID )
-	ON DELETE CASCADE,
+	REFERENCES Posts( PostID ),
 
 	CONSTRAINT fk_Repost_User
 	FOREIGN KEY(UserID)
 	REFERENCES [dbo].[AspNetUsers]( [Id] )
-	ON DELETE CASCADE
 );
 
 CREATE TABLE Likes(
@@ -230,13 +227,11 @@ CREATE TABLE Likes(
 
 	CONSTRAINT fk_Likes_Post
 	FOREIGN KEY(PostID)
-	REFERENCES Posts( PostID )
-	ON DELETE CASCADE,
+	REFERENCES Posts( PostID ),
 
 	CONSTRAINT fk_Likes_User
 	FOREIGN KEY(UserID)
 	REFERENCES [dbo].[AspNetUsers]( [Id] )
-	ON DELETE CASCADE
 );
 
 CREATE TABLE Replies(
@@ -247,13 +242,11 @@ CREATE TABLE Replies(
 
 	CONSTRAINT fk_Replies_Post
 	FOREIGN KEY(PostID)
-	REFERENCES Posts( PostID )
-	ON DELETE CASCADE,
+	REFERENCES Posts( PostID ),
 
 	CONSTRAINT fk_Replies_User
 	FOREIGN KEY(UserID)
 	REFERENCES [dbo].[AspNetUsers]( [Id] )
-	ON DELETE CASCADE
 );
 
 CREATE TABLE Hashtags(
@@ -268,13 +261,11 @@ CREATE TABLE Follows(
 
 	CONSTRAINT fk_Follows_User_Follower
 	FOREIGN KEY(UserFollowerID)
-	REFERENCES [dbo].[AspNetUsers]( [Id] )
-	ON DELETE CASCADE,
+	REFERENCES [dbo].[AspNetUsers]( [Id] ),
 
 	CONSTRAINT fk_Follows_User_Follows
 	FOREIGN KEY(UserFollowID)
-	REFERENCES [dbo].[AspNetUsers]( [Id] )
-	ON DELETE CASCADE,
+	REFERENCES [dbo].[AspNetUsers]( [Id] ),
 );
 
 CREATE TABLE Medias(
@@ -303,8 +294,7 @@ CREATE TABLE HashtagPosts(
 
 	CONSTRAINT fk_HashtagPost_Post
 	FOREIGN KEY(PostID)
-	REFERENCES Posts( PostID )
-	ON DELETE CASCADE,
+	REFERENCES Posts( PostID ),
 );
 
 CREATE TABLE MediaPosts(
@@ -314,13 +304,11 @@ CREATE TABLE MediaPosts(
 
 	CONSTRAINT fk_MediaPost_Media
 	FOREIGN KEY(MediaID)
-	REFERENCES Medias( MediaID )
-	ON DELETE CASCADE,
+	REFERENCES Medias( MediaID ),
 
 	CONSTRAINT fk_MediaPost_Post
 	FOREIGN KEY(PostID)
 	REFERENCES Posts( PostID )
-	ON DELETE CASCADE
 );
 
 CREATE TABLE MediaReplies(
@@ -330,11 +318,9 @@ CREATE TABLE MediaReplies(
 
 	CONSTRAINT fk_MediaReply_Media
 	FOREIGN KEY( MediaID )
-	REFERENCES Medias( MediaID )
-	ON DELETE CASCADE,
+	REFERENCES Medias( MediaID ),
 
 	CONSTRAINT fk_MediaReply_Reply
 	FOREIGN KEY( ReplyID )
 	REFERENCES Replies( ReplyID )
-	ON DELETE CASCADE
 );
