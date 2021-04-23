@@ -208,7 +208,6 @@ CREATE TABLE Posts(
 
 CREATE TABLE Reposts(
 	RepostID			INTEGER PRIMARY KEY IDENTITY,
-	Content				VARCHAR(256)				,
 	RepostDate	DATETIME					,
 	PostID				INTEGER NOT NULL,
 	UserID			[nvarchar](450) NOT NULL,

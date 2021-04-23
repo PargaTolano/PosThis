@@ -112,8 +112,7 @@ namespace Rest_API_PWII.Classes
                         Post = post,
                         UserID = model.UserID,
                         User = user,
-                        Content = model.Content,
-                        RepostDate = model.RepostDate
+                        RepostDate = DateTime.Now
                     };
 
                 db.Reposts.Add( repost );
