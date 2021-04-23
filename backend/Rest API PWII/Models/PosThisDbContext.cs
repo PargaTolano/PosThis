@@ -94,10 +94,6 @@ namespace Rest_API_PWII.Models
                     .ValueGeneratedOnAdd();
 
                 repost
-                    .Property(e => e.Content)
-                    .HasMaxLength(256);
-
-                repost
                     .HasOne(e => e.Post)
                     .WithMany(p => p.Reposts)
                     .HasForeignKey( r => r.PostID );
