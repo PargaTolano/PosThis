@@ -34,7 +34,9 @@ Carpetas generales
 			base de datos con atributos y llaves.
 
 			Controllers:
-			Controladores del programa.
+			Controladores del programa. Contiene los
+			Endpoints para interactuar con la base de
+			datos.
 
 			Models:
 			Interpreta los registros de la base de datos.
