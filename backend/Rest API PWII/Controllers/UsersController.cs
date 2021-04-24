@@ -104,7 +104,7 @@ namespace Rest_API_PWII.Controllers
                         {
                             Code = (int)HttpStatusCode.NotFound,
                             HttpStatusCode = (int)HttpStatusCode.NotFound,
-                            Message = "Tiene que buscar almenos un campo"
+                            Message = "Must search at least one field"
                         });
 
                 return Ok(
@@ -112,7 +112,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = searchResult,
-                        Message = "User retrieve successful"
+                        Message = "Request retrieve successful"
                     });
             }
             catch (Exception ex)
