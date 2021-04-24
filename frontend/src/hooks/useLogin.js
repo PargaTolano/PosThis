@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import useRequestLoadOnMount from 'hooks/useRequestLoadOnMount';
+
+import { logIn } from 'API/User.API';
 
 /**
- * @param {String} username 
- * @param {String} password 
+ * @param {LogInModel} model
  */
-export const useLogin = ( username, password )=>{
-    
+export const useLogin = ( model )=>{
+    return useRequestLoadOnMount( () => logIn(model) );
 };

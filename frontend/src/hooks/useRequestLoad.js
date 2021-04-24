@@ -5,11 +5,11 @@ const useRequestLoad = ( request ) =>{
     const [ state, setState ] = 
         useState({
             ready: false, 
-            data: null
+            response: null
         });
 
     request()
-        .then( res => setState( res ) );
+        .then( res => setState( {ready: true, response: res} ) );
 
     return state;
 };

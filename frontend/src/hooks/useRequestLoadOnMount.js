@@ -5,12 +5,12 @@ const useRequestLoadOnMount = ( request ) =>{
     const [ state, setState ] = 
         useState({
             ready: false, 
-            data: null
+            response: null
         });
 
     useEffect(()=>{
         request()
-        .then( res => setState( { ready: true, data: res} ) );
+        .then( res => setState( { ready: true, response: res} ) );
     }, []);
 
     return state;
