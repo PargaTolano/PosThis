@@ -133,16 +133,16 @@ namespace Rest_API_PWII.Classes
             }
         }
 
-        public ResponseApiError Delete( CRepostModel model )
+        public ResponseApiError Delete( int id )
         {
             try
             {
-                var err = Validate( model );
+                var err = ValidateExists( id) ;
 
                 if (err != null)
                     return err;
 
-                var repost = db.Reposts.FirstOrDefault( rp => rp.RepostID == model.PostID );
+                var repost = db.Reposts.FirstOrDefault( rp => rp.RepostID == id);
 
                 db.Remove( repost );
 

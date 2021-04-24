@@ -13,8 +13,12 @@ namespace Rest_API_PWII.Models.ViewModels
 
         public string       PublisherID { get; set; }
 
+        public int?         PostID      { get; set; }
+
         public string       ReposterID  { get; set; }
 
         public List<int>    MediaIDs    { get; set; }
+
+        public DateTime?    Date        { get; set; }
     }
 }

@@ -103,9 +103,6 @@ namespace Rest_API_PWII.Classes
                      ProfilePhotoMediaID = u.ProfilePhotoMediaID
                  }).ToList();
 
-            if (follows == null)
-                return new List<UserViewModel>();
-
             return follows;
         }
 

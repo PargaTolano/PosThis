@@ -37,7 +37,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = users,
-                        Message = "Users retrieve successful"
+                        Message = "Users retrieval successful"
                     });
             }
             catch (Exception ex)
@@ -62,7 +62,7 @@ namespace Rest_API_PWII.Controllers
                 var user     = userCore.GetOne( id );
                 if ( user == null )
                     return StatusCode(
-                        (int)HttpStatusCode.InternalServerError,
+                        (int)HttpStatusCode.NotFound,
                         new ResponseApiError
                         {
                             Code = (int)HttpStatusCode.NotFound,
@@ -75,10 +75,48 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = user,
-                        Message = "User retrieve successful"
+                        Message = "User retrieval successful"
                     });
             }
             catch ( Exception ex )
+            {
+                return StatusCode(
+                   (int)HttpStatusCode.InternalServerError,
+                   new ResponseApiError
+                   {
+                       Code = (int)HttpStatusCode.InternalServerError,
+                       HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                       Message = ex.Message
+                   });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetFeed( string id)
+        {
+            try
+            {
+                var userCore = new UserCore( db );
+                var feed = userCore.GetFeed(id);
+                if (feed == null)
+                    return StatusCode(
+                        (int)HttpStatusCode.NotFound,
+                        new ResponseApiError
+                        {
+                            Code = (int)HttpStatusCode.NotFound,
+                            HttpStatusCode = (int)HttpStatusCode.NotFound,
+                            Message = "Feed not found"
+                        });
+
+                return Ok(
+                    new ResponseApiSuccess
+                    {
+                        Code = 200,
+                        Data = feed,
+                        Message = "Feed retrieval successful"
+                    });
+            }
+            catch (Exception ex)
             {
                 return StatusCode(
                    (int)HttpStatusCode.InternalServerError,
@@ -104,7 +142,7 @@ namespace Rest_API_PWII.Controllers
                         {
                             Code = (int)HttpStatusCode.NotFound,
                             HttpStatusCode = (int)HttpStatusCode.NotFound,
-                            Message = "Tiene que buscar almenos un campo"
+                            Message = "At least one criteria should be true"
                         });
 
                 return Ok(
@@ -112,7 +150,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = searchResult,
-                        Message = "User retrieve successful"
+                        Message = "Search request successful"
                     });
             }
             catch (Exception ex)
@@ -175,7 +213,7 @@ namespace Rest_API_PWII.Controllers
                     {
                         Code = 200,
                         Data = "Success",
-                        Message = "User delete successful"
+                        Message = "User deletion successful"
                     });
             }
             catch ( Exception ex )

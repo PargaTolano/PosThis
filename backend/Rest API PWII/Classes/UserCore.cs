@@ -77,7 +77,7 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError ValidateExists( string id )
         {
-            var res = (from u in db.Users where u.Id == id select u).First();
+            var res = (from u in db.Users where u.Id == id select u).FirstOrDefault();
 
             if ( res == null )
                 return new ResponseApiError { 
@@ -172,6 +172,86 @@ namespace Rest_API_PWII.Classes
                      }).ToList();
 
             return searchResultModel;
+        }
+
+        public List<FeedPostModel> GetFeed( string id )
+        {
+            var err = ValidateExists( id );
+            if ( err != null )
+                return null;
+
+            var following = (from f in db.Follows
+                             where f.UserFollowerID == id
+                             select f.UserFollowID).ToList();
+
+            var posts =
+                (from p in db.Posts
+                 join u in db.Users
+                 on p.UserID equals u.Id
+                 orderby p.PostDate descending,
+                         (following.Contains( u.Id )) descending
+                 select new FeedPostModel {
+                     IsRepost       = false,
+                     Content        = p.Content,
+                     PublisherID    = u.Id,
+                     ReposterID     = null,
+                     PostID         = p.PostID,
+                     Date           = p.PostDate,
+                     MediaIDs       = (from po in db.Posts
+                                       join mp in db.MediaPosts
+                                       on po.PostID equals mp.PostID
+                                       join m in db.Medias
+                                       on mp.MediaID equals m.MediaID
+                                       where po.PostID == p.PostID
+                                       select m.MediaID).ToList()
+                    
+                 }).ToList();
+            
+             var reposts = 
+                (from rp in db.Reposts
+                join p in db.Posts
+                on rp.PostID equals p.PostID
+                join u in db.Users
+                on rp.UserID equals u.Id
+                orderby rp.RepostDate descending,
+                        (following.Contains(u.Id)) descending
+                where id != rp.UserID
+                select new FeedPostModel
+                {
+                    IsRepost        = true,
+                    Content         = p.Content,
+                    PublisherID     = p.UserID,
+                    ReposterID      = u.Id,
+                    PostID          = p.PostID,
+                    Date            = rp.RepostDate,
+                    MediaIDs        = (from po in db.Posts
+                                       join mp in db.MediaPosts
+                                       on po.PostID equals mp.PostID
+                                       join m in db.Medias
+                                       on mp.MediaID equals m.MediaID
+                                       where po.PostID == p.PostID
+                                       select m.MediaID).ToList()
+                }).ToList();
+
+            var pQuery = posts.AsQueryable();
+            var rpQuery = reposts.AsQueryable();
+
+            var rQuery = pQuery.Union(rpQuery);
+            rQuery = rQuery.OrderByDescending(x => x.Date);
+
+            var feed = (from fp in rQuery
+                        group fp by fp.PostID into groupedFP
+                        select new FeedPostModel { 
+                            IsRepost    = groupedFP.Any( fp => fp.IsRepost ),
+                            Content     = groupedFP.First().Content,
+                            PublisherID = groupedFP.First().PublisherID,
+                            ReposterID  = groupedFP.First().ReposterID,
+                            PostID      = groupedFP.First().PostID,
+                            Date        = groupedFP.First().Date,
+                            MediaIDs    = groupedFP.First().MediaIDs
+                        });
+
+            return feed.ToList();
         }
 
         public UserViewModel GetOne( string id )

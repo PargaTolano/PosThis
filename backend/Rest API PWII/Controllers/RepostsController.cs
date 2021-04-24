@@ -21,7 +21,6 @@ namespace Rest_API_PWII.Controllers
             this.db = db;
         }
 
-        // GET: api/<RepostsController>
         [HttpGet]
         public IActionResult Get()
         {
@@ -50,7 +49,7 @@ namespace Rest_API_PWII.Controllers
                     });
             }
         }
-        // POST: api/<RepostController>
+
         [HttpPost]
         public IActionResult Create( [FromBody] CRepostModel model )
         {
@@ -83,12 +82,12 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete( CRepostModel model )
+        public IActionResult Delete( int id )
         {
             try
             {
                 var repostsCore = new RepostsCore( db );
-                var err = repostsCore.Delete( model );
+                var err = repostsCore.Delete( id );
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
 
@@ -96,7 +95,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess 
                     { 
                         Code = 200, 
-                        Message = "Repost delete successful"
+                        Message = "Repost deletion successful"
                     });
             }
             catch ( Exception ex )
