@@ -1,17 +1,16 @@
-const protocol = 'http';
+const protocol = 'https';
 
-const host = 'localhost:4000';
+const host = 'localhost';
 
-const url = `${protocol}//:${host}`;
+const port = '44325'
+
+const url = `${protocol}//:${host}//${port}`;
 
 const getURL = ( subroute ) =>`${url}/${subroute}`;
-
-const getURLWithParams = ( subroute, param ) =>`${url}/${subroute}/${param}`;
 
 export {
     protocol,
     host,
     url,
-    getURL,
-    getURLWithParams
+    getURL
 }

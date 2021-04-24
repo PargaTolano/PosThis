@@ -92,7 +92,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetFeed( string id)
+        public IActionResult GetFeed( string id )
         {
             try
             {
