@@ -17,6 +17,10 @@
 --Query modificado 21/04/21
 --Se ha modificado los nombres de tablas a idioma inglés
 
+--Query modificado 23/04/21
+--Se ha eliminado un atributo ("Content") de la tabla Repost para 
+--para su mejor funcionamiento
+
 USE [master];
 
 DROP DATABASE IF EXISTS PosThis;
