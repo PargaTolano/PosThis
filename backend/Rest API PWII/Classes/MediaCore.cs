@@ -18,12 +18,12 @@ namespace Rest_API_PWII.Classes
             this.db = db;
         }
 
-        public ResponseApiError Validate( Media media )
+        public ResponseApiError Validate( MediaViewModel media )
         {
-            if ( media.Content != null && media.Content.Length != 0 )
+            if ( media.Content == null || media.Content?.Length == 0 )
                 return new ResponseApiError
                 {
-                    Code = 1,
+                    Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
                     Message = "Invalid data, must have media files"
                 };
@@ -38,7 +38,7 @@ namespace Rest_API_PWII.Classes
             if (res == null)
                 return new ResponseApiError
                 {
-                    Code = 2,
+                    Code = (int)HttpStatusCode.NotFound,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
                     Message = "Media does not exists in database"
                 };
@@ -53,22 +53,27 @@ namespace Rest_API_PWII.Classes
             if ( res == null )
                 return new ResponseApiError
                 {
-                    Code = 2,
+                    Code = (int)HttpStatusCode.NotFound,
                     HttpStatusCode = ( int ) HttpStatusCode.NotFound,
                     Message = "Media does not exist in database"
                 };
 
-
             return null;
         }
 
-        public ResponseApiError Create( Media media )
+        public ResponseApiError Create(MediaViewModel model )
         {
             try
             {
-                ResponseApiError err = Validate( media );
+                var err = Validate(model);
                 if (err != null) 
                     return err;
+
+                var media = new Media {
+                    MediaID = model.MediaID,
+                    MIME    = model.MIME,
+                    Content = model.Content
+                };
 
                 db.Medias.Add( media );
                 db.SaveChanges();
@@ -81,14 +86,14 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = 3,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = "Internal server error"
+                    Message = ex.Message
                 };
             }
         }
 
         public List<Media> GetAll()
         {
-            List<Media> media = (from m in db.Medias select m).ToList();
+            var media = (from m in db.Medias select m).ToList();
 
             return media;
         }
@@ -102,11 +107,11 @@ namespace Rest_API_PWII.Classes
         {
             try
             {
-                ResponseApiError err = ValidateExists( id );
+                var err = ValidateExists( id );
                 if (err != null)
                     return err;
 
-                Media mediaDb = db.Medias.First(m => m.MediaID == id);
+                var mediaDb = db.Medias.First(m => m.MediaID == id);
 
                 db.Medias.Remove( mediaDb );
 
@@ -118,9 +123,9 @@ namespace Rest_API_PWII.Classes
             {
                 return new ResponseApiError
                 {
-                    Code = 3,
+                    Code = (int)HttpStatusCode.InternalServerError,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = "Internal server error"
+                    Message = ex.Message
                 };
             }
         }

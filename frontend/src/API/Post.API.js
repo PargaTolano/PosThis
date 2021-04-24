@@ -1,51 +1,72 @@
-import { getURL, getURLWithParams } from './url.API';
+import {  getURL  } from 'API/url.API';
 
-const getPosts = async () => (await fetch( getURL( 'posts-get' ) )).json();
+import CUPostModel from 'model/CUPostModel';
 
-const searchPost = async ( query )=>{
-    let res = await fetch( getURLWithParams( 'posts-search', query ) );
+const getPosts = async () => {
+    let res = await fetch( getURL( 'api/post/Get' ) );
+    return res.json();
+}
+
+const getPost = async ( id ) => {
+    let res = await fetch( getURL( `api/post/Get/${id}` ) );
     return res.json();
 };
 
-const getPost = async ( id )=>{
-    let res = await fetch( getURLWithParams( 'posts-get-one', id ) );
-    return res.json();
-};
+/**
+ * @param {CUPostModel} model
+ */
+const createPost = async ( model ) => {
 
-const createPost = async ( post )=>{
+    const headers = {
+        'Content-Type': 'application/json'
+    }
+
     const options = {
         method: "POST",
-        body: JSON.stringify( post )
+        body: JSON.stringify( model ),
+        headers: headers
     };
 
-    let res = await fetch( getURL( 'posts-create' ), options );
+    let res = await fetch( getURL( `api/post/Create` ), options );
     return res.json();
 };
 
-const editPost = async ( id, user ) =>{
+/**
+ * @param {Number} id 
+ * @param {CUPostModel} model
+ */
+const updatePost = async ( id, model ) =>{
+
+    const headers = {
+        'Content-Type': 'application/json'
+    }
+
     const options = {
         method: "PUT",
-        body: JSON.stringify( user )
+        body: JSON.stringify( model ),
+        headers: headers
     };
 
-    let res = await fetch( getURLWithParams( 'posts-edit', id ), options );
+    let res = await fetch( getURL( `api/post/Update/${id}` ), options );
     return res.json();
 };
 
+/**
+ * @param   {Number} id
+ */
 const deletePost = async ( id ) =>{
     const options = {
         method: "DELETE",
     };
     
-    let res = await fetch( getURLWithParams( 'posts-delete', id ), options );
+    let res = await fetch( getURL( `api/post/Delete/${id}` ), options );
     return res.json();
 };
 
-export {
+export{
     getPosts,
-    searchPost,
     getPost,
     createPost,
-    editPost,
+    updatePost,
     deletePost
 }

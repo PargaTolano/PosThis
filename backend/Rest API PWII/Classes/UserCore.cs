@@ -48,7 +48,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateNewPassword( User user)
+        public ResponseApiError ValidateNewPassword( User user )
         {
             if ( user.PasswordHash == null )
                 return new ResponseApiError
@@ -89,7 +89,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public bool ValidateSearch (SearchRequestModel model)
+        public bool ValidateSearch ( SearchRequestModel model )
         {
             return model.SearchPosts || model.SearchUsers;
         }

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Rest_API_PWII.Classes;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
-using Rest_API_PWII.Classes;
 using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -24,7 +23,6 @@ namespace Rest_API_PWII.Controllers
             this.db = db;
         }
 
-        // GET: api/<PostController>
         [HttpGet]
         public IActionResult Get()
         {
@@ -56,7 +54,6 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        // GET api/<PostController>/5
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -97,7 +94,6 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        // POST api/<PostController>
         [HttpPost]
         public IActionResult Create([FromBody] CUPostModel post)
         {
@@ -129,7 +125,6 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        // PUT api/<PostController>/5
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody] CUPostModel post)
         {
@@ -162,7 +157,6 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        // DELETE api/<PostController>/5
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {

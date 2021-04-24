@@ -35,7 +35,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
+                        Code = 200,
                         Data = hashtag,
                         Message = "Hashtags retrieve successful"
                     });
@@ -46,7 +46,7 @@ namespace Rest_API_PWII.Controllers
                     (int)HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
-                        Code = 3,
+                        Code = (int)HttpStatusCode.InternalServerError,
                         HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });
@@ -95,7 +95,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
+                        Code = 200,
                         Data = model,
                         Message = "Hashtag create successful"
                     });

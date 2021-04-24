@@ -23,19 +23,19 @@ namespace Rest_API_PWII.Controllers
         {
             this.db = db;
         }
-        // GET: api/<MediaController>
+
         [HttpGet]
         public IActionResult Get()
         {
             try
             {
-                MediaCore mediaCore = new MediaCore(db);
-                List<Media> medias = mediaCore.GetAll();
+                var mediaCore = new MediaCore(db);
+                var medias = mediaCore.GetAll();
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
+                        Code = 200,
                         Data = medias,
                         Message = "Media retrieve successful"
                     });
@@ -46,14 +46,13 @@ namespace Rest_API_PWII.Controllers
                     (int)HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
-                        Code = 3,
+                        Code = (int)HttpStatusCode.InternalServerError,
                         HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });
             }
         }
 
-        // GET api/<MediaController>/5
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -65,7 +64,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
+                        Code = 200,
                         Data = media,
                         Message = "Media retrieve successful"
                     });
@@ -76,28 +75,27 @@ namespace Rest_API_PWII.Controllers
                    (int)HttpStatusCode.InternalServerError,
                    new ResponseApiError
                    {
-                       Code = 3,
+                       Code = (int)HttpStatusCode.InternalServerError,
                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                        Message = ex.Message
                    });
             }
         }
 
-        // POST api/<MediaController>
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Media media)
+        public async Task<IActionResult> Create([FromBody] MediaViewModel media)
         {
             try
             {
-                MediaCore mediaCore = new MediaCore(db);
-                ResponseApiError err = mediaCore.Create(media);
+                var mediaCore = new MediaCore(db);
+                var err = mediaCore.Create(media);
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
+                        Code = 200,
                         Data = media,
                         Message = "Media create successful"
                     });
@@ -108,46 +106,38 @@ namespace Rest_API_PWII.Controllers
                     (int)HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
-                        Code = 3,
+                        Code = (int)HttpStatusCode.InternalServerError,
                         HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });
             }
         }
 
-        // PUT api/<MediaController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-
-        }
-
-        // DELETE api/<MediaController>/5
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
             try
             {
-                MediaCore mediaCore = new MediaCore(db);
-                ResponseApiError err = mediaCore.Delete(id);
+                var mediaCore = new MediaCore(db);
+                var err = mediaCore.Delete(id);
                 if (err != null)
-                    return StatusCode(err.HttpStatusCode, err);
+                    return StatusCode( err.HttpStatusCode, err );
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
+                        Code = 200,
                         Data = "Success",
                         Message = "Media delete successful"
                     });
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 return StatusCode(
                     (int)HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
-                        Code = 3,
+                        Code = (int)HttpStatusCode.InternalServerError,
                         HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });
