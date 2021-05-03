@@ -4,6 +4,8 @@ import {BrowserRouter as Router, Route} from 'react-router-dom';
 import Feed from 'components/Feed';
 import Login from 'components/Login';
 
+import useCheckAuth from 'hooks/useCheckAuth';
+
 import logo from './logo.svg';
 import './App.css';
 
