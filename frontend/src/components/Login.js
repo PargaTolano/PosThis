@@ -1,9 +1,6 @@
 import React from "react";
-import Logo from "assets/placeholder.png";
-
 import {
   Grid,
-  Container,
   TextField,
   FormControlLabel,
   Button,
@@ -14,9 +11,11 @@ import {
   Checkbox,
   Typography,
 } from "@material-ui/core";
-
 import { makeStyles } from "@material-ui/core/styles";
 import PersonPinIcon from "@material-ui/icons/PersonPin";
+
+import CustomizedDialogs from 'components/Registro/dialogSignup';
+import SignUp from "components/Registro/Signup";
 
 import { getUsers } from "API/User.API";
 import useRequestLoadOnMount from "hooks/useRequestLoadOnMount";
@@ -24,10 +23,9 @@ import useRequestLoadOnMount from "hooks/useRequestLoadOnMount";
 const useStyles = makeStyles((theme) => ({
   root: {
     height: "100vh",
-  },
+  }, 
   image: {
-    backgroundImage:
-      "url(/img/backgroundPT.png)",
+    backgroundImage: "url(/img/backgroundPT.png)",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     backgroundPosition: "center",
@@ -43,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.dark,
   },
   form: {
-    width: "100%", // Fix IE 11 issue.
+    width: "100%", 
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -106,7 +104,7 @@ const Login = (props) => {
               color="primary"
               className={classes.submit}
             >
-              Sign In
+              Ingresar
             </Button>
 
             <Grid container>
@@ -116,9 +114,9 @@ const Login = (props) => {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"Regístrate aquí"}
-                </Link>
+                <CustomizedDialogs>
+                  <SignUp/>
+                </CustomizedDialogs>
               </Grid>
             </Grid>
           </form>
