@@ -1,9 +1,13 @@
 :root {
-    --main-color: #031B88;
+    --main-color: #04345b;
     --primary-color: #6096FD;
     --secondary-color: #AA86F8;
     --tertiary-color: #FB7B8E;
     --fourth-color: #FAA7B8;
+}
+
+.AppBar{
+    background-color: var( --primary-color) ; 
 }
 
 html {

@@ -4,17 +4,17 @@ import {BrowserRouter as Router, Route} from 'react-router-dom';
 import Feed from 'components/Feed';
 import Login from 'components/Login';
 
-import useCheckAuth from 'hooks/useCheckAuth';
 
-import logo from './logo.svg';
+import useCheckAuth from 'hooks/useCheckAuth';
 import './App.css';
+
 
 function App() {
   return (
     <div className="App">
       <Router>
-        <Route exact path="/" component={Feed}/>
-        <Route exact path="/login" component={Login}/>
+        <Route exact path="/Feed" component={Feed}/>
+        <Route exact path="/" component={Login}/>
       </Router>
     </div>
   );

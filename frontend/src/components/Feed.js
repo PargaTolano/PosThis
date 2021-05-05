@@ -1,16 +1,17 @@
 import React from 'react';
-
-import useCheckAuth from 'hooks/useCheckAuth';
+import SearchAppBar from "components/Inicio/Navbar";
+import { Container, Grid } from '@material-ui/core';
+import FixedContainer from "components/Inicio/Container"
+//import useCheckAuth from 'hooks/useCheckAuth';
 
 const Feed = ( props ) => {
-
-    useCheckAuth();
-
+    //useCheckAuth();
     return (
-        <div>
-            <h1>Este es el feed</h1>
-        </div>
-    )
+    <Container classname="ContenedorFeed">
+        <SearchAppBar position="fixed"/>
+        <FixedContainer/>
+    </Container>
+    );
 }
 
 export default Feed;
