@@ -22,26 +22,26 @@ import useRequestLoadOnMount from "hooks/useRequestLoadOnMount";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: "100vh",
+    height: '100vh',
   }, 
   image: {
-    backgroundImage: "url(/img/backgroundPT.png)",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
+    backgroundImage: 'url(/img/backgroundPT.png)',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   },
   paper: {
     margin: theme.spacing(8, 4),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.primary.dark,
   },
   form: {
-    width: "100%", 
+    width: '100%', 
     marginTop: theme.spacing(1),
   },
   submit: {

@@ -1,5 +1,4 @@
 import React from "react";
-
 import {
   AppBar,
   Toolbar,
@@ -10,10 +9,8 @@ import {
   Menu,
   Button,
 } from "@material-ui/core";
-
 import {Link} from 'react-router-dom'
 import { fade, makeStyles } from "@material-ui/core/styles";
-import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 
@@ -29,58 +26,59 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
-    display: "none",
-    [theme.breakpoints.up("sm")]: {
-      display: "block",
+    display: 'none',
+    [theme.breakpoints.up('sm')]: {
+      display: 'block',
     },
   },
   titleimg: {},
   search: {
-    position: "relative",
+    position: 'relative',
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.common.white, 0.15),
-    "&:hover": {
+    '&:hover': {
       backgroundColor: fade(theme.palette.common.white, 0.25),
     },
     marginLeft: 0,
     marginRight: theme.spacing(2),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
       marginLeft: theme.spacing(1),
-      width: "auto",
+      width: 'auto',
     },
   },
   searchIcon: {
     padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   inputRoot: {
-    color: "inherit",
+    color: 'inherit',
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      width: '12ch',
+      '&:focus': {
+        width: '20ch',
       },
     },
+  },
+  Tool:{
+    position: 'sticky',
+    top: 0,
   },
 }));
 
 export default function SearchAppBar() {
   const classes = useStyles();
-  const preventDefault = (event) => event.preventDefault();
-
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -92,13 +90,11 @@ export default function SearchAppBar() {
   };
 
   return (
-    <div className={classes.root}>
-      <AppBar position="fixed" className="AppBar">
+      <AppBar className={classes.Tool}>
         <Toolbar>
-
           <div>
               <Link to="/feed">
-              <img className={classes.PosthisLogo} src={Logo} width="50" height="50"/>
+              <img className={classes.PosthisLogo} src= {Logo} width= '50' height='50'/>
               </Link>
           </div>
 
@@ -127,7 +123,7 @@ export default function SearchAppBar() {
               aria-haspopup="true"
               onClick={handleClick}
             >
-              <AccountCircle className="CirculoCuenta" />
+            <AccountCircle/>
             </IconButton>
 
             <Menu
@@ -143,6 +139,6 @@ export default function SearchAppBar() {
           </div>
         </Toolbar>
       </AppBar>
-    </div>
+
   );
 }
