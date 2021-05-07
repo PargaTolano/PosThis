@@ -10,7 +10,7 @@ import {
     Box,
     Typography,
     Container,
-}from  "@material-ui/core";
+}from  '@material-ui/core';
 
 import AccessibilityNewRoundedIcon from '@material-ui/icons/AccessibilityNewRounded';
 import { makeStyles } from '@material-ui/core/styles';
@@ -39,7 +39,7 @@ function SignUp() {
 
   return (
 
-    <Container component="main" maxWidth="xs">
+    <Container component='main' maxWidth='xs'>
       <CssBaseline />
       <div className={classes.paper}>
 
@@ -47,11 +47,11 @@ function SignUp() {
           <AccessibilityNewRoundedIcon/>
         </Avatar>
 
-        <Typography component="h1" variant="h5">
+        <Typography component='h1' variant='h5'>
           <strong>Regístrate</strong>
         </Typography>
 
-        <Typography variant="h7">
+        <Typography variant='h7'>
           Únete a la nueva comunidad de PosThis
         </Typography>
 
@@ -60,60 +60,60 @@ function SignUp() {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
-                autoComplete="fname"
-                name="Username"
-                variant="outlined"
+                autoComplete='fname'
+                name='Username'
+                variant='outlined'
                 required
                 fullWidth
-                id="Username"
-                label="Username"
+                id='Username'
+                label='Username'
                 autoFocus
               />
             </Grid>
 
             <Grid item xs={12} sm={6}>
               <TextField
-                variant="outlined"
+                variant='outlined'
                 required
                 fullWidth
-                id="tag"
-                label="Tag"
-                name="tag"
-                autoComplete="tagname"
+                id='tag'
+                label='Tag'
+                name='tag'
+                autoComplete='tagname'
               />
             </Grid>
 
             <Grid item xs={12}>
               <TextField
-                variant="outlined"
+                variant='outlined'
                 required
                 fullWidth
-                id="email"
-                label="Email"
-                name="email"
-                autoComplete="email"
+                id='email'
+                label='Email'
+                name='email'
+                autoComplete='email'
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                variant="outlined"
+                variant='outlined'
                 required
                 fullWidth
-                name="password"
-                label="Contraseña"
-                type="password"
-                id="password"
-                autoComplete="current-password"
+                name='password'
+                label='Contraseña'
+                type='password'
+                id='password'
+                autoComplete='current-password'
               />
             </Grid>
            
           </Grid>
 
           <Button
-            type="submit"
+            type='submit'
             fullWidth
-            variant="contained"
-            color="secondary"
+            variant='contained'
+            color='secondary'
             className={classes.submit}
           >
             Regístrate ahora

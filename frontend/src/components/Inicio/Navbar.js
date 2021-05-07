@@ -74,6 +74,10 @@ const useStyles = makeStyles((theme) => ({
   Tool:{
     position: 'sticky',
     top: 0,
+    backgroundColor: '#1b2452',
+  },
+  userIcon:{
+    color: '#ea5970',
   },
 }));
 
@@ -123,7 +127,7 @@ export default function SearchAppBar() {
               aria-haspopup="true"
               onClick={handleClick}
             >
-            <AccountCircle/>
+            <AccountCircle className={classes.userIcon}/>
             </IconButton>
 
             <Menu

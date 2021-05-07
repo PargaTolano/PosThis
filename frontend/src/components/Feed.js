@@ -1,22 +1,20 @@
-import React from "react";
-import SearchAppBar from "components/Inicio/Navbar";
-import FixedContainer from "components/Inicio/Container";
-import { ThemeProvider } from "@material-ui/core/styles";
-import theme from "../temaConfig";
-import {makeStyles} from '@material-ui/core/styles'
-import backapp2 from 'assets/backapp2.png'
+import React from 'react';
+import SearchAppBar from 'components/Inicio/Navbar';
+import FixedContainer from 'components/Inicio/Container';
+import { makeStyles } from '@material-ui/core/styles';
+import backapp3 from 'assets/backapp3.png';
 
 //import useCheckAuth from 'hooks/useCheckAuth';
 
 const useStyles = makeStyles((theme) => ({
-  Background:{
-    backgroundImage: `url('${backapp2}')`,
+  Background: {
+    backgroundImage: `url('${backapp3}')`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundAttachment: 'fixed',
     backgroundRepeat: 'no-repeat',
     height: '100%',
-  }
+  },
 }));
 
 const Feed = (props) => {
@@ -24,12 +22,11 @@ const Feed = (props) => {
   const classes = useStyles();
 
   return (
-      <div className= {classes.Background}>
-        <SearchAppBar />
-        <FixedContainer/>
-      </div>
-
-      
+    <div className={classes.Background}>
+      <SearchAppBar />
+      <FixedContainer>
+      </FixedContainer>
+    </div>
   );
 };
 
