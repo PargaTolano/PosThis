@@ -1,9 +1,6 @@
-import React from "react";
-import Logo from "assets/placeholder.png";
-
+import React from 'react';
 import {
   Grid,
-  Container,
   TextField,
   FormControlLabel,
   Button,
@@ -13,37 +10,38 @@ import {
   Paper,
   Checkbox,
   Typography,
-} from "@material-ui/core";
+} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import PersonPinIcon from '@material-ui/icons/PersonPin';
 
-import { makeStyles } from "@material-ui/core/styles";
-import PersonPinIcon from "@material-ui/icons/PersonPin";
+import CustomizedDialogs from 'components/Registro/dialogSignup';
+import SignUp from 'components/Registro/Signup';
 
-import { getUsers } from "API/User.API";
-import useRequestLoadOnMount from "hooks/useRequestLoadOnMount";
+import { getUsers } from 'API/User.API';
+import useRequestLoadOnMount from 'hooks/useRequestLoadOnMount';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: "100vh",
-  },
+    height: '100vh',
+  }, 
   image: {
-    backgroundImage:
-      "url(/img/backgroundPT.png)",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
+    backgroundImage: 'url(/img/backgroundPT.png)',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   },
   paper: {
     margin: theme.spacing(8, 4),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.primary.dark,
   },
   form: {
-    width: "100%", // Fix IE 11 issue.
+    width: '100%', 
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -56,7 +54,7 @@ const Login = (props) => {
   const classes = useStyles();
 
   return (
-    <Grid container component="main" className={classes.root}>
+    <Grid container component='main' className={classes.root}>
       <CssBaseline />
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
@@ -65,60 +63,60 @@ const Login = (props) => {
             <PersonPinIcon />
           </Avatar>
 
-          <Typography component="h1" variant="h5">
+          <Typography component='h1' variant='h5'>
             <strong>Inicia Sesión</strong>
           </Typography>
 
           <form className={classes.form} noValidate>
             <TextField
-              variant="outlined"
-              margin="normal"
+              variant='outlined'
+              margin='normal'
               required
               fullWidth
-              id="email"
-              label="Correo electrónico"
-              name="email"
-              autoComplete="email"
+              id='email'
+              label='Correo electrónico'
+              name='email'
+              autoComplete='email'
               autoFocus
             />
 
             <TextField
-              variant="outlined"
-              margin="normal"
+              variant='outlined'
+              margin='normal'
               required
               fullWidth
-              name="password"
-              label="Contraseña"
-              type="password"
-              id="password"
-              autoComplete="current-password"
+              name='password'
+              label='Contraseña'
+              type='password'
+              id='password'
+              autoComplete='current-password'
             />
 
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Recordar contraseña"
+              control={<Checkbox value='remember' color='primary' />}
+              label='Recordar contraseña'
             />
 
             <Button
-              type="submit"
+              type='submit'
               fullWidth
-              variant="contained"
-              color="primary"
+              variant='contained'
+              color='primary'
               className={classes.submit}
             >
-              Sign In
+              Ingresar
             </Button>
 
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link href='#' variant='body2'>
                   ¿Olvidaste tu contraseña?
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"Regístrate aquí"}
-                </Link>
+                <CustomizedDialogs>
+                  <SignUp/>
+                </CustomizedDialogs>
               </Grid>
             </Grid>
           </form>

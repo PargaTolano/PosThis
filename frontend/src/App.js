@@ -1,20 +1,23 @@
 import React from 'react'
 import {BrowserRouter as Router, Route} from 'react-router-dom';
-
 import Feed from 'components/Feed';
 import Login from 'components/Login';
+import DetailPost from 'components/DetailPost';
+import searchresult from 'components/searchResult';
+import {makeStyles} from '@material-ui/core/styles'
+import backapp from 'assets/backapp.png'
 
 import useCheckAuth from 'hooks/useCheckAuth';
 
-import logo from './logo.svg';
-import './App.css';
-
 function App() {
+
   return (
-    <div className="App">
+    <div className= 'App' >
       <Router>
-        <Route exact path="/" component={Feed}/>
-        <Route exact path="/login" component={Login}/>
+        <Route exact path='/feed' component={Feed}/>
+        <Route exact path='/detailpost' component={DetailPost}/>
+        <Route exact path='/searchresult' component={searchresult}/>
+        <Route exact path='/' component={Login}/>
       </Router>
     </div>
   );
