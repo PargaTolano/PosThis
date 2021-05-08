@@ -13,7 +13,7 @@ const useRequestLoadOnMount = ( request ) =>{
         .then( res => setState( { ready: true, response: res} ) );
     }, []);
 
-    return state;
+    return [state.ready, state.response];
 };
 
 export default useRequestLoadOnMount;

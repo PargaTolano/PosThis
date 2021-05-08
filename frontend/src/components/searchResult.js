@@ -5,7 +5,10 @@ import backapp3 from "assets/backapp3.png";
 import CardPost from "./Post/CardPost";
 import UseCard from "components/Search/userCard";
 
-const useStyles = makeStyles((theme) => ({
+import { getPost } from 'API/Post.API';
+import useRequestLoadOnMount from "hooks/useRequestLoadOnMount";
+
+const useStyles = makeStyles( ( theme ) => ({
   Background: {
     backgroundImage: `url('${backapp3}')`,
     backgroundSize: "cover",
@@ -47,9 +50,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SearchResult = (props) => {
+const SearchResult = ( props ) => {
   //useCheckAuth();
   const classes = useStyles();
+
+  const [ ready, response ] = useRequestLoadOnMount( async () => await getPost(6) );
+  console.log(response);
 
   return (
     <div className={classes.Background}>
@@ -69,7 +75,9 @@ const SearchResult = (props) => {
         <div component="h4" variant="h2" className={classes.titleBegin}>
           <strong>Posts/Hashtags Relacionados</strong>
         </div>
-        <CardPost />
+        {
+          ready && <CardPost post={response.data}/>
+        }
       </div>
     </div>
   );

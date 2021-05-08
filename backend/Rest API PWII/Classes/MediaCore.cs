@@ -100,20 +100,18 @@ namespace Rest_API_PWII.Classes
                     };
 
                     var entry = db.Medias.Add( media );
-                    var mediaDb = entry.Entity;
+                    db.SaveChanges();
 
                     var viewModel = new MediaViewModel
                     {
-                        MediaID = mediaDb.MediaID,
-                        MIME    = mediaDb.MIME,
-                        Path    = $"{Scheme}://{Host}{PathBase}/static/{mediaDb.Name}",
-                        IsVideo = mediaDb.MIME.Contains( "video" )
+                        MediaID = media.MediaID,
+                        MIME    = media.MIME,
+                        Path    = $"{Scheme}://{Host}{PathBase}/static/{media.Name}",
+                        IsVideo = media.MIME.Contains( "video" )
                     };
 
                     list.Add( viewModel );
                 }
-                
-                db.SaveChanges();
 
                 return null;
             }

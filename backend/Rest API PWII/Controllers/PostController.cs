@@ -96,7 +96,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create( [FromBody] CPostModel post )
+        public IActionResult Create( [FromForm] CPostModel post )
         {
             try
             {

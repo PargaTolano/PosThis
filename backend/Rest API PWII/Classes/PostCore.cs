@@ -116,8 +116,8 @@ namespace Rest_API_PWII.Classes
                     PostDate = DateTime.Now
                 };
 
-                var entry = db.Posts.Add(post);
-                var postDb = entry.Entity;
+                db.Posts.Add(post);
+                db.SaveChanges();
 
                 if (model.Files.Count != 0) { 
                 
@@ -128,16 +128,15 @@ namespace Rest_API_PWII.Classes
                         var mediaPost = new MediaPost
                         {
                             MediaID = id,
-                            PostID = postDb.PostID,
+                            PostID = post.PostID,
                             Media = db.Medias.FirstOrDefault(x => x.MediaID == id),
-                            Post = postDb
+                            Post = post
                         };
 
-                        db.MediaPosts.Add( mediaPost );
+                        db.MediaPosts.Add( mediaPost );    
                     }
+                    db.SaveChanges();
                 }
-                
-                db.SaveChanges();
 
                 return null;
             }

@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Login = (props) => {
-  const { ready, response } = useRequestLoadOnMount(getUsers);
+  const [ready, response ]= useRequestLoadOnMount(getUsers);
   const classes = useStyles();
 
   return (
