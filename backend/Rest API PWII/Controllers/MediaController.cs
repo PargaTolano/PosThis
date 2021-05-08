@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Rest_API_PWII.Classes;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
@@ -12,16 +14,18 @@ using System.Threading.Tasks;
 
 namespace Rest_API_PWII.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class MediaController : ControllerBase
     {
 
         private PosThisDbContext db;
+        private readonly IHostingEnvironment _env;
 
-        public MediaController(PosThisDbContext db)
+        public MediaController(IHostingEnvironment env, PosThisDbContext db)
         {
             this.db = db;
+            _env = env;
         }
 
         [HttpGet]
@@ -35,7 +39,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
+                        Code = (int)HttpStatusCode.OK,
                         Data = medias,
                         Message = "Media retrieve successful"
                     });
@@ -54,20 +58,25 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get( int id )
         {
             try
             {
-                MediaCore mediaCore = new MediaCore(db);
-                Media media = mediaCore.GetOne(id);
+                var mediaCore = new MediaCore(db);
+                var media = mediaCore.GetOne(id, Request.Scheme, Request.Host.ToString(), Request.PathBase);
 
-                return Ok(
-                    new ResponseApiSuccess
-                    {
-                        Code = 200,
-                        Data = media,
-                        Message = "Media retrieve successful"
-                    });
+                if ( media == null ) {
+                    return StatusCode(
+                   (int)HttpStatusCode.NotFound,
+                   new ResponseApiError
+                   {
+                       Code = (int)HttpStatusCode.NotFound,
+                       HttpStatusCode = (int)HttpStatusCode.NotFound,
+                       Message = "El archivo de media solicitado no existe"
+                   });
+                }
+
+                return Redirect(media.Path);
             }
             catch (Exception ex)
             {
@@ -83,24 +92,25 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] MediaViewModel media)
+        public async Task<IActionResult> Create( [FromForm] List<IFormFile> files )
         {
             try
             {
-                var mediaCore = new MediaCore(db);
-                var err = mediaCore.Create(media);
+                var list = new List<MediaViewModel>();
+                var mediaCore = new MediaCore( db );
+                var err = mediaCore.Create( files, Request.Scheme, Request.Host.ToString(), Request.PathBase, ref list );
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
-                        Data = media,
+                        Code = (int)HttpStatusCode.OK,
+                        Data = {},
                         Message = "Media create successful"
                     });
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 return StatusCode(
                     (int)HttpStatusCode.InternalServerError,
@@ -126,8 +136,8 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
-                        Data = "Success",
+                        Code = (int)HttpStatusCode.OK,
+                        Data = { },
                         Message = "Media delete successful"
                     });
             }

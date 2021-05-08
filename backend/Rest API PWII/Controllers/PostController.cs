@@ -7,6 +7,7 @@ using Rest_API_PWII.Classes;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
 using System.Net;
+using Microsoft.AspNetCore.Hosting;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,10 +18,12 @@ namespace Rest_API_PWII.Controllers
     public class PostController : ControllerBase
     {
         private PosThisDbContext db;
+        private readonly IHostingEnvironment _env;
 
-        public PostController( PosThisDbContext db )
+        public PostController( IHostingEnvironment env, PosThisDbContext db )
         {
             this.db = db;
+            _env = env;
         }
 
         [HttpGet]
@@ -28,54 +31,52 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-
                 var postCore = new PostCore(db);
-                var posts = postCore.GetAll();
+                var posts = postCore.GetAll( Request.Scheme, Request.Host.ToString(), Request.PathBase );
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
+                        Code = ( int )HttpStatusCode.OK,
                         Data = posts,
                         Message = "Posts retrieve successful"
                     });
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
 
                 return StatusCode(
-                   (int)HttpStatusCode.InternalServerError,
+                   ( int ) HttpStatusCode.InternalServerError,
                    new ResponseApiError
                    {
-                       Code = (int)HttpStatusCode.InternalServerError,
-                       HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                       Code = ( int ) HttpStatusCode.InternalServerError,
+                       HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
                        Message = ex.Message
                    });
             }
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get( int id )
         {
             try
             {
-
-                var postCore = new PostCore(db);
-                var post = postCore.GetOne( id );
+                var postCore = new PostCore( db );
+                var post = postCore.GetOne( id, Request.Scheme, Request.Host.ToString(), Request.PathBase );
 
                 if (post == null)
                     return StatusCode((int)HttpStatusCode.NotFound,
                         new ResponseApiError 
                         { 
-                            Code = (int ) HttpStatusCode.NotFound,
-                            HttpStatusCode = (int)HttpStatusCode.NotFound,
+                            Code = ( int ) HttpStatusCode.NotFound,
+                            HttpStatusCode = ( int ) HttpStatusCode.NotFound,
                             Message = "Post not found"
                         });
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
+                        Code = ( int ) HttpStatusCode.OK,
                         Data = post,
                         Message = "Post retrieve successful"
                     });
@@ -87,46 +88,46 @@ namespace Rest_API_PWII.Controllers
                    (int)HttpStatusCode.InternalServerError,
                    new ResponseApiError
                    {
-                       Code = (int)HttpStatusCode.InternalServerError,
-                       HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                       Code = ( int ) HttpStatusCode.InternalServerError,
+                       HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
                        Message = ex.Message
                    });
             }
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] CUPostModel post)
+        public IActionResult Create( [FromBody] CPostModel post )
         {
             try
             {
-                var postCore = new PostCore(db);
-                var err = postCore.Create( post );
-                if (err != null)
-                    return StatusCode(err.HttpStatusCode, err);
+                var postCore = new PostCore( db );
+                var err = postCore.Create( post, Request.Scheme, Request.Host.ToString(), Request.PathBase );
+                if ( err != null )
+                    return StatusCode( err.HttpStatusCode, err );
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
+                        Code = ( int ) HttpStatusCode.OK,
                         Data = post,
                         Message = "Post create successful"
                     });
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
                 return StatusCode(
-                    (int)HttpStatusCode.InternalServerError,
+                    ( int ) HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
-                        Code = 3,
-                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                        Code = ( int ) HttpStatusCode.InternalServerError,
+                        HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });
             }
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] CUPostModel post)
+        public IActionResult Update( int id, [FromBody] CPostModel post )
         {
             try
             {
@@ -158,7 +159,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete( int id )
         {
             try
             {

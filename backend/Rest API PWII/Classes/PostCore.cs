@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -31,10 +32,10 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateCU(CUPostModel createPostModel)
+        public ResponseApiError ValidateCU(CPostModel createPostModel)
         {
             bool textoValido = !string.IsNullOrEmpty(createPostModel.Content);
-            bool mediaValido = createPostModel.mediaIDs?.Count > 0;
+            bool mediaValido = createPostModel.Files?.Count > 0;
 
             if (textoValido || mediaValido)
                 return null;
@@ -76,15 +77,19 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError Create( CUPostModel createPostModel )
+        public ResponseApiError Create(
+            CPostModel model,
+            string Scheme,
+            string Host,
+            string PathBase)
         {
             try
             {
-                var err = ValidateCU(createPostModel);
+                var err = ValidateCU( model );
                 if (err != null)
                     return err;
 
-                var userDb = db.Users.FirstOrDefault(u => u.Id == createPostModel.UserID);
+                var userDb = db.Users.FirstOrDefault( u => u.Id == model.UserID );
                 if (userDb == null)
                     return new ResponseApiError
                     {
@@ -93,41 +98,45 @@ namespace Rest_API_PWII.Classes
                         Message = "User not found"
                     };
 
-                var post = new Post { 
+                var list = new List<MediaViewModel>();
+
+                var mediaCore = new MediaCore( db );
+                err = mediaCore.Create( model.Files, Scheme, Host, PathBase, ref list);
+
+                
+                if (list == null && model.Files.Count != 0)
+                    throw new Exception("Error subiendo media");
+
+
+                var post = new Post
+                {
                     UserID = userDb.Id,
                     User = userDb,
-                    Content = createPostModel.Content,
+                    Content = model.Content,
+                    PostDate = DateTime.Now
                 };
 
-                var entry = db.Posts.Add( post );
-
+                var entry = db.Posts.Add(post);
                 var postDb = entry.Entity;
 
-                postDb.PostDate = DateTime.Now;
+                if (model.Files.Count != 0) { 
+                
+                    var ids = (from mvm in list select mvm.MediaID).ToList();
 
-                if (createPostModel.mediaIDs?.Count > 0)
-                {
-                    var medias = db.Medias.Where(m => createPostModel.mediaIDs.Contains(m.MediaID)).ToList();
-                    var mediaPosts = new List<MediaPost>();
-
-                    foreach ( var m in medias)
+                    foreach (var id in ids)
                     {
                         var mediaPost = new MediaPost
                         {
-                            MediaID = m.MediaID,
-                            Media = m,
-                            Post = postDb,
-                            PostID = postDb.PostID
+                            MediaID = id,
+                            PostID = postDb.PostID,
+                            Media = db.Medias.FirstOrDefault(x => x.MediaID == id),
+                            Post = postDb
                         };
 
                         db.MediaPosts.Add( mediaPost );
-
-                        mediaPosts.Add( mediaPost );
                     }
-
-                    postDb.MediaPosts = mediaPosts;
                 }
-
+                
                 db.SaveChanges();
 
                 return null;
@@ -138,14 +147,14 @@ namespace Rest_API_PWII.Classes
                 {
                     Code = (int)HttpStatusCode.InternalServerError,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = ex.InnerException.Message
+                    Message = ex.Message
                 };
             }
         }
 
-        public List<PostViewModel> GetAll()
+        public List<PostViewModel> GetAll( string  Scheme, string Host, string PathBase )
         {
-            List<PostViewModel> posts = 
+            var posts = 
                 ( from p in db.Posts 
                   join u in db.Users
                   on p.UserID equals u.Id
@@ -157,19 +166,24 @@ namespace Rest_API_PWII.Classes
                       UserName  = u.UserName,
                       UserTag   = u.Tag,
                       UserProfilePicID = u.ProfilePhotoMediaID,
-                      MediaIDs = (from mp in db.MediaPosts
+                      Medias = (  from mp in db.MediaPosts
                                   join po in db.Posts
                                   on mp.PostID equals po.PostID
                                   join m in db.Medias
                                   on mp.MediaID equals m.MediaID
                                   where po.PostID == p.PostID
-                                  select m.MediaID).ToList()
+                                  select new MediaViewModel {
+                                     MediaID = m.MediaID,
+                                     MIME = m.MIME,
+                                     Path = $"{Scheme}://{Host}{PathBase}/static/{m.Name}",
+                                     IsVideo = m.MIME.Contains( "video" )
+                                  }).ToList()
                   }).ToList();
 
             return posts;
         }
 
-        public PostViewModel GetOne( int id )
+        public PostViewModel GetOne( int id, string Scheme, string Host, string PathBase)
         {
             return (from p in db.Posts
                     join u in db.Users
@@ -183,17 +197,23 @@ namespace Rest_API_PWII.Classes
                         UserName = u.UserName,
                         UserTag = u.Tag,
                         UserProfilePicID = u.ProfilePhotoMediaID,
-                        MediaIDs = (from mp in db.MediaPosts
-                                    join po in db.Posts
-                                    on mp.PostID equals po.PostID
-                                    join m in db.Medias
-                                    on mp.MediaID equals m.MediaID
-                                    where po.PostID == id
-                                    select m.MediaID).ToList()
+                        Medias = (from mp in db.MediaPosts
+                                  join po in db.Posts
+                                  on mp.PostID equals po.PostID
+                                  join m in db.Medias
+                                  on mp.MediaID equals m.MediaID
+                                  where po.PostID == p.PostID
+                                  select new MediaViewModel
+                                  {
+                                      MediaID = m.MediaID,
+                                      MIME = m.MIME,
+                                      Path = $"{Scheme}://{Host}{PathBase}/static/{m.Name}",
+                                      IsVideo = m.MIME.Contains("video")
+                                  }).ToList()
                     }).FirstOrDefault();
         }
 
-        public ResponseApiError Update( int id, CUPostModel post )
+        public ResponseApiError Update( int id, CPostModel post )
         {
             try
             {
@@ -220,9 +240,9 @@ namespace Rest_API_PWII.Classes
                     postDb.MediaPosts = null;
                 }
 
-                if ( post.mediaIDs?.Count > 0 )
+                /*if ( post.Files?.Count > 0 )
                 {
-                    var medias = db.Medias.Where(m => post.mediaIDs.Contains(m.MediaID)).ToList();
+                    var medias = db.Medias.Where(m => post.Files.Contains(m.MediaID)).ToList();
                     var mediaPosts = new List<MediaPost>();
 
                     foreach (var m in medias)
@@ -241,7 +261,7 @@ namespace Rest_API_PWII.Classes
                     }
 
                     postDb.MediaPosts = mediaPosts;
-                }
+                }*/
 
                 db.SaveChanges();
 

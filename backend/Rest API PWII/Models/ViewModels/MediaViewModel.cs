@@ -11,6 +11,8 @@ namespace Rest_API_PWII.Models.ViewModels
 
         public string MIME { get; set; }
 
-        public byte[] Content { get; set; }
+        public string Path { get; set; }
+
+        public bool IsVideo { get; set; }
     }
 }

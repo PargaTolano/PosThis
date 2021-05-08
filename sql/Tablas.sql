@@ -21,6 +21,8 @@
 --Se ha eliminado un atributo ("Content") de la tabla Repost para 
 --para su mejor funcionamiento
 
+--Query modificado 
+
 USE [master];
 
 DROP DATABASE IF EXISTS PosThis;
@@ -275,7 +277,7 @@ CREATE TABLE Follows(
 CREATE TABLE Medias(
 	MediaID				INTEGER PRIMARY KEY IDENTITY,
 	MIME				VARCHAR(20)					,
-	Content				VARBINARY(MAX)
+	Name				VARCHAR(MAX)
 );
 
 ALTER TABLE [dbo].[AspNetUsers] 

@@ -17,6 +17,8 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace Rest_API_PWII
 {
@@ -89,6 +91,14 @@ namespace Rest_API_PWII
             }
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine( env.ContentRootPath, "static") ),
+                RequestPath = "/static"
+            });
+
             app.UseRouting();
 
             app.UseCors("AllowOrigin");

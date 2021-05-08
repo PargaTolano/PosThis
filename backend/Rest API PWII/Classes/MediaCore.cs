@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
 
@@ -18,9 +20,9 @@ namespace Rest_API_PWII.Classes
             this.db = db;
         }
 
-        public ResponseApiError Validate( MediaViewModel media )
+        public ResponseApiError Validate(List<IFormFile> files )
         {
-            if ( media.Content == null || media.Content?.Length == 0 )
+            if ( files?.Count == 0 )
                 return new ResponseApiError
                 {
                     Code = (int)HttpStatusCode.BadRequest,
@@ -61,30 +63,66 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError Create(MediaViewModel model )
+        public ResponseApiError Create( 
+            List<IFormFile> files,
+            string Scheme,
+            string Host,
+            string PathBase,
+            ref List<MediaViewModel> list )
         {
             try
             {
-                var err = Validate(model);
+                var err = Validate(files);
                 if (err != null) 
                     return err;
 
-                var media = new Media {
-                    MediaID = model.MediaID,
-                    MIME    = model.MIME,
-                    Content = model.Content
-                };
+                list = new List<MediaViewModel>();
 
-                db.Medias.Add( media );
+
+                foreach( var file in files)
+                {
+                    if (file.Length == 0)
+                        continue;
+
+                    var fileName = Guid.NewGuid() + file.FileName;
+
+                    var path = Path.Combine("static", fileName);
+
+                    using ( var fileStream = new FileStream( path, FileMode.Create ) )
+                    {
+                        file.CopyTo( fileStream );
+                    }
+
+                    var media = new Media
+                    {
+                        MIME = file.ContentType,
+                        Name = fileName
+                    };
+
+                    var entry = db.Medias.Add( media );
+                    var mediaDb = entry.Entity;
+
+                    var viewModel = new MediaViewModel
+                    {
+                        MediaID = mediaDb.MediaID,
+                        MIME    = mediaDb.MIME,
+                        Path    = $"{Scheme}://{Host}{PathBase}/static/{mediaDb.Name}",
+                        IsVideo = mediaDb.MIME.Contains( "video" )
+                    };
+
+                    list.Add( viewModel );
+                }
+                
                 db.SaveChanges();
 
                 return null;
             }
             catch ( Exception ex )
             {
+                list = null;
                 return new ResponseApiError
                 {
-                    Code = 3,
+                    Code = (int)HttpStatusCode.InternalServerError,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                     Message = ex.Message
                 };
@@ -98,9 +136,20 @@ namespace Rest_API_PWII.Classes
             return media;
         }
 
-        public Media GetOne( int id )
+        public MediaViewModel GetOne( int id , string Scheme, string Host, string PathBase )
         {
-            return db.Medias.FirstOrDefault( m => m.MediaID == id );
+            var MediaViewModel = (
+                from m in db.Medias
+                where m.MediaID == id
+                select new MediaViewModel
+                {
+                    MediaID = m.MediaID,
+                    MIME = m.MIME,
+                    Path =$"{Scheme}://{Host}{PathBase}/static/{m.Name}",
+                    IsVideo = m.MIME.Contains("video")
+                }).FirstOrDefault();
+
+            return MediaViewModel;
         }
 
         public ResponseApiError Delete( int id )

@@ -183,7 +183,7 @@ namespace Rest_API_PWII.Models
                     .IsRequired();
 
                 media
-                    .Property(e => e.Content)
+                    .Property(e => e.Name)
                     .IsRequired();
             });
 
