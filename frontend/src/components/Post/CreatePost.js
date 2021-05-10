@@ -9,6 +9,7 @@ import {
   TextField,
   Button,
 } from "@material-ui/core";
+import { CenterFocusStrong } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
  
@@ -16,11 +17,12 @@ const useStyles = makeStyles((theme) => ({
     marginLeft :theme.spacing(4),
     marginRight:theme.spacing(35),
     background:'white',
-    width: '90%', 
+    width: '87%', 
     marginTop: theme.spacing(0.5),
     height:'40%',
     padding:theme.spacing(3),
     borderRadius: 10,  
+    alignItems: 'center',
   },
   submit: {
     
@@ -33,14 +35,23 @@ const useStyles = makeStyles((theme) => ({
     color: 'white',
     alignSelf:'center',
   },
-  
+  titleForm: {
+    justifyContent: 'space-around',
+    color: theme.palette.primary.dark ,
+    alignSelf:'center',
+    color:'#ea5970',
+  },
   
 }));
 
 function CreatePost() {
   const classes = useStyles();
   return (
+
              <form className={classes.form} noValidate>
+                <div component='h4' variant='h2' className={classes.titleForm}>
+                <strong>Nuevo PosThis!</strong>
+                </div>
             <TextField
               variant="outlined"
               margin="normal"
@@ -57,9 +68,7 @@ function CreatePost() {
             />
 
             <div className = {classes.cardBtn}>
-             <IconButton>
-                <ImageIcon className={classes.imageIcon}/>
-             </IconButton>
+             
              <Button
               type="submit"
               fullWidth
@@ -69,6 +78,9 @@ function CreatePost() {
              >
               Publicar
             </Button>
+            <IconButton>
+                <ImageIcon className={classes.imageIcon}/>
+             </IconButton>
             </div>
             </form>
        

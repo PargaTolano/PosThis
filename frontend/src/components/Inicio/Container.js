@@ -40,11 +40,10 @@ function FixedContainer() {
       <div component='h4' variant='h2' className={classes.titleBegin}>
         <strong>Recientes</strong>
       </div>
-      <CardPost />
-      <CardPost />
-      <CardPost />
-      <CardPost />
-     
+        <CardPost />
+        <CardPost />
+        <CardPost />
+        <CardPost />
     </div>
   );
 }
