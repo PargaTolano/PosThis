@@ -6,16 +6,8 @@ import ImageIcon from '@material-ui/icons/Image';
 import IconButton from "@material-ui/core/IconButton";
 
 import {
-  Grid,
   TextField,
-  FormControlLabel,
   Button,
-  Link,
-  CssBaseline,
-  Avatar,
-  Paper,
-  Checkbox,
-  Typography,
 } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -26,8 +18,8 @@ const useStyles = makeStyles((theme) => ({
     background:'white',
     width: '90%', 
     marginTop: theme.spacing(0.5),
-    height:'30%',
-    padding:theme.spacing(2),
+    height:'40%',
+    padding:theme.spacing(3),
     borderRadius: 10,  
   },
   submit: {
@@ -41,6 +33,8 @@ const useStyles = makeStyles((theme) => ({
     color: 'white',
     alignSelf:'center',
   },
+  
+  
 }));
 
 function CreatePost() {
@@ -50,7 +44,9 @@ function CreatePost() {
             <TextField
               variant="outlined"
               margin="normal"
-              
+              multiline
+              rows={3}
+              rowsMax={3}
               fullWidth
               id="postContent"
               label="Escribir..."

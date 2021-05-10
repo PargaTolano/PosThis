@@ -11,7 +11,6 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import ReplyAllIcon from '@material-ui/icons/ReplyAll';
 import Avatar from '@material-ui/core/Avatar';
-import Link from '@material-ui/core/Link'
 
 const useStyles = makeStyles((theme) => ({
   root: {

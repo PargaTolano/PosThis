@@ -38,13 +38,13 @@ function FixedContainer() {
     <div className={classes.cardHolder}>
 
       <div component='h4' variant='h2' className={classes.titleBegin}>
-        <strong>Inicio</strong>
+        <strong>Recientes</strong>
       </div>
-
       <CardPost />
       <CardPost />
       <CardPost />
       <CardPost />
+     
     </div>
   );
 }

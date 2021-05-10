@@ -4,6 +4,7 @@ import Feed from 'components/Feed';
 import Login from 'components/Login';
 import DetailPost from 'components/DetailPost';
 import searchresult from 'components/searchResult';
+import Profile from 'components/Profile';
 import {makeStyles} from '@material-ui/core/styles'
 import backapp from 'assets/backapp.png'
 
@@ -17,6 +18,7 @@ function App() {
         <Route exact path='/feed' component={Feed}/>
         <Route exact path='/detailpost' component={DetailPost}/>
         <Route exact path='/searchresult' component={searchresult}/>
+        <Route exact path='/profile' component={Profile}/>
         <Route exact path='/' component={Login}/>
       </Router>
     </div>

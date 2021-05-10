@@ -1,9 +1,7 @@
 import React from "react";
 import SearchAppBar from "components/Inicio/Navbar";
-import FixedContainer from "components/Inicio/Container";
 import ContainerPerfil from "components/Perfil/ContainerPerfil";
-import { ThemeProvider } from "@material-ui/core/styles";
-import theme from "../temaConfig";
+
 import {makeStyles} from '@material-ui/core/styles'
 import backapp2 from 'assets/backapp2.png'
 
@@ -20,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Perfil = (props) => {
+const Profile = (props) => {
   //useCheckAuth();
   const classes = useStyles();
 
@@ -34,4 +32,4 @@ const Perfil = (props) => {
   );
 };
 
-export default Perfil;
+export default Profile;
