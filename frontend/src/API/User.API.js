@@ -4,7 +4,7 @@ import { arrayToCSV } from 'utils/utils';
 import SignUpModel from 'model/SignUpModel';
 import LogInModel from 'model/LogInModel';
 import UserViewModel from 'model/UserViewModel';
-import SearchRequestModel from 'model/SearchRequestModel'
+import SearchRequestModel from 'model/SearchRequestModel';
 
 const getUsers = async () => {
     let res = await fetch( getURL( 'api/users/Get' ) );
@@ -26,7 +26,7 @@ const getSearch = async( model ) =>{
     url.searchParams.set( 'SearchPosts', model.searchPosts );
     url.searchParams.set( 'SearchUsers', model.searchUsers );
     url.searchParams.set( 'Query', model.query );
-    url.searchParams.set( 'SearchPosts', arrayToCSV( model.hashtags ) );
+    url.searchParams.set( 'Hashtags', arrayToCSV( model.hashtags ) );
 
     let res = await fetch( url.href );
     return res.json();

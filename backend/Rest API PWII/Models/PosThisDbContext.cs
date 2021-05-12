@@ -11,25 +11,23 @@ namespace Rest_API_PWII.Models
 {
     public class PosThisDbContext : IdentityDbContext<User>
     {
-        public DbSet<Post> Posts { get; set; }
+        public DbSet<Post>          Posts { get; set; }
 
-        public DbSet<Repost> Reposts { get; set; }
+        public DbSet<Repost>        Reposts { get; set; }
 
-        public DbSet<Like> Likes { get; set; }
+        public DbSet<Like>          Likes { get; set; }
 
-        public DbSet<Reply> Replies { get; set; }
+        public DbSet<Reply>         Replies { get; set; }
 
-        public DbSet<Hashtag> Hashtags { get; set; }
+        public DbSet<Hashtag>       Hashtags { get; set; }
 
-        public DbSet<Follow> Follows { get; set; }
+        public DbSet<Follow>        Follows { get; set; }
 
-        public DbSet<Media> Medias { get; set; }
+        public DbSet<UserMedia>     UserMedias { get; set; }
+        public DbSet<PostMedia>     PostMedias { get; set; }
+        public DbSet<ReplyMedia>    ReplyMedias { get; set; }
 
-        public DbSet<HashtagPost> HashtagPosts { get; set; }
-
-        public DbSet<MediaPost> MediaPosts { get; set; }
-
-        public DbSet<MediaReply> MediaReplies { get; set; }
+        public DbSet<HashtagPost>   HashtagPosts { get; set; }
 
         public PosThisDbContext(DbContextOptions<PosThisDbContext> options) : base(options)
         {
@@ -44,27 +42,35 @@ namespace Rest_API_PWII.Models
         {
             base.OnModelCreating( modelBuilder );
 
-            modelBuilder.Entity<User>(user =>
+            modelBuilder.Entity<User>( user =>
             {
-                user.HasKey(user => user.Id);
+                user.HasKey( user => user.Id );
                 
-                user.Property(e => e.UserName)
-                    .HasMaxLength(20)
-                    .IsUnicode(false)
+                user.Property( e => e.UserName )
+                    .HasMaxLength( 20 )
+                    .IsUnicode( false )
                     .IsRequired();
 
-                user.Property(e => e.Tag)
-                    .HasMaxLength(15)
-                    .IsUnicode(false)
+                user.Property( e => e.Tag )
+                    .HasMaxLength( 15 )
+                    .IsUnicode( false )
                     .IsRequired();
 
-                user.Property(e => e.Email)
-                    .HasMaxLength(256)
-                    .IsUnicode(false)
+                user.Property( e => e.Email )
+                    .HasMaxLength( 256 )
+                    .IsUnicode( false )
                     .IsRequired();
 
-                user.Property(e => e.PasswordHash)
+                user.Property( e => e.PasswordHash )
                     .IsRequired();
+
+                user.HasOne ( x => x.ProfilePic )
+                    .WithOne( x => x.ProfilePicOwner )
+                    .HasForeignKey<User>( x => x.ProfilePicID );
+
+                user.HasOne ( x => x.CoverPic )
+                    .WithOne( x => x.CoverPicOwner )
+                    .HasForeignKey<User>(x => x.CoverPicID);
             });
 
             modelBuilder.Entity<Post>(post =>
@@ -81,9 +87,14 @@ namespace Rest_API_PWII.Models
                 post.Property(e => e.PostDate);
 
                 post
-                    .HasOne( e => e.User )
-                    .WithMany( u => u.Posts )
-                    .HasForeignKey( p => p.UserID );
+                    .HasOne(e => e.User)
+                    .WithMany(u => u.Posts)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                post
+                    .HasMany(x => x.Medias)
+                    .WithOne();
             });
 
             modelBuilder.Entity<Repost>(repost =>
@@ -101,7 +112,8 @@ namespace Rest_API_PWII.Models
                 repost
                     .HasOne( e => e.User )
                     .WithMany( r => r.Reposts )
-                    .HasForeignKey( r => r.UserID );
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Like>(like =>
@@ -113,13 +125,15 @@ namespace Rest_API_PWII.Models
 
                 like
                     .HasOne(e=> e.Post)
-                    .WithMany( p=> p.Likes )
-                    .HasForeignKey( l => l.PostID );
+                    .WithMany( p=> p.Likes)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 like
                     .HasOne( e => e.User )
-                    .WithMany( u => u.Likes )
-                    .HasForeignKey( l => l.UserID );
+                    .WithMany( u => u.Likes)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Reply>(reply =>
@@ -131,13 +145,19 @@ namespace Rest_API_PWII.Models
 
                 reply
                     .HasOne( e => e.Post )
-                    .WithMany( p => p.Replies )
-                    .HasForeignKey( r => r.PostID );
+                    .WithMany( p => p.Replies)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 reply
                     .HasOne( e => e.User )
-                    .WithMany( u => u.Replies )
-                    .HasForeignKey( r => r.UserID );
+                    .WithMany( u => u.Replies)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                //reply
+                //    .HasMany(x => x.Medias)
+                //    .WithOne();
             });
 
             modelBuilder.Entity<Hashtag>(hashtag =>
@@ -158,18 +178,18 @@ namespace Rest_API_PWII.Models
 
                 follow
                     .HasOne( e => e.UserFollow )
-                    .WithMany( u => u.Following )
-                    .HasForeignKey( f => f.UserFollowID )
-                    .HasPrincipalKey( f => f.Id );
+                    .WithMany( u => u.Following)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 follow
                     .HasOne( e => e.UserFollower )
-                    .WithMany( u => u.Follows )
-                    .HasForeignKey( f => f.UserFollowerID)
-                    .HasPrincipalKey( f => f.Id );
+                    .WithMany( u => u.Follows)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<Media>(media =>
+            modelBuilder.Entity<UserMedia>(media =>
             {
                 media
                     .HasKey(e => e.MediaID);
@@ -185,6 +205,62 @@ namespace Rest_API_PWII.Models
                 media
                     .Property(e => e.Name)
                     .IsRequired();
+
+                media
+                    .HasOne(x=>x.ProfilePicOwner)
+                    .WithOne(x => x.ProfilePic)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                media
+                    .HasOne(x => x.CoverPicOwner)
+                    .WithOne(x => x.CoverPic)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<PostMedia>(media =>
+            {
+                media
+                    .HasKey(e => e.MediaID);
+
+                media.Property(e => e.MediaID)
+                    .ValueGeneratedOnAdd();
+
+                media
+                    .Property(e => e.MIME)
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                media
+                    .Property(e => e.Name)
+                    .IsRequired();
+
+                media
+                    .HasOne(x => x.Post)
+                    .WithMany(x => x.Medias)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ReplyMedia>(media =>
+            {
+                media
+                    .HasKey(e => e.MediaID);
+
+                media.Property(e => e.MediaID)
+                    .ValueGeneratedOnAdd();
+
+                media
+                    .Property(e => e.MIME)
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                media
+                    .Property(e => e.Name)
+                    .IsRequired();
+
+                media
+                    .HasOne(x => x.Reply)
+                    .WithMany(x => x.Medias)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<HashtagPost>(hashtagPost =>
@@ -204,44 +280,6 @@ namespace Rest_API_PWII.Models
                    .HasOne( e=> e.Post )
                    .WithMany( p => p.HashtagPosts )
                    .HasForeignKey( hp => hp.PostID );
-            });
-
-            modelBuilder.Entity<MediaPost>(mediaPost =>
-            {
-                mediaPost
-                    .HasKey(mp => mp.MediaPostID);
-
-                mediaPost.Property(e => e.MediaPostID)
-                    .ValueGeneratedOnAdd();
-
-                mediaPost
-                    .HasOne( e => e.Media )
-                    .WithMany( m => m.MediaPosts )
-                    .HasForeignKey( mp=> mp.MediaID );
-
-                mediaPost
-                    .HasOne( e => e.Post )
-                    .WithMany( p => p.MediaPosts )
-                    .HasForeignKey( mp => mp.PostID );
-            });
-
-            modelBuilder.Entity<MediaReply>(mediaReply =>
-            {
-                mediaReply
-                    .HasKey( mp => mp.MediaReplyID );
-
-                mediaReply.Property( e => e.MediaReplyID )
-                    .ValueGeneratedOnAdd();
-
-                mediaReply
-                    .HasOne( mr => mr.Media )
-                    .WithMany(m => m.MediaReplies)
-                    .HasForeignKey(mr => mr.MediaID);
-
-                mediaReply
-                    .HasOne( mr => mr.Reply )
-                    .WithMany( p => p.MediaReplies )
-                    .HasForeignKey( mr => mr.ReplyID );
             });
         }
     }

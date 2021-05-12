@@ -20,138 +20,138 @@ namespace Rest_API_PWII.Controllers
     {
 
         private PosThisDbContext db;
-        private readonly IHostingEnvironment _env;
+        private readonly IHostingEnvironment env;
 
         public MediaController(IHostingEnvironment env, PosThisDbContext db)
         {
             this.db = db;
-            _env = env;
+            this.env = env;
         }
 
-        [HttpGet]
-        public IActionResult Get()
-        {
-            try
-            {
-                var mediaCore = new MediaCore(db);
-                var medias = mediaCore.GetAll();
+        //[HttpGet]
+        //public IActionResult Get()
+        //{
+        //    try
+        //    {
+        //        var mediaCore = new MediaCore(db, env, Request);
+        //        var medias = mediaCore.GetAll();
+        //
+        //        return Ok(
+        //            new ResponseApiSuccess
+        //            {
+        //                Code = (int)HttpStatusCode.OK,
+        //                Data = medias,
+        //                Message = "Media retrieve successful"
+        //            });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(
+        //            (int)HttpStatusCode.InternalServerError,
+        //            new ResponseApiError
+        //            {
+        //                Code = (int)HttpStatusCode.InternalServerError,
+        //                HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+        //                Message = ex.Message
+        //            });
+        //    }
+        //}
 
-                return Ok(
-                    new ResponseApiSuccess
-                    {
-                        Code = (int)HttpStatusCode.OK,
-                        Data = medias,
-                        Message = "Media retrieve successful"
-                    });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(
-                    (int)HttpStatusCode.InternalServerError,
-                    new ResponseApiError
-                    {
-                        Code = (int)HttpStatusCode.InternalServerError,
-                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                        Message = ex.Message
-                    });
-            }
-        }
+        //[HttpGet("{id}")]
+        //public IActionResult Get( int id )
+        //{
+        //    try
+        //    {
+        //        var mediaCore = new MediaCore(db, env, Request);
+        //        var media = mediaCore.GetOne( id );
+        //
+        //        if ( media == null ) {
+        //            return StatusCode(
+        //           (int)HttpStatusCode.NotFound,
+        //           new ResponseApiError
+        //           {
+        //               Code = (int)HttpStatusCode.NotFound,
+        //               HttpStatusCode = (int)HttpStatusCode.NotFound,
+        //               Message = "El archivo de media solicitado no existe"
+        //           });
+        //        }
+        //
+        //        return Redirect(media.Path);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(
+        //           (int)HttpStatusCode.InternalServerError,
+        //           new ResponseApiError
+        //           {
+        //               Code = (int)HttpStatusCode.InternalServerError,
+        //               HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+        //               Message = ex.Message
+        //           });
+        //    }
+        //}
 
-        [HttpGet("{id}")]
-        public IActionResult Get( int id )
-        {
-            try
-            {
-                var mediaCore = new MediaCore(db);
-                var media = mediaCore.GetOne(id, Request.Scheme, Request.Host.ToString(), Request.PathBase);
+        //[HttpPost]
+        //public async Task<IActionResult> Create( [FromForm] List<IFormFile> files )
+        //{
+        //    try
+        //    {
+        //        var list = new List<Media>();
+        //        var mediaCore = new MediaCore( db, env, Request );
+        //        var err = mediaCore.Create( files, ref list );
+        //        if (err != null)
+        //            return StatusCode(err.HttpStatusCode, err);
+        //
+        //        return Ok(
+        //            new ResponseApiSuccess
+        //            {
+        //                Code = (int)HttpStatusCode.OK,
+        //                Data = {},
+        //                Message = "Media create successful"
+        //            });
+        //    }
+        //    catch ( Exception ex )
+        //    {
+        //        return StatusCode(
+        //            (int)HttpStatusCode.InternalServerError,
+        //            new ResponseApiError
+        //            {
+        //                Code = (int)HttpStatusCode.InternalServerError,
+        //                HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+        //                Message = ex.Message
+        //            });
+        //    }
+        //}
 
-                if ( media == null ) {
-                    return StatusCode(
-                   (int)HttpStatusCode.NotFound,
-                   new ResponseApiError
-                   {
-                       Code = (int)HttpStatusCode.NotFound,
-                       HttpStatusCode = (int)HttpStatusCode.NotFound,
-                       Message = "El archivo de media solicitado no existe"
-                   });
-                }
-
-                return Redirect(media.Path);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(
-                   (int)HttpStatusCode.InternalServerError,
-                   new ResponseApiError
-                   {
-                       Code = (int)HttpStatusCode.InternalServerError,
-                       HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                       Message = ex.Message
-                   });
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create( [FromForm] List<IFormFile> files )
-        {
-            try
-            {
-                var list = new List<MediaViewModel>();
-                var mediaCore = new MediaCore( db );
-                var err = mediaCore.Create( files, Request.Scheme, Request.Host.ToString(), Request.PathBase, ref list );
-                if (err != null)
-                    return StatusCode(err.HttpStatusCode, err);
-
-                return Ok(
-                    new ResponseApiSuccess
-                    {
-                        Code = (int)HttpStatusCode.OK,
-                        Data = {},
-                        Message = "Media create successful"
-                    });
-            }
-            catch ( Exception ex )
-            {
-                return StatusCode(
-                    (int)HttpStatusCode.InternalServerError,
-                    new ResponseApiError
-                    {
-                        Code = (int)HttpStatusCode.InternalServerError,
-                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                        Message = ex.Message
-                    });
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            try
-            {
-                var mediaCore = new MediaCore(db);
-                var err = mediaCore.Delete(id);
-                if (err != null)
-                    return StatusCode( err.HttpStatusCode, err );
-
-                return Ok(
-                    new ResponseApiSuccess
-                    {
-                        Code = (int)HttpStatusCode.OK,
-                        Data = { },
-                        Message = "Media delete successful"
-                    });
-            }
-            catch ( Exception ex )
-            {
-                return StatusCode(
-                    (int)HttpStatusCode.InternalServerError,
-                    new ResponseApiError
-                    {
-                        Code = (int)HttpStatusCode.InternalServerError,
-                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                        Message = ex.Message
-                    });
-            }
-        }
+        //[HttpDelete("{id}")]
+        //public IActionResult Delete(int id)
+        //{
+        //    try
+        //    {
+        //        var mediaCore = new MediaCore(db, env, Request);
+        //        var err = mediaCore.Delete(id);
+        //        if (err != null)
+        //            return StatusCode( err.HttpStatusCode, err );
+        //
+        //        return Ok(
+        //            new ResponseApiSuccess
+        //            {
+        //                Code = (int)HttpStatusCode.OK,
+        //                Data = { },
+        //                Message = "Media delete successful"
+        //            });
+        //    }
+        //    catch ( Exception ex )
+        //    {
+        //        return StatusCode(
+        //            (int)HttpStatusCode.InternalServerError,
+        //            new ResponseApiError
+        //            {
+        //                Code = (int)HttpStatusCode.InternalServerError,
+        //                HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+        //                Message = ex.Message
+        //            });
+        //    }
+        //}
     }
 }

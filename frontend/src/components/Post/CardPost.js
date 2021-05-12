@@ -1,23 +1,29 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import { red } from '@material-ui/core/colors';
-import FavoriteIcon from '@material-ui/icons/Favorite';
+import { makeStyles }     from '@material-ui/core/styles';
+import Card               from '@material-ui/core/Card';
+import CardActionArea     from '@material-ui/core/CardActionArea';
+import CardActions        from '@material-ui/core/CardActions';
+import CardContent        from '@material-ui/core/CardContent';
+import Grid               from '@material-ui/core/Grid';
+import Typography         from '@material-ui/core/Typography';
+import IconButton         from '@material-ui/core/IconButton';
+import { red }            from '@material-ui/core/colors';
+import FavoriteIcon       from '@material-ui/icons/Favorite';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
-import ReplyAllIcon from '@material-ui/icons/ReplyAll';
-import Avatar from '@material-ui/core/Avatar';
-import Link from '@material-ui/core/Link'
+import ReplyAllIcon       from '@material-ui/icons/ReplyAll';
+import Avatar             from '@material-ui/core/Avatar';
+import Link               from '@material-ui/core/Link';
+
+const defaultImage = 'https://www.adobe.com/express/create/media_1900d303a701488626835756419ca3a50b83a2ae5.png?width=2000&format=webply&optimize=medium';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: 600,
     marginBottom: theme.spacing(3),
     backgroundColor: '#2b387f',
+    [theme.breakpoints.down('sm')]:{
+      width: 'auto'
+    }
   },
   media: {
     height: 140,
@@ -68,6 +74,9 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '400px',
     overflow: 'hidden',
+    [theme.breakpoints.down('sm')]:{
+      height: '300px'
+    }
   },
   media:{
     display: 'inline-block',
@@ -79,52 +88,156 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const useMediaGridStyles = makeStyles((theme)=>({
+  gridHeight: {
+    height: '400px',
+    overflow: 'hidden',
+    borderRadius: theme.spacing(1)
+  },
+  subGridContainer:{
+    height: '100%'
+  },
+  subGrid:{
+    height: '100%'
+  },
+  subGridRow:{
+    height: '100%'
+  },
+  mediaContainer:{
+    display:  'inline-block',
+    width:    '100%',
+    height:   '100%',
+    overflow: 'hidden',
+    backgroundColor: '#333333'
+  },
+  mediaFit: {
+    display:  'inline-block',
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover'
+  }
+}));
+
+function MediaGrid( props ){
+
+  const classes = useMediaGridStyles();
+  const { media } = props;
+
+  if ( media?.length === 0 )
+    return (<></>);
+
+  return (
+    <>
+    <Grid container className={classes.gridHeight}>
+      <Grid item xs={ media === 1 ? 12 : 6 } className={classes.subGridContainer}>
+        <Grid container className={classes.subGrid}>
+            <Grid item xs={ 12 } className={classes.subGridRow}>
+              <div className={classes.mediaContainer}>
+                {
+                media[0].isVideo ?
+                (
+                  <video className={classes.mediaFit} controls>
+                      <source src={media[0].path} type={media[0].mime}/>
+                  </video>
+                )
+                :
+                (<img src={media[0].path} className={classes.mediaFit}/>)
+              }
+            </div>
+            </Grid>
+            {
+              media.length === 4 
+              &&
+              (
+                <Grid item xs={ 12 } className={classes.subGridRow}>
+                <div className={classes.mediaContainer}>
+                  {
+                    media[2].isVideo ?
+                    (
+                      <video className={classes.mediaFit} controls>
+                          <source src={media[2].path} type={media[2].mime}/>
+                      </video>
+                    )
+                    :
+                    (<img src={media[2].path} className={classes.mediaFit}/>)
+                  }
+                </div>
+              </Grid>   
+              )
+            }
+        </Grid>
+      </Grid>
+      <Grid item xs={ media === 1 ? 12 : 6 } className={classes.subGridContainer}>
+        <Grid container className={classes.subGrid}>
+        {
+          media.length > 1
+          &&
+          (
+            <Grid item xs={ 12 } className={classes.subGridRow}>
+            <div className={classes.mediaContainer}>
+              {
+              media[1].isVideo ?
+              (
+                <video className={classes.mediaFit} controls>
+                    <source src={media[1].path} type={media[1].mime}/>
+                </video>
+              )
+              :
+              (<img src={media[1].path} className={classes.mediaFit}/>)
+            }
+            </div>
+          </Grid>   
+          )
+          }
+        
+          {
+          ( media.length > 2) 
+          &&
+          (
+            <Grid item xs={ 12 } className={classes.subGridRow}>
+            <div className={classes.mediaContainer}>
+              {
+              media[3].isVideo ?
+              (
+                <video className={classes.mediaFit} controls>
+                    <source src={media[3].path} type={media[3].mime}/>
+                </video>
+              )
+              :
+              (<img src={media[3].path} className={classes.mediaFit}/>)
+            }
+            </div>
+          </Grid>   
+          )
+        }
+        </Grid>
+      </Grid>
+    </Grid>
+    </>
+  );
+};
+
 function CardPost( props ) {
 
-
   const { post } = props;
+  const id = post.publisherId;
 
   const classes = useStyles();
   return (
     <Card className={classes.root}>
-
       <CardActionArea >
       <CardContent>
           <div className={classes.displayTitle}>
-            <Avatar id='avatarUser' src=''/>
+            <Avatar id='avatarUser' src={post.publisherProfilePic || defaultImage}/>
             <Typography id='userTag' variant='h6' component='h2' className={classes.title}>
-              <strong>{post.userName} {"@"+post.userTag}</strong>
+              <strong>{post.publisherUserName} {"@"+post.publisherTag}</strong>
             </Typography>
           </div>
           <Typography id='contentP' variant='body2' component='p' className={classes.content}>
             {post.content}
           </Typography>
           <div className={classes.contMedia}>
-            {
-              post.medias.map( (mediaViewModel, i) =>(
-                <div 
-                  key={mediaViewModel.mediaID} 
-                  className={classes.contImg}
-                  style={
-                     post.medias.Length === 4 && i === 0 ?
-                      {height: '100%',width: '50%'} : {height: 'auto',width: 'auto'} 
-                     }
-                >
-                  <div className={classes.mediaMask}>
-                    {
-                      mediaViewModel.isVideo ?
-                      (
-                        <video className={classes.media} width="320" height="240" controls>
-                            <source src={mediaViewModel.path} type={mediaViewModel.mime}/>
-                        </video>
-                      )
-                      :
-                      (<img src={mediaViewModel.path} className={classes.media}/>)
-                    }
-                  </div>
-                </div>
-              ))
-            }
+            <MediaGrid media={post.medias}/>
           </div>
         </CardContent>
       </CardActionArea>
@@ -134,19 +247,19 @@ function CardPost( props ) {
           <IconButton>
             <FavoriteIcon className={classes.likeIcon}/>
           </IconButton>
-          10
+          {post.likeCount}
         </div>
         <div id='commentNum'>
           <IconButton>
             <QuestionAnswerIcon className={classes.commentIcon}/>
           </IconButton>
-          5
+          {post.replyCount}
         </div>
         <div id='repostNum'>
           <IconButton>
             <ReplyAllIcon className={classes.repostIcon}/>
           </IconButton>
-          2
+          {post.repostCount}
         </div>
       </CardActions>
     </Card>

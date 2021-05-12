@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
 
@@ -10,10 +12,14 @@ namespace Rest_API_PWII.Classes
     public class FollowCore
     {
         private PosThisDbContext db;
+        private IHostingEnvironment env;
+        private HttpRequest request;
 
-        public FollowCore( PosThisDbContext db )
+        public FollowCore( PosThisDbContext db, IHostingEnvironment env, HttpRequest request )
         {
             this.db = db;
+            this.env = env;
+            this.request = request;
         }
 
         public ResponseApiError Validate( FollowViewModel model )
@@ -73,7 +79,7 @@ namespace Rest_API_PWII.Classes
                     Tag = u.Tag,
                     Email = u.Email,
                     BirthDate = u.BirthDate,
-                    ProfilePhotoMediaID = u.ProfilePhotoMediaID
+                    ProfilePicPath = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.ProfilePic.Name}"
                  }).ToList();
 
             if (follows == null)
@@ -100,7 +106,7 @@ namespace Rest_API_PWII.Classes
                      Tag = u.Tag,
                      Email = u.Email,
                      BirthDate = u.BirthDate,
-                     ProfilePhotoMediaID = u.ProfilePhotoMediaID
+                     ProfilePicPath = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.ProfilePic.Name}"
                  }).ToList();
 
             return follows;

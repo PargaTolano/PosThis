@@ -6,33 +6,15 @@ namespace Rest_API_PWII.Models
 {
     public class Post
     {
-        public int PostID { get; set; }
+        public int PostID                               { get; set; }
+        public string Content                           { get; set; }
+        public DateTime PostDate                        { get; set; }
 
-        public string Content { get; set; }
-
-        public string UserID { get; set; }
-
-        public DateTime PostDate { get; set; }
-
-        [JsonIgnore]
-        public virtual User User { get; set; }
-
-        [JsonIgnore]
-        public virtual ICollection<Repost> Reposts { get; set; }
-
-        [JsonIgnore]
-        public virtual ICollection<Like> Likes { get; set; }
-        
-        [JsonIgnore]
-        public virtual ICollection<Reply> Replies { get; set; }
-
-        [JsonIgnore]
-        public virtual ICollection<HashtagPost> HashtagPosts { get; set; }
-        
-        [JsonIgnore]
-        public virtual ICollection<MediaPost> MediaPosts { get; set; }
-        
-        [JsonIgnore]
-        public static readonly string ForeignKeyUsuario = "fk_Post_User";
+        public virtual User User                        { get; set; }
+        public virtual List<Repost> Reposts             { get; set; }
+        public virtual List<Like> Likes                 { get; set; }
+        public virtual List<Reply> Replies              { get; set; }
+        public virtual List<PostMedia> Medias               { get; set; }
+        public virtual List<HashtagPost> HashtagPosts   { get; set; }
     }
 }

@@ -3,7 +3,8 @@ import {  getURL  } from 'API/url.API';
 import CUPostModel from 'model/CUPostModel';
 
 const getPosts = async () => {
-    let res = await fetch( getURL( 'api/post/Get' ) );
+    const url = getURL( 'api/post/Get' );
+    let res = await fetch( url );
     return res.json();
 }
 

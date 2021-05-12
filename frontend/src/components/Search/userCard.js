@@ -2,6 +2,8 @@ import React from 'react';
 import {Grid, Typography, makeStyles, Avatar, Link, Button} from '@material-ui/core'
 import veryfied from 'assets/veryfied.svg';
 
+const defaultImage = 'https://www.adobe.com/express/create/media_1900d303a701488626835756419ca3a50b83a2ae5.png?width=2000&format=webply&optimize=medium';
+
 const useStyles = makeStyles(theme => ({
     root: {
         border: `1.2px solid ${theme.palette.grey[300]}`,
@@ -40,33 +42,33 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const UseCard = () => {
+const UserCard = ( {user} ) => {
     const classes = useStyles();
     return(
     <Grid container direction = 'column' className = {classes.root}>
-        <ChannelPhoto  classes = {classes}/>
-        <ChannelUsername  classes = {classes}/>
-        <SeeButton classes = {classes}/>
+        <ChannelPhoto  classes = {classes} user={user}/>
+        <ChannelUsername  classes = {classes} user={user}/>
+        <SeeButton classes = {classes} user={user}/>
     </Grid>
     );
 }
 
-const ChannelPhoto = ({classes}) => 
+const ChannelPhoto = ({classes, user}) => 
 {
     return(
         <div className ={classes.photoContainer}>
-            <Avatar className = {classes.avatar} alta='pic' src = 'https://www.adobe.com/express/create/media_1900d303a701488626835756419ca3a50b83a2ae5.png?width=2000&format=webply&optimize=medium'/>
+            <Avatar className = {classes.avatar} alta='pic' src ={ user.profilePicPath }/>
         </div>
         
     );
 };
 
-const ChannelUsername = ({classes}) => {
+const ChannelUsername = ({classes, user}) => {
     return(
 
         <Grid container justify='center' spacing={5}>
             <Grid item xs={4}>
-                <Typography variant = 'body2' className={classes.channelusername}>Username</Typography>
+                <Typography variant = 'body2' className={classes.channelusername}>{user.userName}</Typography>
             </Grid>
             <Grid item xs={1}>
                 <img alt='veryfied' src={veryfied} className={classes.veryf}/>
@@ -74,7 +76,7 @@ const ChannelUsername = ({classes}) => {
         </Grid>
     );
 };
-const SeeButton = ({classes}) => {
+const SeeButton = ({classes, user}) => {
     return(
         <Button disableElevation component={Link} to="/" color='primary' variant = 'contained' size = 'small' className={classes.btn}>
             Ver Perfil
@@ -82,4 +84,4 @@ const SeeButton = ({classes}) => {
     );
 };
 
-export default UseCard;
+export default UserCard;

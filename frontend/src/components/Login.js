@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useState, useEffect }from 'react';
 import {
   Grid,
   TextField,
@@ -18,6 +18,7 @@ import CustomizedDialogs from 'components/Registro/dialogSignup';
 import SignUp from 'components/Registro/Signup';
 
 import { getUsers } from 'API/User.API';
+import { getPosts } from 'API/Post.API';
 import useRequestLoadOnMount from 'hooks/useRequestLoadOnMount';
 
 const useStyles = makeStyles((theme) => ({
@@ -49,9 +50,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const makeOnSubmit = ( object ) =>
+  e =>{
+    e.preventDefault();
+    let body = {};
+
+    for( let key of Object.keys(object)){
+      console.log(key, object[key]);
+    }
+  };
+
 const Login = (props) => {
-  const [ready, response ]= useRequestLoadOnMount(getUsers);
+  //const [ready, response ]= useRequestLoadOnMount(getUsers);
+  //const [readyP, responseP ]= useRequestLoadOnMount(getPosts);
   const classes = useStyles();
+
+  const [ email, setEmail ] = useState('');
+  const [ password, setPassword ] = useState('');
+
+  const getOnChange = ( setState )=>e=>setState(e.target.value);
 
   return (
     <Grid container component='main' className={classes.root}>
@@ -67,7 +84,7 @@ const Login = (props) => {
             <strong>Inicia Sesión</strong>
           </Typography>
 
-          <form className={classes.form} noValidate>
+          <form className={classes.form} noValidate onSubmit={makeOnSubmit({email, password})}>
             <TextField
               variant='outlined'
               margin='normal'
@@ -78,6 +95,7 @@ const Login = (props) => {
               name='email'
               autoComplete='email'
               autoFocus
+              onChange = {getOnChange(setEmail)}
             />
 
             <TextField
@@ -90,6 +108,7 @@ const Login = (props) => {
               type='password'
               id='password'
               autoComplete='current-password'
+              onChange = {getOnChange(setPassword)}
             />
 
             <FormControlLabel

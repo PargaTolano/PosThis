@@ -18,12 +18,12 @@ namespace Rest_API_PWII.Controllers
     public class PostController : ControllerBase
     {
         private PosThisDbContext db;
-        private readonly IHostingEnvironment _env;
+        private readonly IHostingEnvironment env;
 
         public PostController( IHostingEnvironment env, PosThisDbContext db )
         {
             this.db = db;
-            _env = env;
+            this.env = env;
         }
 
         [HttpGet]
@@ -31,8 +31,8 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var postCore = new PostCore(db);
-                var posts = postCore.GetAll( Request.Scheme, Request.Host.ToString(), Request.PathBase );
+                var postCore = new PostCore(db, env, Request);
+                var posts = postCore.GetAll();
 
                 return Ok(
                     new ResponseApiSuccess
@@ -61,8 +61,8 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var postCore = new PostCore( db );
-                var post = postCore.GetOne( id, Request.Scheme, Request.Host.ToString(), Request.PathBase );
+                var postCore = new PostCore( db, env, Request);
+                var post = postCore.GetOne( id );
 
                 if (post == null)
                     return StatusCode((int)HttpStatusCode.NotFound,
@@ -100,8 +100,8 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var postCore = new PostCore( db );
-                var err = postCore.Create( post, Request.Scheme, Request.Host.ToString(), Request.PathBase );
+                var postCore = new PostCore( db, env, Request);
+                var err = postCore.Create( post );
                 if ( err != null )
                     return StatusCode( err.HttpStatusCode, err );
 
@@ -127,11 +127,11 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update( int id, [FromBody] CPostModel post )
+        public IActionResult Update( int id, [FromForm] UPostModel post )
         {
             try
             {
-                var postCore= new PostCore(db);
+                var postCore= new PostCore(db, env, Request);
                 var err = postCore.Update(id, post);
 
                 if (err != null)
@@ -140,7 +140,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
+                        Code = (int)HttpStatusCode.OK,
                         Data = post,
                         Message = "Post update successful"
                     });
@@ -151,7 +151,7 @@ namespace Rest_API_PWII.Controllers
                     (int)HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
-                        Code = 3,
+                        Code = (int)HttpStatusCode.InternalServerError,
                         HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });
@@ -163,7 +163,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var postCore = new PostCore(db);
+                var postCore = new PostCore(db, env, Request);
                 var err = postCore.Delete( id );
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);

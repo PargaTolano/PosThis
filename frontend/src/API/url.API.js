@@ -1,6 +1,6 @@
 const protocol = 'https';
 
-const host = 'localhost';
+const host =  window.location.hostname;
 
 const port = '44325';
 

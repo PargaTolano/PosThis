@@ -139,6 +139,8 @@ CREATE TABLE [dbo].[AspNetUsers](
 	[AccessFailedCount] [int] NOT NULL,
 	Tag					VARCHAR(15) UNIQUE			,
 	BirthDate			DATETIME					,
+	ProfilePicID		INT							,
+	CoverPicID			INT							,
  CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -204,11 +206,7 @@ CREATE TABLE Posts(
 	PostID				INTEGER PRIMARY KEY IDENTITY,
 	Content				VARCHAR(256)				,
 	PostDate			DATETIME	DEFAULT(CURRENT_TIMESTAMP),
-	UserID				[nvarchar](450) NOT NULL	,
-
-	CONSTRAINT fk_Post_User
-	FOREIGN KEY(UserID)
-	REFERENCES [dbo].[AspNetUsers]( [Id] )
+	UserID				[nvarchar](450)
 );
 
 CREATE TABLE Reposts(
@@ -216,43 +214,19 @@ CREATE TABLE Reposts(
 	RepostDate	DATETIME					,
 	PostID				INTEGER NOT NULL,
 	UserID			[nvarchar](450) NOT NULL,
-
-	CONSTRAINT fk_Repost_Post
-	FOREIGN KEY(PostID)
-	REFERENCES Posts( PostID ),
-
-	CONSTRAINT fk_Repost_User
-	FOREIGN KEY(UserID)
-	REFERENCES [dbo].[AspNetUsers]( [Id] )
 );
 
 CREATE TABLE Likes(
 	LikeID				INTEGER PRIMARY KEY IDENTITY,
-	PostID				INTEGER NOT NULL,
-	UserID			[nvarchar](450) NOT NULL,
-
-	CONSTRAINT fk_Likes_Post
-	FOREIGN KEY(PostID)
-	REFERENCES Posts( PostID ),
-
-	CONSTRAINT fk_Likes_User
-	FOREIGN KEY(UserID)
-	REFERENCES [dbo].[AspNetUsers]( [Id] )
+	PostID				INTEGER			NOT NULL,
+	UserID				[nvarchar](450) NOT NULL,
 );
 
 CREATE TABLE Replies(
 	ReplyID						INTEGER PRIMARY KEY IDENTITY,
-	PostID						INTEGER NOT NULL,
-	UserID						[nvarchar](450) NOT NULL,
 	ContentReplies				[nvarchar](max) NULL,
-
-	CONSTRAINT fk_Replies_Post
-	FOREIGN KEY(PostID)
-	REFERENCES Posts( PostID ),
-
-	CONSTRAINT fk_Replies_User
-	FOREIGN KEY(UserID)
-	REFERENCES [dbo].[AspNetUsers]( [Id] )
+	PostID				INTEGER			NOT NULL,
+	UserID				[nvarchar](450) NOT NULL,
 );
 
 CREATE TABLE Hashtags(
@@ -264,27 +238,27 @@ CREATE TABLE Follows(
 	FollowID			INTEGER PRIMARY KEY IDENTITY,
 	UserFollowerID	[nvarchar](450),
 	UserFollowID	[nvarchar](450),
-
-	CONSTRAINT fk_Follows_User_Follower
-	FOREIGN KEY(UserFollowerID)
-	REFERENCES [dbo].[AspNetUsers]( [Id] ),
-
-	CONSTRAINT fk_Follows_User_Follows
-	FOREIGN KEY(UserFollowID)
-	REFERENCES [dbo].[AspNetUsers]( [Id] ),
 );
 
-CREATE TABLE Medias(
+CREATE TABLE UserMedias(
 	MediaID				INTEGER PRIMARY KEY IDENTITY,
 	MIME				VARCHAR(20)					,
-	Name				VARCHAR(MAX)
+	Name				VARCHAR(MAX)				,
 );
 
-ALTER TABLE [dbo].[AspNetUsers] 
-ADD 
-	ProfilePhotoMediaID INT NULL
-	CONSTRAINT fk_User_Media FOREIGN KEY( ProfilePhotoMediaID ) REFERENCES Medias(MediaID);
+CREATE TABLE PostMedias(
+	MediaID				INTEGER PRIMARY KEY IDENTITY,
+	MIME				VARCHAR(20)					,
+	Name				VARCHAR(MAX)				,
+	PostID				INT							,
+);
 
+CREATE TABLE ReplyMedias(
+	MediaID				INTEGER PRIMARY KEY IDENTITY,
+	MIME				VARCHAR(20)					,
+	Name				VARCHAR(MAX)				,
+	ReplyID				INT			
+);
 
 -- TABLAS RELACIONALES
 
@@ -293,16 +267,9 @@ CREATE TABLE HashtagPosts(
 	HashtagPostID		INTEGER PRIMARY KEY IDENTITY,
 	HashtagID			INTEGER,
 	PostID				INTEGER,
-
-	CONSTRAINT fk_HashtagPost_Hashtag
-	FOREIGN KEY(HashtagID)
-	REFERENCES Hashtags( HashtagID ),
-
-	CONSTRAINT fk_HashtagPost_Post
-	FOREIGN KEY(PostID)
-	REFERENCES Posts( PostID ),
 );
 
+/*
 CREATE TABLE MediaPosts(
 	MediaPostID			INTEGER PRIMARY KEY IDENTITY,
 	MediaID				INTEGER,
@@ -329,4 +296,4 @@ CREATE TABLE MediaReplies(
 	CONSTRAINT fk_MediaReply_Reply
 	FOREIGN KEY( ReplyID )
 	REFERENCES Replies( ReplyID )
-);
+);*/

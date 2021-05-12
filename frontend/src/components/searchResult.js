@@ -3,9 +3,12 @@ import SearchAppBar from "components/Inicio/Navbar";
 import { makeStyles } from "@material-ui/core/styles";
 import backapp3 from "assets/backapp3.png";
 import CardPost from "./Post/CardPost";
-import UseCard from "components/Search/userCard";
+import UserCard from "components/Search/UserCard";
 
-import { getPost } from 'API/Post.API';
+import SearchRequestModel from 'model/SearchRequestModel';
+
+import { getPosts } from 'API/Post.API';
+import { getSearch } from 'API/User.API';
 import useRequestLoadOnMount from "hooks/useRequestLoadOnMount";
 
 const useStyles = makeStyles( ( theme ) => ({
@@ -47,6 +50,9 @@ const useStyles = makeStyles( ( theme ) => ({
     textAlign: "center",
     justifyContent: "center",
     width: 600,
+    [theme.breakpoints.down('md')]:{
+      width: 'auto'
+    }
   },
 }));
 
@@ -54,9 +60,14 @@ const SearchResult = ( props ) => {
   //useCheckAuth();
   const classes = useStyles();
 
-  const [ ready, response ] = useRequestLoadOnMount( async () => await getPost(6) );
-  console.log(response);
-
+  const searchRequest = new SearchRequestModel({
+    query: '',
+    searchPosts: true, 
+    searchUsers: true,
+    hashtags: []
+  });
+  const [ readySearch, responsePosts ] = useRequestLoadOnMount( async ()=> await getSearch(searchRequest) );
+  
   return (
     <div className={classes.Background}>
       <SearchAppBar />
@@ -66,17 +77,17 @@ const SearchResult = ( props ) => {
         </div>
       </div>
       <div className={classes.ucHolder}>
-        <UseCard />
-        <UseCard />
-        <UseCard />
-        <UseCard />
+        {
+          readySearch && ( responsePosts.data.users.map( user =><UserCard key={user.publisherID} user={user}/>) )
+        }
+        
       </div>
       <div className={classes.cardHolder}>
         <div component="h4" variant="h2" className={classes.titleBegin}>
           <strong>Posts/Hashtags Relacionados</strong>
         </div>
         {
-          ready && <CardPost post={response.data}/>
+          readySearch && ( responsePosts.data.posts.map( post =><CardPost key={post.postId} post={post}/>) )
         }
       </div>
     </div>

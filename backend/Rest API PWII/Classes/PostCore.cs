@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
@@ -12,19 +14,23 @@ namespace Rest_API_PWII.Classes
 {
     public class PostCore
     {
-        private PosThisDbContext db;
+        private PosThisDbContext    db;
+        private IHostingEnvironment env;
+        private HttpRequest         request;
 
-        public PostCore( PosThisDbContext db )
+        public PostCore(PosThisDbContext db, IHostingEnvironment env, HttpRequest request)
         {
             this.db = db;
+            this.env = env;
+            this.request = request;
         }
 
         public ResponseApiError Validate( Post post )
         {
-            if ( post.Content == null && post.MediaPosts.Count == 0 )
+            if ( post.Content == null)
                 return new ResponseApiError
                 {
-                    Code = 1,
+                    Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
                     Message = "Post data not valid, must have text content and/or media"
                 };
@@ -32,17 +38,35 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateCU(CPostModel createPostModel)
+        public ResponseApiError ValidateC( CPostModel model )
         {
-            bool textoValido = !string.IsNullOrEmpty(createPostModel.Content);
-            bool mediaValido = createPostModel.Files?.Count > 0;
+            bool textoValido = !string.IsNullOrEmpty(model.Content);
+            bool mediaValido = model.Files?.Count > 0;
 
             if (textoValido || mediaValido)
                 return null;
 
             return new ResponseApiError
             {
-                Code = 400,
+                Code = (int)HttpStatusCode.BadRequest,
+                HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                Message = "Invalid post, must have text centent and at least one media file"
+            };
+        }
+
+        public ResponseApiError ValidateU( int id, UPostModel model )
+        {
+            bool textoValido = !string.IsNullOrEmpty(model.Content);
+
+            int count = (from m in db.PostMedias where id == m.MediaID select m).Count();
+            bool mediaValido = model.Deleted.Count < count;
+
+            if (textoValido || mediaValido)
+                return null;
+
+            return new ResponseApiError
+            {
+                Code = (int)HttpStatusCode.BadRequest,
                 HttpStatusCode = (int)HttpStatusCode.BadRequest,
                 Message = "Invalid post, must have text centent and at least one media file"
             };
@@ -77,15 +101,11 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError Create(
-            CPostModel model,
-            string Scheme,
-            string Host,
-            string PathBase)
+        public ResponseApiError Create( CPostModel model )
         {
             try
             {
-                var err = ValidateCU( model );
+                var err = ValidateC( model );
                 if (err != null)
                     return err;
 
@@ -98,19 +118,16 @@ namespace Rest_API_PWII.Classes
                         Message = "User not found"
                     };
 
-                var list = new List<MediaViewModel>();
+                var list = new List<PostMedia>();
 
-                var mediaCore = new MediaCore( db );
-                err = mediaCore.Create( model.Files, Scheme, Host, PathBase, ref list);
-
+                var mediaCore = new MediaCore( db, env, request );
+                err = mediaCore.CreatePostMedia( model.Files, ref list );
                 
-                if (list == null && model.Files.Count != 0)
+                if (list == null && model.Files?.Count != 0)
                     throw new Exception("Error subiendo media");
-
 
                 var post = new Post
                 {
-                    UserID = userDb.Id,
                     User = userDb,
                     Content = model.Content,
                     PostDate = DateTime.Now
@@ -119,24 +136,11 @@ namespace Rest_API_PWII.Classes
                 db.Posts.Add(post);
                 db.SaveChanges();
 
-                if (model.Files.Count != 0) { 
-                
-                    var ids = (from mvm in list select mvm.MediaID).ToList();
+                db.Attach(post);
 
-                    foreach (var id in ids)
-                    {
-                        var mediaPost = new MediaPost
-                        {
-                            MediaID = id,
-                            PostID = post.PostID,
-                            Media = db.Medias.FirstOrDefault(x => x.MediaID == id),
-                            Post = post
-                        };
+                post.Medias = list;
 
-                        db.MediaPosts.Add( mediaPost );    
-                    }
-                    db.SaveChanges();
-                }
+                db.SaveChanges();
 
                 return null;
             }
@@ -151,116 +155,93 @@ namespace Rest_API_PWII.Classes
             }
         }
 
-        public List<PostViewModel> GetAll( string  Scheme, string Host, string PathBase )
+        public List<PostViewModel> GetAll()
         {
             var posts = 
-                ( from p in db.Posts 
-                  join u in db.Users
-                  on p.UserID equals u.Id
+                ( from p in db.Posts
+                        .Include(x => x.Medias)
+                        .Include(X => X.Likes)
+                        .Include(x => x.Replies)
+                        .Include(x => x.Reposts)
                   select new PostViewModel
                   {
-                      PostID    = p.PostID,
-                      Content   = p.Content,
-                      UserID    = u.Id,
-                      UserName  = u.UserName,
-                      UserTag   = u.Tag,
-                      UserProfilePicID = u.ProfilePhotoMediaID,
-                      Medias = (  from mp in db.MediaPosts
-                                  join po in db.Posts
-                                  on mp.PostID equals po.PostID
-                                  join m in db.Medias
-                                  on mp.MediaID equals m.MediaID
-                                  where po.PostID == p.PostID
+                      PostID                = p.PostID,
+                      Content               = p.Content,
+                      PublisherID           = p.User.Id,
+                      PublisherUserName     = p.User.UserName,
+                      PublisherTag          = p.User.Tag,
+                      PublisherProfilePic   = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{p.User.ProfilePic.Name}",
+                      LikeCount             = p.Likes.Count,
+                      ReplyCount            = p.Replies.Count,
+                      RepostCount           = p.Reposts.Count,
+                      Medias = (  from m in p.Medias
                                   select new MediaViewModel {
-                                     MediaID = m.MediaID,
-                                     MIME = m.MIME,
-                                     Path = $"{Scheme}://{Host}{PathBase}/static/{m.Name}",
-                                     IsVideo = m.MIME.Contains( "video" )
+                                     MediaID    = m.MediaID,
+                                     MIME       = m.MIME,
+                                     Path       = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                     IsVideo    = m.MIME.Contains( "video" )
                                   }).ToList()
                   }).ToList();
 
             return posts;
         }
 
-        public PostViewModel GetOne( int id, string Scheme, string Host, string PathBase)
+        public PostViewModel GetOne( int id )
         {
-            return (from p in db.Posts
-                    join u in db.Users
-                    on p.UserID equals u.Id
+            return (from p in db.Posts.Include( p => p.Medias )
                     where id == p.PostID
                     select new PostViewModel
                     {
-                        PostID = p.PostID,
-                        Content = p.Content,
-                        UserID = u.Id,
-                        UserName = u.UserName,
-                        UserTag = u.Tag,
-                        UserProfilePicID = u.ProfilePhotoMediaID,
-                        Medias = (from mp in db.MediaPosts
-                                  join po in db.Posts
-                                  on mp.PostID equals po.PostID
-                                  join m in db.Medias
-                                  on mp.MediaID equals m.MediaID
-                                  where po.PostID == p.PostID
-                                  select new MediaViewModel
-                                  {
-                                      MediaID = m.MediaID,
-                                      MIME = m.MIME,
-                                      Path = $"{Scheme}://{Host}{PathBase}/static/{m.Name}",
-                                      IsVideo = m.MIME.Contains("video")
+                        PostID      = p.PostID,
+                        Content     = p.Content,
+                        PublisherID = p.User.Id,
+                        PublisherUserName = p.User.UserName,
+                        PublisherTag = p.User.Tag,
+                        PublisherProfilePic = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{""/*p.User.ProfilePic.Name*/}",
+                        Medias = (from m in p.Medias
+                                  select new MediaViewModel{
+                                      MediaID   = m.MediaID,
+                                      MIME      = m.MIME,
+                                      Path      = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                      IsVideo   = m.MIME.Contains("video")
                                   }).ToList()
                     }).FirstOrDefault();
         }
 
-        public ResponseApiError Update( int id, CPostModel post )
+        public ResponseApiError Update( int id, UPostModel model )
         {
             try
             {
-                ResponseApiError err = ValidateCU(post);
+                var err = ValidateExists(id);
+                if (err != null)
+                    return err;
+                
+                err = ValidateU( id, model );
                 if (err != null)
                     return err;
 
-                err = ValidateExists(id);
-                if (err != null)
-                    return err;
+                var post = db.Posts.First(u => u.PostID == id);
+                db.Attach( post );
+                post.Content = model.Content;
 
-                Post postDb = db.Posts.First(u => u.PostID == id);
-
-                postDb.Content = post.Content;
-
-                if ( postDb.MediaPosts?.Count > 0)
+                foreach ( var deletedId in model.Deleted )
                 {
-                    foreach( var mp in postDb.MediaPosts)
-                    {
-                        db.Medias.Remove( mp.Media );
-                        db.MediaPosts.Remove( mp );
-                    }
+                    var media = db.PostMedias.First( x => x.MediaID == deletedId );
 
-                    postDb.MediaPosts = null;
+                    File.Delete(Path.Combine("static", media.Name));
+
+                    post.Medias.Remove( media );
+                    db.PostMedias.Remove( media );    
                 }
 
-                /*if ( post.Files?.Count > 0 )
-                {
-                    var medias = db.Medias.Where(m => post.Files.Contains(m.MediaID)).ToList();
-                    var mediaPosts = new List<MediaPost>();
+                var list = new List<PostMedia>();
+                var mediaCore = new MediaCore(db, env, request);
+                err = mediaCore.CreatePostMedia(model.Files, ref list);
 
-                    foreach (var m in medias)
-                    {
-                        var mediaPost = new MediaPost
-                        {
-                            MediaID = m.MediaID,
-                            Media = m,
-                            Post = postDb,
-                            PostID = postDb.PostID
-                        };
+                if (list == null && model.Files?.Count != 0)
+                    throw new Exception("Error subiendo media");
 
-                        db.MediaPosts.Add(mediaPost);
-
-                        mediaPosts.Add(mediaPost);
-                    }
-
-                    postDb.MediaPosts = mediaPosts;
-                }*/
+                db.PostMedias.AddRange(list);
 
                 db.SaveChanges();
 

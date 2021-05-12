@@ -21,7 +21,7 @@ namespace Rest_API_PWII.Classes
         {
             if (reply.Post.Content == null || reply.Post.Content == "")
                 return new ResponseApiError{
-                    Code = 1,
+                    Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
                     Message = "Reply data not valid, must have text content"
                 };
@@ -93,7 +93,7 @@ namespace Rest_API_PWII.Classes
 
             if (res == null)
                 return new ResponseApiError{
-                    Code = 2,
+                    Code = (int)HttpStatusCode.NotFound,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
                     Message = "Reply does not exist in database"
                 };
@@ -107,7 +107,7 @@ namespace Rest_API_PWII.Classes
 
             if (res == null)
                 return new ResponseApiError { 
-                    Code = 2, 
+                    Code = (int)HttpStatusCode.NotFound, 
                     HttpStatusCode = (int)HttpStatusCode.NotFound, 
                     Message = "Requested reply does not exist in database"
                 };
@@ -128,42 +128,18 @@ namespace Rest_API_PWII.Classes
                     return err;
 
                 var post = db.Posts.First( p => p.PostID == model.PostID );
-
                 var user = db.Users.First( u => u.Id == model.UserID );
-
                 var reply = new Reply {
-                    PostID = post.PostID,
-                    Post = post,
-                    UserID = user.Id,
-                    User = user,
                     ContentReplies = model.Content,
                 };
 
-                var replyEntry = db.Replies.Add(reply);
+                db.Replies.Add(reply);
+                db.SaveChanges();
 
-                var replyDb = replyEntry.Entity;
+                db.Attach(reply);
 
-                if ( model.mediaIDs?.Count > 0 )
-                {
-                    var medias = db.Medias.Where( m => model.mediaIDs.Contains(m.MediaID) ).ToList();
-
-                    var mediaReplies = new List<MediaReply>();
-
-                    foreach (var m in medias)
-                    {
-                        var mediaReply = new MediaReply
-                        {
-                            MediaID = m.MediaID,
-                            Media = m,
-                            ReplyID = replyDb.ReplyID,
-                            Reply = replyDb
-                        };
-
-                        mediaReplies.Add(mediaReply);
-                    }
-
-                    replyDb.MediaReplies = mediaReplies;
-                }
+                reply.Post = post;
+                reply.User = user;
 
                 db.SaveChanges();
 
@@ -172,7 +148,7 @@ namespace Rest_API_PWII.Classes
             catch (Exception ex)
             {
                 return new ResponseApiError{
-                    Code = 3,
+                    Code = (int)HttpStatusCode.NotFound,
                     HttpStatusCode = (int)HttpStatusCode.NotFound,
                     Message = ex.Message
                 };
@@ -182,15 +158,13 @@ namespace Rest_API_PWII.Classes
         public List<ReplyViewModel> GetAll()
         {
             var reply = 
-                (from r in db.Replies 
-                 join p in db.Posts
-                 on r.PostID equals p.PostID
+                (from r in db.Replies
                  select new ReplyViewModel 
                  {
                     ReplyID = r.ReplyID,
                     Content = r.ContentReplies,
-                    PostID  = r.PostID,
-                    UserID  = r.UserID,
+                    PostID  = r.Post.PostID,
+                    UserID  = r.User.Id,
                  }).ToList();
 
             return reply;
@@ -205,8 +179,8 @@ namespace Rest_API_PWII.Classes
                  {
                      ReplyID = r.ReplyID,
                      Content = r.ContentReplies,
-                     PostID = r.PostID,
-                     UserID = r.UserID,
+                     PostID = r.Post.PostID,
+                     UserID = r.User.Id,
                  }).FirstOrDefault();
         }
 
@@ -225,28 +199,8 @@ namespace Rest_API_PWII.Classes
                 var replyDb = db.Replies.First( r => r.ReplyID == id );
 
                 replyDb.ContentReplies = reply.Content;
-                
-                if( reply.mediaIDs?.Count > 0)
-                {
-                    var medias = db.Medias.Where(  m => reply.mediaIDs.Contains(m.MediaID) ).ToList();
 
-                    var mediaReplies = new List<MediaReply>();
-
-                    foreach ( var m in medias)
-                    {
-                        var mediaReply = new MediaReply
-                        {
-                            MediaID = m.MediaID,
-                            Media = m,
-                            ReplyID = replyDb.ReplyID,
-                            Reply = replyDb
-                        };
-
-                        mediaReplies.Add( mediaReply );
-                    }
-
-                    replyDb.MediaReplies = mediaReplies;
-                }
+                //TODO MEDIA
 
                 db.SaveChanges();
 

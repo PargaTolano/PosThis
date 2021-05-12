@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
@@ -11,18 +12,41 @@ using Rest_API_PWII.Models.ViewModels;
 
 namespace Rest_API_PWII.Classes
 {
+    public enum UserMediaType
+    {
+        ProfilePic,
+        CoverPic
+    }
+
     public class MediaCore
     {
         private PosThisDbContext db;
+        private IHostingEnvironment env;
+        private HttpRequest request;
 
-        public MediaCore(PosThisDbContext db)
+        public MediaCore(PosThisDbContext db, IHostingEnvironment env, HttpRequest request)
         {
             this.db = db;
+            this.env = env;
+            this.request = request;
         }
 
-        public ResponseApiError Validate(List<IFormFile> files )
+        public ResponseApiError Validate( IFormFile files )
         {
-            if ( files?.Count == 0 )
+            if (files.Length == 0)
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.BadRequest,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Invalid data, file must not be empty"
+                };
+
+            return null;
+        }
+
+        public ResponseApiError Validate( List<IFormFile> files )
+        {
+            if (files?.Count == 0)
                 return new ResponseApiError
                 {
                     Code = (int)HttpStatusCode.BadRequest,
@@ -33,148 +57,204 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateExists( Media media )
+        public ResponseApiError ValidateUserMediaExists( int id )
         {
-            var res = (from m in db.Medias where m.MediaID == media.MediaID select m).First();
+            var um = db.UserMedias.FirstOrDefault( x => x.MediaID == id );
 
-            if (res == null)
+            if ( um == null )
                 return new ResponseApiError
                 {
-                    Code = (int)HttpStatusCode.NotFound,
-                    HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "Media does not exists in database"
+                    Code = (int)HttpStatusCode.BadRequest,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "User picture must exist"
                 };
 
             return null;
         }
 
-        public ResponseApiError ValidateExists( int id )
+        public ResponseApiError ValidatePostMediaExists( int id )
         {
-            var res = (from m in db.Medias where m.MediaID == id select m).First();
+            var um = db.PostMedias.FirstOrDefault(x => x.MediaID == id);
 
-            if ( res == null )
+            if (um == null)
                 return new ResponseApiError
                 {
-                    Code = (int)HttpStatusCode.NotFound,
-                    HttpStatusCode = ( int ) HttpStatusCode.NotFound,
-                    Message = "Media does not exist in database"
+                    Code = (int)HttpStatusCode.BadRequest,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Post picture or video must exist"
                 };
 
             return null;
         }
 
-        public ResponseApiError Create( 
-            List<IFormFile> files,
-            string Scheme,
-            string Host,
-            string PathBase,
-            ref List<MediaViewModel> list )
+        public ResponseApiError ValidateReplyMediaExists( int id )
         {
-            try
+            var um = db.ReplyMedias.FirstOrDefault(x => x.MediaID == id);
+
+            if (um == null)
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.BadRequest,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "Reply picture or video picture must exist"
+                };
+
+            return null;
+        }
+
+        public ResponseApiError CreateUserMedia( IFormFile file, ref UserMedia media )
+        {
+            var err = Validate(file);
+            if (err != null)
+                return err;
+
+            var fileName = Guid.NewGuid() + file.FileName;
+
+            var path = Path.Combine("static", fileName);
+
+            using (var fileStream = new FileStream(path, FileMode.Create))
             {
-                var err = Validate(files);
-                if (err != null) 
-                    return err;
+                file.CopyTo(fileStream);
+            }
 
-                list = new List<MediaViewModel>();
+            media = new UserMedia
+            {
+                MIME = file.ContentType,
+                Name = fileName
+            };
+
+            db.UserMedias.Add(media);
+            db.SaveChanges();
+
+            return null;
+        }
+
+        public ResponseApiError CreatePostMedia( List<IFormFile> files, ref List<PostMedia> list )
+        {
+            var err = Validate(files);
+            if (err != null)
+                return err;
+
+            list = new List<PostMedia>();
 
 
-                foreach( var file in files)
+            foreach (var file in files)
+            {
+                if (file.Length == 0)
+                    continue;
+
+                var fileName = Guid.NewGuid() + file.FileName;
+
+                var path = Path.Combine("static", fileName);
+
+                using (var fileStream = new FileStream(path, FileMode.Create))
                 {
-                    if (file.Length == 0)
-                        continue;
-
-                    var fileName = Guid.NewGuid() + file.FileName;
-
-                    var path = Path.Combine("static", fileName);
-
-                    using ( var fileStream = new FileStream( path, FileMode.Create ) )
-                    {
-                        file.CopyTo( fileStream );
-                    }
-
-                    var media = new Media
-                    {
-                        MIME = file.ContentType,
-                        Name = fileName
-                    };
-
-                    var entry = db.Medias.Add( media );
-                    db.SaveChanges();
-
-                    var viewModel = new MediaViewModel
-                    {
-                        MediaID = media.MediaID,
-                        MIME    = media.MIME,
-                        Path    = $"{Scheme}://{Host}{PathBase}/static/{media.Name}",
-                        IsVideo = media.MIME.Contains( "video" )
-                    };
-
-                    list.Add( viewModel );
+                    file.CopyTo(fileStream);
                 }
 
-                return null;
-            }
-            catch ( Exception ex )
-            {
-                list = null;
-                return new ResponseApiError
+                var media = new PostMedia
                 {
-                    Code = (int)HttpStatusCode.InternalServerError,
-                    HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = ex.Message
+                    MIME = file.ContentType,
+                    Name = fileName
                 };
-            }
-        }
 
-        public List<Media> GetAll()
-        {
-            var media = (from m in db.Medias select m).ToList();
-
-            return media;
-        }
-
-        public MediaViewModel GetOne( int id , string Scheme, string Host, string PathBase )
-        {
-            var MediaViewModel = (
-                from m in db.Medias
-                where m.MediaID == id
-                select new MediaViewModel
-                {
-                    MediaID = m.MediaID,
-                    MIME = m.MIME,
-                    Path =$"{Scheme}://{Host}{PathBase}/static/{m.Name}",
-                    IsVideo = m.MIME.Contains("video")
-                }).FirstOrDefault();
-
-            return MediaViewModel;
-        }
-
-        public ResponseApiError Delete( int id )
-        {
-            try
-            {
-                var err = ValidateExists( id );
-                if (err != null)
-                    return err;
-
-                var mediaDb = db.Medias.First(m => m.MediaID == id);
-
-                db.Medias.Remove( mediaDb );
-
+                db.PostMedias.Add(media);
                 db.SaveChanges();
+                list.Add(media);
+            }
 
-                return null;
-            }
-            catch (Exception ex)
+            return null;
+        }
+
+        public ResponseApiError CreateReplyMedia( List<IFormFile> files, ref List<ReplyMedia> list )
+        {
+            var err = Validate(files);
+            if (err != null)
+                return err;
+
+            list = new List<ReplyMedia>();
+
+
+            foreach (var file in files)
             {
-                return new ResponseApiError
+                if (file.Length == 0)
+                    continue;
+
+                var fileName = Guid.NewGuid() + file.FileName;
+
+                var path = Path.Combine("static", fileName);
+
+                using (var fileStream = new FileStream(path, FileMode.Create))
                 {
-                    Code = (int)HttpStatusCode.InternalServerError,
-                    HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = ex.Message
+                    file.CopyTo(fileStream);
+                }
+
+                var media = new ReplyMedia
+                {
+                    MIME = file.ContentType,
+                    Name = fileName
                 };
+
+                db.ReplyMedias.Add(media);
+                db.SaveChanges();
+                list.Add(media);
             }
+
+            return null;
+        }
+
+        public ResponseApiError DeleteUserMedia( int id )
+        {
+            var err = ValidateUserMediaExists( id );
+            if (err != null)
+                return err;
+
+            var um = db.UserMedias.First( x => x.MediaID == id );
+
+            var path = Path.Combine( "static", um.Name );
+
+            File.Delete(path);
+
+            db.UserMedias.Remove(um);
+            db.SaveChanges();
+
+            return null;
+        }
+
+        public ResponseApiError DeletePostMedia( int id )
+        {
+            var err = ValidatePostMediaExists( id );
+            if ( err != null )
+                return err;
+
+            var pm = db.PostMedias.First( x => x.MediaID == id );
+
+            var path = Path.Combine( "static", pm.Name );
+
+            File.Delete(path);
+
+            db.PostMedias.Remove( pm );
+            db.SaveChanges();
+
+            return null;
+        }
+
+        public ResponseApiError DeleteReplyMedia( int id )
+        {
+            var err = ValidateReplyMediaExists( id );
+            if ( err != null )
+                return err;
+
+            var rm = db.ReplyMedias.First( x => x.MediaID == id );
+
+            var path = Path.Combine( "static", rm.Name );
+
+            File.Delete( path );
+
+            db.ReplyMedias.Remove( rm );
+            db.SaveChanges();
+
+            return null;
         }
     }
 

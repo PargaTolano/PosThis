@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
 using Rest_API_PWII.Classes;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Rest_API_PWII.Controllers
 {
@@ -16,17 +17,19 @@ namespace Rest_API_PWII.Controllers
     public class FollowController : ControllerBase
     {
         private PosThisDbContext db;
+        private IHostingEnvironment env;
 
-        public FollowController(PosThisDbContext db)
+        public FollowController(IHostingEnvironment env, PosThisDbContext db)
         {
             this.db = db;
+            this.env = env;
         }
 
         [HttpGet("{id}")]
         public IActionResult GetFollowers( string id ) {
             try
             {
-                var followCore = new FollowCore( db );
+                var followCore = new FollowCore( db, env, Request );
                 var followers = followCore.GetFollowers( id );
 
                 return Ok(
@@ -55,7 +58,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var followCore = new FollowCore(db);
+                var followCore = new FollowCore(db, env, Request);
                 var following = followCore.GetFollowing(id);
 
                 return Ok(
@@ -84,7 +87,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var followCore = new FollowCore(db);
+                var followCore = new FollowCore(db, env, Request);
                 var count = followCore.GetFollowersCount(id);
 
                 return Ok(
@@ -113,7 +116,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var followCore = new FollowCore(db);
+                var followCore = new FollowCore(db, env, Request);
                 var count = followCore.GetFollowingCount(id);
 
                 return Ok(
@@ -142,7 +145,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var followCore = new FollowCore( db );
+                var followCore = new FollowCore( db, env, Request);
                 var err = followCore.Create( model );
                 if (err != null)
                     return StatusCode( err.HttpStatusCode, err );
@@ -172,7 +175,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var followCore = new FollowCore(db);
+                var followCore = new FollowCore(db, env, Request);
                 var err = followCore.Delete( id );
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);

@@ -3,18 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Rest_API_PWII.Classes
 {
     public class UserCore
     {
-        private PosThisDbContext db;
+        private PosThisDbContext    db;
+        private IHostingEnvironment env;
+        private HttpRequest         request;
 
-        public UserCore( PosThisDbContext db )
+        public UserCore(PosThisDbContext db, IHostingEnvironment env, HttpRequest request)
         {
             this.db = db;
+            this.env = env;
+            this.request = request;
         }
 
         public ResponseApiError Validate( User user )
@@ -32,10 +40,9 @@ namespace Rest_API_PWII.Classes
         public ResponseApiError ValidateUpdate( UserViewModel model )
         {
             if( 
-                model.UserName == null &&
-                model.Tag == null &&
-                model.Email == null &&
-                model.ProfilePhotoMediaID == null &&
+                model.UserName  == null &&
+                model.Tag       == null &&
+                model.Email     == null &&
                 model.BirthDate == null 
                 )
                 return new ResponseApiError
@@ -119,17 +126,19 @@ namespace Rest_API_PWII.Classes
 
         public List<UserViewModel> GetAll()
         {
-            List<UserViewModel> users = 
+            var users = 
                 (from u 
-                 in db.Users 
-                 select new UserViewModel {
+                 in db.Users.Include(x=>x.ProfilePic)
+                 select new UserViewModel
+                 {
                      Id = u.Id,
                      UserName = u.UserName,
                      Tag = u.Tag,
                      Email = u.Email,
                      BirthDate = u.BirthDate,
-                     ProfilePhotoMediaID = u.ProfilePhotoMediaID
+                     ProfilePicPath = u.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.ProfilePic.Name}" : null,
                  }).ToList();
+
             return users;
         }
 
@@ -140,35 +149,52 @@ namespace Rest_API_PWII.Classes
             if ( !valid )
                 return null;
 
+            var query = model.Query != null ? model.Query : "";
+
             var searchResultModel = new SearchResultModel();
 
             if ( model.SearchPosts )
                 searchResultModel.posts =
-                    (from p in db.Posts
-                     join u in db.Users
-                     on p.UserID equals u.Id
-                     where p.Content.ToLower().Contains( model.Query.ToLower().Trim() )
+                    (from p 
+                     in db.Posts
+                        .Include( x=>x.Medias  )
+                        .Include( X=>X.Likes   )
+                        .Include( x=>x.Replies )
+                        .Include( x=>x.Reposts )
+                     where p.Content.ToLower().Contains( query.ToLower().Trim() )
                      select new SearchResultPostModel
                      {
-                         Content            = p.Content,
-                         PublisherID        = u.Id,
-                         PublisherUserName  = u.UserName,
-                         PublisherTag       = u.Tag,
-                         PublishingTime     = p.PostDate,
+                         PostID              = p.PostID,
+                         Content             = p.Content,
+                         PublisherID         = p.User.Id,
+                         PublisherUserName   = p.User.UserName,
+                         PublisherTag        = p.User.Tag,
+                         PublisherProfilePic = p.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{p.User.ProfilePic.Name}" : null,
+                         PublishingTime      = p.PostDate,
+                         LikeCount           = p.Likes.Count,
+                         ReplyCount          = p.Replies.Count,
+                         RepostCount         = p.Reposts.Count,
+                         Medias              = ( from m in p.Medias
+                                                 select new MediaViewModel
+                                                 {
+                                                     MediaID = m.MediaID,
+                                                     MIME = m.MIME,
+                                                     Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                                     IsVideo = m.MIME.Contains("video")
+                                                 }).ToList()
                      }).ToList();
 
             if ( model.SearchUsers )
                 searchResultModel.users =
-                    (from  u in db.Users
-                     where u.NormalizedUserName.Contains( model.Query.ToUpper())
+                    (from  u in db.Users.Include(x=>x.Follows).Include( x => x.ProfilePic)
+                     where u.NormalizedUserName.Contains( query.ToUpper() )
                      select new SearchResultUserModel
                      {
+                         UserId         = u.Id,
                          UserName       = u.UserName,
-                         Tag            = u.Tag,
-                         ProfilePicID   = u.ProfilePhotoMediaID,
-                         FollowerCount  = (from   f in db.Follows
-                                           where  f.UserFollowID == u.Id
-                                           select f).Count()
+                         UserTag        = u.Tag,
+                         ProfilePicPath = u.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.ProfilePic.Name}" : null,
+                         FollowerCount  = u.Follows.Count
                      }).ToList();
 
             return searchResultModel;
@@ -185,53 +211,41 @@ namespace Rest_API_PWII.Classes
                              select f.UserFollowID).ToList();
 
             var posts =
-                (from p in db.Posts
-                 join u in db.Users
-                 on p.UserID equals u.Id
+                (from p in db.Posts.Include(x=>x.Medias)
                  orderby p.PostDate descending,
-                         (following.Contains( u.Id )) descending
+                         (following.Contains( p.User.Id )) descending
                  select new FeedPostModel {
                      IsRepost       = false,
                      Content        = p.Content,
-                     PublisherID    = u.Id,
+                     PublisherID    = p.User.Id,
                      ReposterID     = null,
                      PostID         = p.PostID,
                      Date           = p.PostDate,
-                     MediaIDs       = (from po in db.Posts
-                                       join mp in db.MediaPosts
-                                       on po.PostID equals mp.PostID
-                                       join m in db.Medias
-                                       on mp.MediaID equals m.MediaID
-                                       where po.PostID == p.PostID
+                     MediaIDs       = (from m in p.Medias
                                        select m.MediaID).ToList()
                     
                  }).ToList();
             
              var reposts = 
-                (from rp in db.Reposts
-                join p in db.Posts
-                on rp.PostID equals p.PostID
-                join u in db.Users
-                on rp.UserID equals u.Id
-                orderby rp.RepostDate descending,
-                        (following.Contains(u.Id)) descending
-                where id != rp.UserID
-                select new FeedPostModel
-                {
-                    IsRepost        = true,
-                    Content         = p.Content,
-                    PublisherID     = p.UserID,
-                    ReposterID      = u.Id,
-                    PostID          = p.PostID,
-                    Date            = rp.RepostDate,
-                    MediaIDs        = (from po in db.Posts
-                                       join mp in db.MediaPosts
-                                       on po.PostID equals mp.PostID
-                                       join m in db.Medias
-                                       on mp.MediaID equals m.MediaID
-                                       where po.PostID == p.PostID
-                                       select m.MediaID).ToList()
-                }).ToList();
+                (from rp 
+                 in db.Reposts
+                    .Include(x=>x.Post)
+                    .Include(x=>x.Post.Medias)
+                    .Include(x=>x.User)
+                 orderby rp.RepostDate descending,
+                         (following.Contains(rp.User.Id)) descending
+                 where id != rp.UserID
+                 select new FeedPostModel
+                 {
+                     IsRepost        = true,
+                     Content         = rp.Post.Content,
+                     PublisherID     = rp.Post.User.Id,
+                     ReposterID      = rp.User.Id,
+                     PostID          = rp.PostID,
+                     Date            = rp.RepostDate,
+                     MediaIDs        = (from m in rp.Post.Medias
+                                        select m.MediaID).ToList()
+                 }).ToList();
 
             var pQuery = posts.AsQueryable();
             var rpQuery = reposts.AsQueryable();
@@ -266,7 +280,7 @@ namespace Rest_API_PWII.Classes
                         Tag = u.Tag,
                         Email = u.Email,
                         BirthDate = u.BirthDate,
-                        ProfilePhotoMediaID = u.ProfilePhotoMediaID
+                        ProfilePicPath = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.ProfilePic.Name}"
                     }).FirstOrDefault();
         }
 
@@ -303,6 +317,78 @@ namespace Rest_API_PWII.Classes
                 return new ResponseApiError
                 {
                     Code = 3,
+                    HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public ResponseApiError UploadProfilePic( string id, IFormFile file )
+        {
+            try
+            {
+                var mediaCore = new MediaCore( db, env, request );
+                var um = new UserMedia();
+
+                var err = mediaCore.CreateUserMedia( file, ref um );
+                if ( err != null )
+                    return err;
+
+                err = ValidateExists( id );
+                if ( err != null )
+                    return err;
+
+                var user = db.Users.First( u => u.Id == id );
+
+                db.Attach( user );
+                user.ProfilePic = um;
+                user.ProfilePicID = um.MediaID;
+
+                db.SaveChanges();
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.InternalServerError,
+                    HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public ResponseApiError UploadCoverPic( string id, IFormFile file )
+        {
+            try
+            {
+                var mediaCore = new MediaCore( db, env, request );
+                var um = new UserMedia();
+
+                var err = mediaCore.CreateUserMedia( file, ref um );
+                if ( err != null )
+                    return err;
+
+                err = ValidateExists( id );
+                if ( err != null )
+                    return err;
+
+                var user = db.Users.First(u => u.Id == id);
+
+                db.Attach( user );
+                user.CoverPic = um;
+                user.CoverPicID = um.MediaID;
+
+                db.SaveChanges();
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.InternalServerError,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                     Message = ex.Message
                 };

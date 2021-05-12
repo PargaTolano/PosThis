@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
 using Rest_API_PWII.Classes;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,10 +20,12 @@ namespace Rest_API_PWII.Controllers
     public class UsersController : ControllerBase
     {
         private PosThisDbContext db;
+        private IHostingEnvironment env;
 
-        public UsersController( PosThisDbContext db )
+        public UsersController(IHostingEnvironment env, PosThisDbContext db)
         {
             this.db = db;
+            this.env = env;
         }
 
         [HttpGet]
@@ -29,8 +33,8 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var userCore = new UserCore( db );
-                var users    = userCore.GetAll();
+                var userCore = new UserCore(db, env, Request);
+                var users = userCore.GetAll();
 
                 return Ok(
                     new ResponseApiSuccess
@@ -58,9 +62,9 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var userCore = new UserCore( db );
-                var user     = userCore.GetOne( id );
-                if ( user == null )
+                var userCore = new UserCore(db, env, Request);
+                var user = userCore.GetOne(id);
+                if (user == null)
                     return StatusCode(
                         (int)HttpStatusCode.NotFound,
                         new ResponseApiError
@@ -78,7 +82,7 @@ namespace Rest_API_PWII.Controllers
                         Message = "User retrieval successful"
                     });
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 return StatusCode(
                    (int)HttpStatusCode.InternalServerError,
@@ -96,7 +100,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var userCore = new UserCore( db );
+                var userCore = new UserCore(db, env, Request);
                 var feed = userCore.GetFeed(id);
                 if (feed == null)
                     return StatusCode(
@@ -111,7 +115,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
+                        Code = (int)HttpStatusCode.OK,
                         Data = feed,
                         Message = "Feed retrieval successful"
                     });
@@ -130,11 +134,11 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetSearch( [FromQuery] SearchRequestModel model) {
+        public IActionResult GetSearch( [FromQuery] SearchRequestModel model ) {
             try
             {
-                var userCore = new UserCore( db );
-                var searchResult = userCore.GetSearch( model );
+                var userCore = new UserCore(db, env, Request);
+                var searchResult = userCore.GetSearch(model);
                 if (searchResult == null)
                     return StatusCode(
                         (int)HttpStatusCode.InternalServerError,
@@ -148,7 +152,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
+                        Code = (int) HttpStatusCode.OK,
                         Data = searchResult,
                         Message = "Search request successful"
                     });
@@ -171,11 +175,11 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var userCore = new UserCore( db );
-                var err = userCore.Update( id, user );
+                var userCore = new UserCore(db, env, Request);
+                var err = userCore.Update(id, user);
 
-                if ( err != null )
-                    return StatusCode( err.HttpStatusCode, err );
+                if (err != null)
+                    return StatusCode(err.HttpStatusCode, err);
 
                 return Ok(
                     new ResponseApiSuccess
@@ -185,14 +189,78 @@ namespace Rest_API_PWII.Controllers
                         Message = "User data update successful"
                     });
             }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    (int)HttpStatusCode.InternalServerError,
+                    new ResponseApiError {
+                        Code = (int)HttpStatusCode.InternalServerError,
+                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                        Message = ex.Message
+                    });
+            }
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult AddProfilePic( string id, [FromForm] IFormFile file )
+        {
+            try
+            {
+                var userCore = new UserCore( db, env, Request );
+                var err = userCore.UploadProfilePic( id, file );
+
+                if ( err != null )
+                    return StatusCode( err.HttpStatusCode, err );
+
+                return Ok(
+                    new ResponseApiSuccess
+                    {
+                        Code = ( int ) HttpStatusCode.OK,
+                        Data = new int[]{ },
+                        Message = "User data update successful"
+                    });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    (int)HttpStatusCode.InternalServerError,
+                    new ResponseApiError
+                    {
+                        Code = (int)HttpStatusCode.InternalServerError,
+                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                        Message = ex.Message
+                    });
+            }
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult AddCoverPic( string id, [FromForm] IFormFile file )
+        {
+            try
+            {
+                var userCore = new UserCore( db, env, Request );
+                var err = userCore.UploadCoverPic( id, file );
+
+                if ( err != null )
+                    return StatusCode( err.HttpStatusCode, err );
+
+                return Ok(
+                    new ResponseApiSuccess
+                    {
+                        Code = (int)HttpStatusCode.OK,
+                        Data = new int[] { },
+                        Message = "User data update successful"
+                    });
+            }
             catch ( Exception ex )
             {
                 return StatusCode(
-                    ( int ) HttpStatusCode.InternalServerError,
-                    new ResponseApiError {
+                    (int)HttpStatusCode.InternalServerError,
+                    new ResponseApiError
+                    {
                         Code = (int)HttpStatusCode.InternalServerError,
-                        HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
-                        Message = ex.Message 
+                        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                        Message = ex.Message
                     });
             }
         }
@@ -202,7 +270,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var userCore = new UserCore(db);
+                var userCore = new UserCore(db, env, Request);
                 var err = userCore.Delete( id );
 
                 if ( err != null )
