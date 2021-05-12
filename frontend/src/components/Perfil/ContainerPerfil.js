@@ -1,14 +1,9 @@
 import React from 'react';
 
-import Container from '@material-ui/core/Container';
 import {makeStyles} from '@material-ui/core/styles';
-import CardPost from 'components/Post/CardPost';
 import CardPerfil from 'components/Perfil/CardPerfil';
 import FixedContainer from "components/Inicio/Container";
 import CreatePost from "components/Post/CreatePost";
-import ImageIcon from '@material-ui/icons/Image';
-
-import IconButton from "@material-ui/core/IconButton";
 
 import {
   Grid,
@@ -66,9 +61,7 @@ function ContainerPerfil() {
             </div>
           
         </div>
-        <Typography id="userTag"  component="h2" className={classes.title}>
-              <strong>Mis PosThis</strong>
-            </Typography>
+       
         <FixedContainer></FixedContainer>
         </div>
   );
