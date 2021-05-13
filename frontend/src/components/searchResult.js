@@ -3,7 +3,7 @@ import SearchAppBar from "components/Inicio/Navbar";
 import { makeStyles } from "@material-ui/core/styles";
 import backapp3 from "assets/backapp3.png";
 import CardPost from "./Post/CardPost";
-import UserCard from "components/Search/userCard";
+import UserCard from "components/Search/UserCard";
 
 import SearchRequestModel from 'model/SearchRequestModel';
 

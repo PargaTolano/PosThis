@@ -23,13 +23,16 @@ const useStyles = makeStyles((theme) => ({
   topHolder:{
     backgroundColor: 'transparent',
     paddingTop: theme.spacing(4),
-    paddingLeft:theme.spacing(35),
     paddingBottom: theme.spacing(1),
     marginLeft : 'auto',
     marginRight : 'auto',
     display: 'flex',
-    alignItems: 'row',
+    alignItems: 'center',
     flexDirection: 'row',
+    justifyContent: 'center',
+    [theme.breakpoints.down('sm')]:{
+      flexDirection: 'column',
+    }
   },
   rightHolder:{
 

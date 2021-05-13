@@ -3,7 +3,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import CardPost from 'components/Post/CardPost';
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider';
-import Link from '@material-ui/core/Link'
+import Link from '@material-ui/core/Link';
+
+import PostMock from 'mock/post.json';
 
 const useStyles = makeStyles((theme) => ({
   cardHolder: {
@@ -40,10 +42,15 @@ function FixedContainer() {
       <div component='h4' variant='h2' className={classes.titleBegin}>
         <strong>Recientes</strong>
       </div>
-        <CardPost />
-        <CardPost />
-        <CardPost />
-        <CardPost />
+      {
+        <>
+          <CardPost post={PostMock} editMode={true}/>
+          <CardPost post={PostMock} editMode={true}/>
+          <CardPost post={PostMock} editMode={true}/>
+          <CardPost post={PostMock} editMode={true}/>
+        </>
+      }
+        
     </div>
   );
 }

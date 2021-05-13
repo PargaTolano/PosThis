@@ -3,8 +3,9 @@ import {BrowserRouter as Router, Route} from 'react-router-dom';
 import Feed from 'components/Feed';
 import Login from 'components/Login';
 import DetailPost from 'components/DetailPost';
-import Searchresult from 'components/searchResult';
-import {makeStyles} from '@material-ui/core/styles'
+import SearchResult from 'components/SearchResult';
+import Profile from 'components/Profile';
+import {makeStyles} from '@material-ui/core/styles';
 import backapp from 'assets/backapp.png'
 
 import useCheckAuth from 'hooks/useCheckAuth';
@@ -16,7 +17,8 @@ function App() {
       <Router>
         <Route exact path='/feed' component={Feed}/>
         <Route exact path='/detailpost' component={DetailPost}/>
-        <Route exact path='/searchresult' component={Searchresult}/>
+        <Route exact path='/searchresult' component={SearchResult}/>
+        <Route exact path='/profile/:id' component={Profile}/>
         <Route exact path='/' component={Login}/>
       </Router>
     </div>

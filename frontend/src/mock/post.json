@@ -1,0 +1,25 @@
+{
+    "postID": 1,
+    "content": "Platano chiapas a 5.90 el kilo pero en Soriana",
+    "medias": [
+        {
+            "mediaID": 1,
+            "mime": "image/jpeg",
+            "path": "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-image_large.png?format=jpg&quality=90&v=1530129081",
+            "isVideo": false
+        },
+        {
+            "mediaID": 2,
+            "mime": "image/png",
+            "path": "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-image_large.png?format=jpg&quality=90&v=1530129081",
+            "isVideo": false
+        }
+    ],
+    "publisherID": "11496042-d9c3-4800-bd8c-353dba645286",
+    "publisherUserName": "DavGutierrez",
+    "publisherTag": "DGut",
+    "publisherProfilePic": "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-image_large.png?format=jpg&quality=90&v=1530129081",
+    "likeCount": 0,
+    "replyCount": 0,
+    "repostCount": 0
+}

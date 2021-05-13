@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles }     from '@material-ui/core/styles';
 import Card               from '@material-ui/core/Card';
 import CardActionArea     from '@material-ui/core/CardActionArea';
@@ -219,8 +219,9 @@ function MediaGrid( props ){
 
 function CardPost( props ) {
 
-  const { post } = props;
+  const { post, uid, editMode} = props;
   const id = post.publisherId;
+  let [editValue, setEditValue] = useState(post.content);
 
   const classes = useStyles();
   return (
@@ -230,13 +231,19 @@ function CardPost( props ) {
           <div className={classes.displayTitle}>
             <Avatar id='avatarUser' src={post.publisherProfilePic || defaultImage}/>
             <Typography id='userTag' variant='h6' component='h2' className={classes.title}>
-              <Link to="/">
+              <Link to={`/profile/${5}`}>
                 <strong>{post.publisherUserName} {"@"+post.publisherTag}</strong>
               </Link>
             </Typography>
           </div>
           <Typography id='contentP' variant='body2' component='p' className={classes.content}>
-            {post.content}
+
+            {
+              editMode ? 
+              (<textarea value={editValue} onChange={e=>setEditValue(e.target.value)}></textarea>)
+              :
+              (post.content)
+            }
           </Typography>
           <div className={classes.contMedia}>
             <MediaGrid media={post.medias}/>
