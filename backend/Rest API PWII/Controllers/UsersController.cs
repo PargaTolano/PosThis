@@ -170,6 +170,44 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetUserPosts( string id )
+        {
+            try
+            {
+                var userCore = new UserCore(db, env, Request);
+                var searchResult = userCore.GetUserPosts( id );
+                if (searchResult == null)
+                    return StatusCode(
+                        (int)HttpStatusCode.InternalServerError,
+                        new ResponseApiError
+                        {
+                            Code = (int)HttpStatusCode.NotFound,
+                            HttpStatusCode = (int)HttpStatusCode.NotFound,
+                            Message = "At least one criteria should be true"
+                        });
+
+                return Ok(
+                    new ResponseApiSuccess
+                    {
+                        Code = (int)HttpStatusCode.OK,
+                        Data = searchResult,
+                        Message = "Search request successful"
+                    });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                   (int)HttpStatusCode.InternalServerError,
+                   new ResponseApiError
+                   {
+                       Code = (int)HttpStatusCode.InternalServerError,
+                       HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+                       Message = ex.Message
+                   });
+            }
+        }
+
         [HttpPut("{id}")]
         public IActionResult Update( string id, [FromBody] UserViewModel user )
         {

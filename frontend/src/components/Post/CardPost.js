@@ -12,7 +12,7 @@ import FavoriteIcon       from '@material-ui/icons/Favorite';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import ReplyAllIcon       from '@material-ui/icons/ReplyAll';
 import Avatar             from '@material-ui/core/Avatar';
-import Link               from '@material-ui/core/Link';
+import { Link }           from 'react-router-dom';
 
 const defaultImage = 'https://www.adobe.com/express/create/media_1900d303a701488626835756419ca3a50b83a2ae5.png?width=2000&format=webply&optimize=medium';
 
@@ -230,7 +230,9 @@ function CardPost( props ) {
           <div className={classes.displayTitle}>
             <Avatar id='avatarUser' src={post.publisherProfilePic || defaultImage}/>
             <Typography id='userTag' variant='h6' component='h2' className={classes.title}>
-              <strong>{post.publisherUserName} {"@"+post.publisherTag}</strong>
+              <Link to="/">
+                <strong>{post.publisherUserName} {"@"+post.publisherTag}</strong>
+              </Link>
             </Typography>
           </div>
           <Typography id='contentP' variant='body2' component='p' className={classes.content}>

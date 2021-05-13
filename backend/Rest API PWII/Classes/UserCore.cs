@@ -221,9 +221,15 @@ namespace Rest_API_PWII.Classes
                      ReposterID     = null,
                      PostID         = p.PostID,
                      Date           = p.PostDate,
-                     MediaIDs       = (from m in p.Medias
-                                       select m.MediaID).ToList()
-                    
+                     Medias       = (from m in p.Medias
+                                     select new MediaViewModel
+                                     {
+                                         MediaID = m.MediaID,
+                                         MIME = m.MIME,
+                                         Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                         IsVideo = m.MIME.Contains("video")
+                                     }).ToList()
+
                  }).ToList();
             
              var reposts = 
@@ -243,8 +249,14 @@ namespace Rest_API_PWII.Classes
                      ReposterID      = rp.User.Id,
                      PostID          = rp.PostID,
                      Date            = rp.RepostDate,
-                     MediaIDs        = (from m in rp.Post.Medias
-                                        select m.MediaID).ToList()
+                     Medias        = (from m in rp.Post.Medias
+                                      select new MediaViewModel
+                                      {
+                                          MediaID = m.MediaID,
+                                          MIME = m.MIME,
+                                          Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                          IsVideo = m.MIME.Contains("video")
+                                      }).ToList()
                  }).ToList();
 
             var pQuery = posts.AsQueryable();
@@ -262,7 +274,90 @@ namespace Rest_API_PWII.Classes
                             ReposterID  = groupedFP.First().ReposterID,
                             PostID      = groupedFP.First().PostID,
                             Date        = groupedFP.First().Date,
-                            MediaIDs    = groupedFP.First().MediaIDs
+                            Medias    = groupedFP.First().Medias
+                        });
+
+            return feed.ToList();
+        }
+
+        public List<FeedPostModel> GetUserPosts(string id)
+        {
+            var err = ValidateExists(id);
+            if (err != null)
+                return null;
+
+            var following = (from f in db.Follows
+                             where f.UserFollowerID == id
+                             select f.UserFollowID).ToList();
+
+            var posts =
+                (from p in db.Posts
+                                .Include(x => x.Medias)
+                 orderby p.PostDate descending,
+                         (following.Contains(p.User.Id)) descending
+                 where id == p.User.Id
+                 select new FeedPostModel
+                 {
+                     IsRepost       = false,
+                     Content        = p.Content,
+                     PublisherID    = p.User.Id,
+                     ReposterID     = null,
+                     PostID         = p.PostID,
+                     Date           = p.PostDate,
+                     Medias = (from m in p.Medias
+                                select new MediaViewModel { 
+                                   MediaID = m.MediaID,
+                                   MIME    = m.MIME,
+                                   Path    = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                   IsVideo = m.MIME.Contains("video")
+                                }).ToList()
+
+                 }).ToList();
+
+            var reposts =
+               (from rp
+                in db.Reposts
+                   .Include(x => x.Post)
+                   .Include(x => x.Post.Medias)
+                   .Include(x => x.User)
+                orderby rp.RepostDate descending,
+                        (following.Contains(rp.User.Id)) descending
+                where id == rp.UserID
+                select new FeedPostModel
+                {
+                    IsRepost = true,
+                    Content = rp.Post.Content,
+                    PublisherID = rp.Post.User.Id,
+                    ReposterID = rp.User.Id,
+                    PostID = rp.PostID,
+                    Date = rp.RepostDate,
+                    Medias = (from m in rp.Post.Medias
+                                select new MediaViewModel
+                                {
+                                    MediaID = m.MediaID,
+                                    MIME = m.MIME,
+                                    Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                    IsVideo = m.MIME.Contains("video")
+                                }).ToList()
+                }).ToList();
+
+            var pQuery = posts.AsQueryable();
+            var rpQuery = reposts.AsQueryable();
+
+            var rQuery = pQuery.Union(rpQuery);
+            rQuery = rQuery.OrderByDescending(x => x.Date);
+
+            var feed = (from fp in rQuery
+                        group fp by fp.PostID into groupedFP
+                        select new FeedPostModel
+                        {
+                            IsRepost = groupedFP.Any(fp => fp.IsRepost),
+                            Content = groupedFP.First().Content,
+                            PublisherID = groupedFP.First().PublisherID,
+                            ReposterID = groupedFP.First().ReposterID,
+                            PostID = groupedFP.First().PostID,
+                            Date = groupedFP.First().Date,
+                            Medias = groupedFP.First().Medias
                         });
 
             return feed.ToList();
