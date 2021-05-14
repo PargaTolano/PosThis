@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   AppBar,
   Toolbar,
@@ -8,14 +8,15 @@ import {
   MenuItem,
   Menu,
   Button,
-} from "@material-ui/core";
-import {Link} from 'react-router-dom'
-import { fade, makeStyles } from "@material-ui/core/styles";
-import SearchIcon from "@material-ui/icons/Search";
-import AccountCircle from "@material-ui/icons/AccountCircle";
+} from '@material-ui/core';
 
-//Logo personal
-import Logo from "assets/Logo.png";
+import {Link}                   from 'react-router-dom'
+import { fade, makeStyles }     from '@material-ui/core/styles';
+import SearchIcon               from '@material-ui/icons/Search';
+import AccountCircle            from '@material-ui/icons/AccountCircle';
+import Logo                     from 'assets/Logo.png';
+import LogoNominado             from 'assets/LogoNominado.png';
+import { routes, authTokenKey } from '_utils';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -93,17 +94,23 @@ export default function SearchAppBar() {
     setAnchorEl(null);
   };
 
+  const handleLogOut = ()=>{
+    localStorage.removeItem( authTokenKey );
+    window.location.href = '/login';
+    setAnchorEl(null);
+  }
+
   return (
       <AppBar className={classes.Tool}>
         <Toolbar>
           <div>
-              <Link to="/feed">
+              <Link to={routes.feed}>
               <img className={classes.PosthisLogo} src= {Logo} width= '50' height='50'/>
               </Link>
           </div>
 
           <div className={classes.title}>
-            <img src="/img/POSTHIS.svg" width="120" height="60" alt="Logo" />
+            <img src={LogoNominado} width='120' height='60' alt='Logo' />
           </div>
 
           <div className={classes.search}>
@@ -111,34 +118,38 @@ export default function SearchAppBar() {
               <SearchIcon />
             </div>
             <InputBase
-              placeholder="Buscar…"
+              placeholder='Buscar…'
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
-              inputProps={{ "aria-label": "search" }}
+              inputProps={{ 'aria-label': 'search' }}
+              onSubmit ={e=>{
+                e.preventDefault();
+                console.log( e.target.value );
+              }}
             />
           </div>
 
           <div>
             <IconButton
-              color="inherit"
-              aria-controls="simple-menu"
-              aria-haspopup="true"
+              color='inherit'
+              aria-controls='simple-menu'
+              aria-haspopup='true'
               onClick={handleClick}
             >
             <AccountCircle className={classes.userIcon}/>
             </IconButton>
 
             <Menu
-              id="simple-menu"
+              id='simple-menu'
               anchorEl={anchorEl}
               keepMounted
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Perfil</MenuItem>
-              <MenuItem onClick={handleClose} component={Link} to="/">Cerrar sesión</MenuItem>
+              <MenuItem onClick={handleClose }>Perfil</MenuItem>
+              <MenuItem onClick={handleLogOut} component={Link} to='/'>Cerrar sesión</MenuItem>
             </Menu>
           </div>
         </Toolbar>

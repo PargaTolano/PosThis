@@ -42,10 +42,8 @@ namespace Rest_API_PWII
                 });
 
             string connectionString = Configuration.GetConnectionString("SqlConnection");
-            byte[] key;
             string keyStr = Configuration.GetValue<string>("SecretKey");
-
-            key = Encoding.ASCII.GetBytes(keyStr);
+            byte[] key = Encoding.ASCII.GetBytes(keyStr);
 
             services.AddDbContext<PosThisDbContext>( options =>
                 options.UseSqlServer(connectionString)
@@ -74,9 +72,10 @@ namespace Rest_API_PWII
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowOrigin",
-                    builder => builder.WithOrigins("*")
-                                        .AllowAnyMethod()
-                                        .AllowAnyHeader());
+                    builder => builder
+                                    .WithOrigins("*")
+                                    .AllowAnyMethod()
+                                    .AllowAnyHeader());
             });
         }
 

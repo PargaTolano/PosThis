@@ -230,7 +230,7 @@ namespace Rest_API_PWII.Classes
                                          IsVideo = m.MIME.Contains("video")
                                      }).ToList()
 
-                 }).ToList();
+                 });
             
              var reposts = 
                 (from rp 
@@ -257,15 +257,13 @@ namespace Rest_API_PWII.Classes
                                           Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
                                           IsVideo = m.MIME.Contains("video")
                                       }).ToList()
-                 }).ToList();
+                 });
 
-            var pQuery = posts.AsQueryable();
-            var rpQuery = reposts.AsQueryable();
+            var query = posts
+                            .Union(reposts)
+                            .OrderByDescending(x => x.Date);
 
-            var rQuery = pQuery.Union(rpQuery);
-            rQuery = rQuery.OrderByDescending(x => x.Date);
-
-            var feed = (from fp in rQuery
+            var feed = (from fp in query
                         group fp by fp.PostID into groupedFP
                         select new FeedPostModel { 
                             IsRepost    = groupedFP.Any( fp => fp.IsRepost ),
@@ -274,10 +272,10 @@ namespace Rest_API_PWII.Classes
                             ReposterID  = groupedFP.First().ReposterID,
                             PostID      = groupedFP.First().PostID,
                             Date        = groupedFP.First().Date,
-                            Medias    = groupedFP.First().Medias
-                        });
+                            Medias      = groupedFP.First().Medias
+                        }).ToList();
 
-            return feed.ToList();
+            return feed;
         }
 
         public List<FeedPostModel> GetUserPosts(string id)
@@ -312,7 +310,7 @@ namespace Rest_API_PWII.Classes
                                    IsVideo = m.MIME.Contains("video")
                                 }).ToList()
 
-                 }).ToList();
+                 });
 
             var reposts =
                (from rp
@@ -339,28 +337,24 @@ namespace Rest_API_PWII.Classes
                                     Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
                                     IsVideo = m.MIME.Contains("video")
                                 }).ToList()
-                }).ToList();
+                });
 
-            var pQuery = posts.AsQueryable();
-            var rpQuery = reposts.AsQueryable();
+            var query = posts.Union(reposts).OrderByDescending(x => x.Date);
 
-            var rQuery = pQuery.Union(rpQuery);
-            rQuery = rQuery.OrderByDescending(x => x.Date);
-
-            var feed = (from fp in rQuery
+            var feed = (from  fp in query
                         group fp by fp.PostID into groupedFP
                         select new FeedPostModel
                         {
-                            IsRepost = groupedFP.Any(fp => fp.IsRepost),
-                            Content = groupedFP.First().Content,
+                            IsRepost    = groupedFP.Any(fp => fp.IsRepost),
+                            Content     = groupedFP.First().Content,
                             PublisherID = groupedFP.First().PublisherID,
-                            ReposterID = groupedFP.First().ReposterID,
-                            PostID = groupedFP.First().PostID,
-                            Date = groupedFP.First().Date,
-                            Medias = groupedFP.First().Medias
-                        });
+                            ReposterID  = groupedFP.First().ReposterID,
+                            PostID      = groupedFP.First().PostID,
+                            Date        = groupedFP.First().Date,
+                            Medias      = groupedFP.First().Medias
+                        }).ToList();
 
-            return feed.ToList();
+            return feed;
         }
 
         public UserViewModel GetOne( string id )
@@ -472,8 +466,12 @@ namespace Rest_API_PWII.Classes
                 var user = db.Users.First(u => u.Id == id);
 
                 db.Attach( user );
+
+                err = mediaCore.DeleteUserMedia(user.CoverPicID.Value);
+                if (err != null)
+                    return err;
+                
                 user.CoverPic = um;
-                user.CoverPicID = um.MediaID;
 
                 db.SaveChanges();
 

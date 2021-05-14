@@ -11,15 +11,14 @@ import {
   Checkbox,
   Typography,
 } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import PersonPinIcon from '@material-ui/icons/PersonPin';
+import { makeStyles }     from '@material-ui/core/styles';
+import PersonPinIcon      from '@material-ui/icons/PersonPin';
 
-import CustomizedDialogs from 'components/Registro/dialogSignup';
-import SignUp from 'components/Registro/Signup';
+import CustomizedDialogs  from 'components/Registro/dialogSignup';
+import SignUp             from 'components/Registro/Signup';
 
-import { getUsers } from 'API/User.API';
-import { getPosts } from 'API/Post.API';
-import useRequestLoadOnMount from 'hooks/useRequestLoadOnMount';
+import { loginHelper, authHeader } from '_helpers';
+import LoginModel from 'model/LogInModel';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,21 +50,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const makeOnSubmit = ( object ) =>
-  e =>{
+  async e =>{
     e.preventDefault();
-    let body = {};
 
-    for( let key of Object.keys(object)){
-      console.log(key, object[key]);
+    const err = await loginHelper( new LoginModel(object) );
+    if ( err !== null ){
+      console.error( err );
     }
+
+    console.log( err );
   };
 
 const Login = (props) => {
-  //const [ready, response ]= useRequestLoadOnMount(getUsers);
-  //const [readyP, responseP ]= useRequestLoadOnMount(getPosts);
+
   const classes = useStyles();
 
-  const [ email, setEmail ] = useState('');
+  const [ username, setUsername ] = useState('');
   const [ password, setPassword ] = useState('');
 
   const getOnChange = ( setState )=>e=>setState(e.target.value);
@@ -74,7 +74,7 @@ const Login = (props) => {
     <Grid container component='main' className={classes.root}>
       <CssBaseline />
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+      <Grid item xs={12}    sm={8} md={5} component={Paper} elevation={6} square>
         <div className={classes.paper}>
           <Avatar className={classes.avatar}>
             <PersonPinIcon />
@@ -84,18 +84,18 @@ const Login = (props) => {
             <strong>Inicia Sesión</strong>
           </Typography>
 
-          <form className={classes.form} noValidate onSubmit={makeOnSubmit({email, password})}>
+          <form className={classes.form} noValidate onSubmit={makeOnSubmit({username, password})}>
             <TextField
               variant='outlined'
               margin='normal'
               required
               fullWidth
               id='email'
-              label='Correo electrónico'
+              label='Correo electrónico o Nombre de Usuario'
               name='email'
               autoComplete='email'
               autoFocus
-              onChange = {getOnChange(setEmail)}
+              onChange = {getOnChange(setUsername)}
             />
 
             <TextField

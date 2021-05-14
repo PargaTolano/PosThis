@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Feed = (props) => {
-  //useCheckAuth();
+  
   const classes = useStyles();
 
   return (

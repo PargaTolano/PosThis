@@ -10,6 +10,8 @@ using System.Text;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Primitives;
 
 namespace Rest_API_PWII.Controllers
 {
@@ -28,7 +30,7 @@ namespace Rest_API_PWII.Controllers
             _configuration = configuration;
         }
 
-        ResponseApiError ValidateSignUpModel( SignUpModel signup )
+        private ResponseApiError ValidateSignUpModel( SignUpModel signup )
         {
             if (signup.UserName == null)
                 return new ResponseApiError
@@ -64,7 +66,7 @@ namespace Rest_API_PWII.Controllers
             return null;
         }
 
-        ResponseApiError ValidateLoginModel( LoginModel login )
+        private ResponseApiError ValidateLoginModel( LoginModel login )
         {
             if (login.UserName == null)
                 return new ResponseApiError
@@ -80,6 +82,21 @@ namespace Rest_API_PWII.Controllers
                     Code = 400,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
                     Message = "Password not valid"
+                };
+
+            return null;
+        }
+
+        private async Task<ResponseApiError> ValidateExists( string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.NotFound,
+                    HttpStatusCode = (int)HttpStatusCode.NotFound,
+                    Message = "Username not valid"
                 };
 
             return null;
@@ -173,54 +190,60 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        //TODO terminar modificacion de contrasena
-        /*
+        [HttpPost("{id}")]
+        [Authorize]
+        public async Task<IActionResult> ValidateToken(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound(new ResponseApiError {
+                    Code = (int)HttpStatusCode.NotFound,
+                    HttpStatusCode = (int)HttpStatusCode.NotFound,
+                    Message = "User doest exist"
+                });
+            }
+
+            var model = new UserViewModel {
+                Id = user.Id,
+                UserName = user.UserName,
+                Tag = user.Tag,
+                Email = user.Email,
+                ProfilePicPath = user.ProfilePic != null ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/static/{user.ProfilePic.Name}" : null,
+                BirthDate = user.BirthDate
+            };
+
+            return Ok(new ResponseApiSuccess { 
+                Code = (int ) HttpStatusCode.OK,
+                Message = "", 
+                Data = model
+            });
+        }
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> ChangePassword( string id, [FromBody] string Password ){
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(string id, [FromBody] ChangePasswordModel model ){
             try
             {
-                var err = ValidateLoginModel(login);
+                var err = await ValidateExists(id);
 
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
 
-                var user = await _userManager.FindByEmailAsync(login.UserName);
+                var user = await _userManager.FindByIdAsync(id);
 
-                if (user == null)
-                    return StatusCode(404);
-
-                var result = await _signInManager.CheckPasswordSignInAsync(user, login.Password, false);
+                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
 
                 if (!result.Succeeded)
-                    return StatusCode(404);
+                    return StatusCode(500);
 
-                var secretKey = _configuration.GetValue<string>("SecretKey");
-
-                var key = Encoding.ASCII.GetBytes(secretKey);
-
-
-                var claims = new ClaimsIdentity(new[] {
-                    new Claim( ClaimTypes.NameIdentifier, user.Id),
-                    new Claim( ClaimTypes.Name, user.UserName )
-                });
-
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = claims,
-                    Expires = DateTime.UtcNow.AddDays(1),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-
-                var createdToken = tokenHandler.CreateToken(tokenDescriptor);
-
-                return Ok(tokenHandler.WriteToken(createdToken));
+                return Ok();
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
-        }*/
+        }
     }
 }

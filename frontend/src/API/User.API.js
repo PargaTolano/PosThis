@@ -1,10 +1,11 @@
 import {  getURL  } from 'API/url.API';
-import { arrayToCSV } from 'utils/utils';
+import { arrayToCSV } from '_utils';
 
 import SignUpModel from 'model/SignUpModel';
 import LogInModel from 'model/LogInModel';
 import UserViewModel from 'model/UserViewModel';
 import SearchRequestModel from 'model/SearchRequestModel';
+import { authHeader } from '_helpers';
 
 const getUsers = async () => {
     let res = await fetch( getURL( 'api/users/Get' ) );
@@ -85,7 +86,8 @@ const logIn = async ( model ) => {
 const updateUser = async ( id, model ) =>{
 
     const headers = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...authHeader()
     }
 
     const options = {
@@ -104,10 +106,33 @@ const updateUser = async ( id, model ) =>{
 const deleteUser = async ( id ) =>{
     const options = {
         method: "DELETE",
+        ...authHeader()
     };
     
     let res = await fetch( getURL( `api/users/Delete/${id}` ), options );
     return res.json();
+};
+
+const validateToken = async ( id )=>{
+
+    const headers ={
+        ...authHeader()
+    }
+
+    const options ={
+        method: "POST",
+        headers
+    } 
+
+    try {
+        let res = await fetch( getURL(`api/security/ValidateToken/${id}`), options );
+        let data = await res.json();
+        return data;
+    } catch (error) {
+        return {
+            error
+        }
+    }
 };
 
 export{
@@ -118,5 +143,6 @@ export{
     createUser,
     logIn,
     updateUser,
-    deleteUser
+    deleteUser,
+    validateToken
 }

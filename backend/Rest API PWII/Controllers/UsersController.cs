@@ -10,6 +10,7 @@ using Rest_API_PWII.Models.ViewModels;
 using Rest_API_PWII.Classes;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -29,6 +30,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Get()
         {
             try
@@ -58,6 +60,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public IActionResult Get( string id )
         {
             try
@@ -77,7 +80,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
+                        Code = (int)HttpStatusCode.OK,
                         Data = user,
                         Message = "User retrieval successful"
                     });
@@ -96,6 +99,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public IActionResult GetFeed( string id )
         {
             try
@@ -134,6 +138,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetSearch( [FromQuery] SearchRequestModel model ) {
             try
             {
@@ -171,6 +176,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public IActionResult GetUserPosts( string id )
         {
             try
@@ -209,6 +215,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult Update( string id, [FromBody] UserViewModel user )
         {
             try
@@ -222,7 +229,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
+                        Code = (int)HttpStatusCode.OK,
                         Data = user,
                         Message = "User data update successful"
                     });
@@ -240,6 +247,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult AddProfilePic( string id, [FromForm] IFormFile file )
         {
             try
@@ -272,6 +280,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult AddCoverPic( string id, [FromForm] IFormFile file )
         {
             try
@@ -304,6 +313,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Delete( string id )
         {
             try
@@ -317,7 +327,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
+                        Code = (int)HttpStatusCode.OK,
                         Data = "Success",
                         Message = "User deletion successful"
                     });
