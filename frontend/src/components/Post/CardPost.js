@@ -14,6 +14,7 @@ import ReplyAllIcon       from '@material-ui/icons/ReplyAll';
 import Avatar             from '@material-ui/core/Avatar';
 import { Link }           from 'react-router-dom';
 import SaveIcon           from '@material-ui/icons/Save';
+import Button             from '@material-ui/core/Button';
 
 const defaultImage = 'https://www.adobe.com/express/create/media_1900d303a701488626835756419ca3a50b83a2ae5.png?width=2000&format=webply&optimize=medium';
 
@@ -42,6 +43,17 @@ const useStyles = makeStyles((theme) => ({
     color: 'white',
     marginLeft: theme.spacing(7),
     marginBottom: theme.spacing(1),
+  },
+  contentEdit: {
+    color: 'white',
+    marginBottom: theme.spacing(1),
+    background: 'transparent',
+    outline: 'none',
+    width: '100%',
+    height: '70px',
+    resize: 'none',
+    textDecoration: 'underline',
+    boxSizing: 'border-box',
   },
   likeIcon:{
     color: red[500],
@@ -92,8 +104,13 @@ const useStyles = makeStyles((theme) => ({
   },
   usertag:{
     color: 'white',
+  },
+  displaybtn:{
+    textAlign: 'right',
+    marginTop: theme.spacing(2),
 
   }
+
 }));
 
 const useMediaGridStyles = makeStyles((theme)=>({
@@ -243,12 +260,13 @@ function CardPost( props ) {
                 <strong>{post.publisherUserName} {"@"+post.publisherTag}</strong>
               </Link>
             </Typography>
+
           </div>
           <Typography id='contentP' variant='body2' component='p' className={classes.content}>
 
             {
               editMode ? 
-              (<textarea value={editValue} onChange={e=>setEditValue(e.target.value)}></textarea>)
+              (<textarea className={classes.contentEdit} value={editValue} onChange={e=>setEditValue(e.target.value)}></textarea>)
               :
               (post.content)
             }
@@ -256,6 +274,13 @@ function CardPost( props ) {
           <div className={classes.contMedia}>
             <MediaGrid media={post.medias}/>
           </div>
+          <div  className={classes.displaybtn}>
+          
+          <Button variant='contained' color='secondary'>
+            Edit Post
+          </Button>
+          </div>
+          
         </CardContent>
       </CardActionArea>
 
@@ -287,7 +312,6 @@ function CardPost( props ) {
           <IconButton>
             <SaveIcon className={classes.saveIcon}/>
           </IconButton>
-          {post.repostCount}
         </div>
 
       </CardActions>
