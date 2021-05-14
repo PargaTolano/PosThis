@@ -9,7 +9,6 @@ import {
   TextField,
   Button,
 } from "@material-ui/core";
-import { CenterFocusStrong } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
  
@@ -41,7 +40,9 @@ const useStyles = makeStyles((theme) => ({
     alignSelf:'center',
     color:'#ea5970',
   },
-  
+  input: {
+    display: 'none',
+  },
 }));
 
 function CreatePost() {
@@ -69,19 +70,24 @@ function CreatePost() {
 
             <div className = {classes.cardBtn}>
              
-             <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-             >
-              Publicar
-            </Button>
-            <IconButton>
-                <ImageIcon className={classes.imageIcon}/>
-             </IconButton>
-            </div>
+              <Button
+               type="submit"
+               fullWidth
+               variant="contained"
+               color="primary"
+               className={classes.submit}
+              >
+                Publicar
+             </Button>
+                
+                  <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
+                  <label htmlFor="icon-button-file">
+                    <IconButton color="primary" aria-label="upload picture" component="span">
+                      <ImageIcon className={classes.imageIcon}/>
+                    </IconButton>
+                  </label>
+               
+              </div>
             </form>
        
 

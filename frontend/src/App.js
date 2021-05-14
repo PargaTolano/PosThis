@@ -3,7 +3,7 @@ import {BrowserRouter as Router, Route} from 'react-router-dom';
 import Feed from 'components/Feed';
 import Login from 'components/Login';
 import DetailPost from 'components/DetailPost';
-import SearchResult from 'components/SearchResult';
+import SearchResult from 'components/searchResult';
 import Profile from 'components/Profile';
 import {makeStyles} from '@material-ui/core/styles';
 import backapp from 'assets/backapp.png'
