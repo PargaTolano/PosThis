@@ -1,6 +1,6 @@
 import React from "react";
 import SearchAppBar from "components/Inicio/Navbar";
-import ContainerPerfil from "components/Perfil/ContainerPerfil";
+import ContainerPerfil from "components/Profile/ContainerProfile";
 
 import {makeStyles} from '@material-ui/core/styles'
 import backapp2 from 'assets/backapp2.png'

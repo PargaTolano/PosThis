@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {makeStyles} from '@material-ui/core/styles';
-import CardPerfil from 'components/Perfil/CardPerfil';
+import CardPerfil from 'components/Profile/CardProfile';
 import FixedContainer from "components/Inicio/Container";
 import CreatePost from "components/Post/CreatePost";
 

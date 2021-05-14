@@ -4,9 +4,8 @@ import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer";
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import EditInfo from 'components/EditProfile/EditInfo';
+import CustomizedDialogs from 'components/EditProfile/dialogEditInfo';
 import {
   TextField,
   Button,
@@ -103,7 +102,11 @@ function CardPerfil() {
             </Button>
           
         </div>
+        <CustomizedDialogs>
+                  <EditInfo/>
+      </CustomizedDialogs>
       </CardActions>
+      
     </Card>
   );
 }
