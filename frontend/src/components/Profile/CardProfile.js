@@ -4,9 +4,8 @@ import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import QuestionAnswerIcon from "@material-ui/icons/QuestionAnswer";
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import EditInfo from 'components/EditProfile/EditInfo';
+import CustomizedDialogs from 'components/EditProfile/dialogEditInfo';
 import {
   TextField,
   Button,
@@ -41,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
  layTitle:{
     display: 'inline-flex'
   },
-  imgPerfil:{
+  profilePicture:{
     maxWidth: 150,
     maxHeight: 150,
   },
@@ -56,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function CardPerfil() {
+function CardProfile() {
   const classes = useStyles();
   return (
     <Card className={classes.root}>
@@ -67,7 +66,7 @@ function CardPerfil() {
 
           </div>
           <div className={classes.contImg}>
-            <img className={classes.imgPerfil} id="imagenP" src="https://image.freepik.com/vector-gratis/perfil-avatar-hombre-icono-redondo_24640-14044.jpg"/>
+            <img className={classes.profilePicture} id="profilePicture" src="https://image.freepik.com/vector-gratis/perfil-avatar-hombre-icono-redondo_24640-14044.jpg"/>
             <Typography id="userTag" variant="h6" component="h2" className={classes.title}>
               <strong>Usuario @Tag</strong>
               
@@ -103,9 +102,13 @@ function CardPerfil() {
             </Button>
           
         </div>
+        <CustomizedDialogs>
+                  <EditInfo/>
+      </CustomizedDialogs>
       </CardActions>
+      
     </Card>
   );
 }
 
-export default CardPerfil;
+export default CardProfile;

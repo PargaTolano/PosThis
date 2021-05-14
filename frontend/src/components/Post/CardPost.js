@@ -14,6 +14,7 @@ import ReplyAllIcon       from '@material-ui/icons/ReplyAll';
 import Avatar             from '@material-ui/core/Avatar';
 import { Link }           from 'react-router-dom';
 import {routes}           from '_utils';
+import SaveIcon           from '@material-ui/icons/Save';
 
 const defaultImage = 'https://www.adobe.com/express/create/media_1900d303a701488626835756419ca3a50b83a2ae5.png?width=2000&format=webply&optimize=medium';
 
@@ -56,6 +57,9 @@ const useStyles = makeStyles((theme) => ({
   repostIcon:{
     color: '#f28a9a',
   },
+  saveIcon:{
+    color: '#33eaff',
+  },
   displayTitle:{
     display: 'inline-flex'
   },
@@ -90,6 +94,10 @@ const useStyles = makeStyles((theme) => ({
     left: '50%',
     transform: 'translate( -50%, -50%)',
     width: '100%',
+  },
+  usertag:{
+    color: 'white',
+
   }
 }));
 
@@ -243,7 +251,6 @@ function CardPost( props ) {
             
           </div>
           <Typography id='contentP' variant='body2' component='p' className={classes.content}>
-
             {
               editMode ? 
               (<textarea value={editValue} onChange={e=>setEditValue(e.target.value)}></textarea>)
@@ -265,17 +272,29 @@ function CardPost( props ) {
           {post.likeCount}
         </div>
         <div id='commentNum'>
+          
+          <Link to={`/DetailPost`}>
           <IconButton>
             <QuestionAnswerIcon className={classes.commentIcon}/>
           </IconButton>
+          </Link>
           {post.replyCount}
         </div>
+
         <div id='repostNum'>
           <IconButton>
             <ReplyAllIcon className={classes.repostIcon}/>
           </IconButton>
           {post.repostCount}
         </div>
+
+        <div id='saveedit'>
+          <IconButton>
+            <SaveIcon className={classes.saveIcon}/>
+          </IconButton>
+          {post.repostCount}
+        </div>
+
       </CardActions>
     </Card>
   );

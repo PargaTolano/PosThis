@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {makeStyles} from '@material-ui/core/styles';
-import CardPerfil from 'components/Perfil/CardPerfil';
+import CardProfile from 'components/Profile/CardProfile';
 import FixedContainer from "components/Inicio/Container";
 import CreatePost from "components/Post/CreatePost";
 
@@ -56,7 +56,7 @@ function ContainerPerfil() {
   return (
         <div>
         <div className = {classes.topHolder}>
-            <CardPerfil/> 
+            <CardProfile/> 
             <div className={classes.rightHolder}>
             <img className={classes.imgBackG} id="imagenP" src="https://png.pngtree.com/thumb_back/fw800/background/20190220/ourmid/pngtree-blue-gradient-summer-creative-image_9270.jpg"/>
            
