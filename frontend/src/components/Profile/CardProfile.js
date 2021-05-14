@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
  layTitle:{
     display: 'inline-flex'
   },
-  imgPerfil:{
+  profilePicture:{
     maxWidth: 150,
     maxHeight: 150,
   },
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function CardPerfil() {
+function CardProfile() {
   const classes = useStyles();
   return (
     <Card className={classes.root}>
@@ -66,7 +66,7 @@ function CardPerfil() {
 
           </div>
           <div className={classes.contImg}>
-            <img className={classes.imgPerfil} id="imagenP" src="https://image.freepik.com/vector-gratis/perfil-avatar-hombre-icono-redondo_24640-14044.jpg"/>
+            <img className={classes.profilePicture} id="profilePicture" src="https://image.freepik.com/vector-gratis/perfil-avatar-hombre-icono-redondo_24640-14044.jpg"/>
             <Typography id="userTag" variant="h6" component="h2" className={classes.title}>
               <strong>Usuario @Tag</strong>
               
@@ -111,4 +111,4 @@ function CardPerfil() {
   );
 }
 
-export default CardPerfil;
+export default CardProfile;

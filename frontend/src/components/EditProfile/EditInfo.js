@@ -1,11 +1,8 @@
 import React from 'react';
 import {
-    Avatar,
     Button,
     CssBaseline,
     TextField,
-    FormControlLabel,
-    Link,
     Grid,
     Box,
     Typography,
@@ -14,9 +11,9 @@ import {
 import ImageIcon from '@material-ui/icons/Image';
 
 import IconButton from "@material-ui/core/IconButton";
-
-import AccessibilityNewRoundedIcon from '@material-ui/icons/AccessibilityNewRounded';
 import { makeStyles } from '@material-ui/core/styles';
+
+import AccountCircle from "@material-ui/icons/AccountCircle";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -26,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.primary.main,
   },
   form: {
     width: '100%', 
@@ -37,6 +34,27 @@ const useStyles = makeStyles((theme) => ({
   },
   input:{
     display: 'none',
+  },
+  profilePicture:{
+    maxWidth: 100,
+    maxHeight: 100,
+    borderRadius: 5,
+  },
+  backgroundPicture:{
+    maxWidth: 300,
+    maxHeight: 250,
+    borderRadius: 5,
+    
+    marginTop:theme.spacing(3),
+  },
+  pictures: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  userIcon:{
+    color: '#ea5970',
+    margin: theme.spacing(1),
   },
 }));
 
@@ -52,9 +70,9 @@ function EditInfo() {
       <CssBaseline />
       <div className={classes.paper}>
 
-        <Avatar className={classes.avatar}>
-          <AccessibilityNewRoundedIcon/>
-        </Avatar>
+        
+
+        <AccountCircle className={classes.userIcon}/>
 
         <Typography component='h1' variant='h5'>
           <strong>Mi Perfil</strong>
@@ -67,42 +85,44 @@ function EditInfo() {
         <form className={classes.form} noValidate>
        
           <Grid container spacing={2}>
-            
-            <Grid item xs={12}>
-              <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
-                <label htmlFor="icon-button-file"> Seleccionar foto de perfil
-                  <IconButton color="primary" aria-label="upload picture" component="span">
-                    <ImageIcon className={classes.imageIcon}/>
-                    
-                  </IconButton>
-                </label>
-            <img id="profilePicture" ></img>
+            <Grid item xs={12} className={classes.pictures}>
+              <img className={classes.profilePicture} id="profilePicture" src="https://image.freepik.com/vector-gratis/perfil-avatar-hombre-icono-redondo_24640-14044.jpg"/>
             </Grid>
 
+           
+            <Grid item xs={12}   className={classes.pictures}>
+              <input accept="image/*" className={classes.input} id="profile-button-file" type="file" />
+                <label htmlFor="profile-button-file"> Foto de perfil
+                  <IconButton color="secondary" aria-label="upload picture" component="span">
+                    <ImageIcon className={classes.imageIcon}/>
+                  </IconButton>
+                </label>
+            </Grid>
+            
+            
+          
             <Grid item xs={12} sm={6}>
               <TextField
                 autoComplete='fname'
                 name='Username'
                 variant='outlined'
-                
+                required
                 fullWidth
                 id='Username'
-                label='Username'
+                label='Usuario'
                 autoFocus
-                disabled
               />
             </Grid>
 
             <Grid item xs={12} sm={6}>
               <TextField
                 variant='outlined'
-                
+                required
                 fullWidth
                 id='tag'
                 label='Tag'
                 name='tag'
                 autoComplete='tagname'
-                disabled
               />
             </Grid>
 
@@ -117,38 +137,27 @@ function EditInfo() {
                 autoComplete='email'
               />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant='outlined'
-                required
-                fullWidth
-                name='password'
-                label='Nueva contraseña'
-                type='password'
-                id='password'
-                autoComplete='current-password'
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant='outlined'
-                required
-                fullWidth
-                name='password'
-                label='Confirmar contraseña'
-                type='password'
-                id='passwordC'
-                autoComplete='current-password'
-              />
-            </Grid>
+            
            
           </Grid>
+          <Grid item xs={12}   className={classes.pictures}>
+              <img className={classes.backgroundPicture} id="backgroundPicture" src="https://png.pngtree.com/thumb_back/fw800/background/20190220/ourmid/pngtree-blue-gradient-summer-creative-image_9270.jpg"/>
+          </Grid>
+
+          <Grid item xs={12}   className={classes.pictures}>
+              <input accept="image/*" className={classes.input} id="background-button-file" type="file" />
+                <label htmlFor="background-button-file"> Foto de portada
+                  <IconButton color="secondary" aria-label="upload picture" component="span">
+                    <ImageIcon className={classes.imageIcon}/>
+                  </IconButton>
+                </label>
+            </Grid>
 
           <Button
             type='submit'
             fullWidth
             variant='contained'
-            color='secondary'
+            color='primary'
             className={classes.submit}
           >
             Guardar información
