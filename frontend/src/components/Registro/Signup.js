@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import {
     Avatar,
     Button,
@@ -37,6 +37,26 @@ const useStyles = makeStyles((theme) => ({
 function SignUp() {
   const classes = useStyles();
 
+  const [datos, setDatos] = useState({
+      Username: '',
+      tag: '',
+      email: '',
+      password:''
+  })
+
+  const handleInputChange = (event) =>{
+    //console.log(event.target.value)
+    setDatos({
+      ...datos,
+      [event.target.name] : event.target.value
+    })
+  }
+
+  const SendData = (event) =>{
+    event.preventDefault();
+    console.log(datos.Username + ' ' + datos.tag + ' ' + datos.email + ' ' + datos.password)
+  }
+
   return (
 
     <Container component='main' maxWidth='xs'>
@@ -55,7 +75,7 @@ function SignUp() {
           Únete a la nueva comunidad de PosThis
         </Typography>
 
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate onSubmit = {SendData}>
 
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -68,6 +88,7 @@ function SignUp() {
                 id='Username'
                 label='Username'
                 autoFocus
+                onChange = {handleInputChange}
               />
             </Grid>
 
@@ -80,6 +101,7 @@ function SignUp() {
                 label='Tag'
                 name='tag'
                 autoComplete='tagname'
+                onChange = {handleInputChange}
               />
             </Grid>
 
@@ -92,6 +114,7 @@ function SignUp() {
                 label='Email'
                 name='email'
                 autoComplete='email'
+                onChange = {handleInputChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -104,6 +127,7 @@ function SignUp() {
                 type='password'
                 id='password'
                 autoComplete='current-password'
+                onChange = {handleInputChange}
               />
             </Grid>
            
