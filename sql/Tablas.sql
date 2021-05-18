@@ -211,7 +211,7 @@ CREATE TABLE Posts(
 
 CREATE TABLE Reposts(
 	RepostID			INTEGER PRIMARY KEY IDENTITY,
-	RepostDate	DATETIME					,
+	RepostDate			DATETIME					,
 	PostID				INTEGER NOT NULL,
 	UserID			[nvarchar](450) NOT NULL,
 );
@@ -223,8 +223,9 @@ CREATE TABLE Likes(
 );
 
 CREATE TABLE Replies(
-	ReplyID						INTEGER PRIMARY KEY IDENTITY,
-	ContentReplies				[nvarchar](max) NULL,
+	ReplyID				INTEGER PRIMARY KEY IDENTITY,
+	ContentReplies		[nvarchar](max) NULL,
+	PostDate			DATETIME	DEFAULT(CURRENT_TIMESTAMP),
 	PostID				INTEGER			NOT NULL,
 	UserID				[nvarchar](450) NOT NULL,
 );

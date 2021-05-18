@@ -1,12 +1,12 @@
 import React                    from 'react';
 import { Route, Redirect }      from 'react-router-dom';
-import { authTokenKey }         from '_utils';
+import {  routes }              from '_utils';
 
-const PrivateRoute = ({ component: Component, auth, ...rest }) => {
+const PrivateRoute = ({ component: Component, user, ...rest }) => {
     return <Route {...rest} render={props => (
-        auth.isAuthenticated
-            ? <Component auth={auth} {...props} />
-            : <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
+        user
+            ? <Component {...props} />
+            : <Redirect to={{ pathname: routes.login, state: { from: props.location } }} />
     )} />
 };
 

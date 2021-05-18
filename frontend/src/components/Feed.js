@@ -4,8 +4,6 @@ import FixedContainer from 'components/Inicio/Container';
 import { makeStyles } from '@material-ui/core/styles';
 import backapp3 from 'assets/backapp3.png';
 
-//import useCheckAuth from 'hooks/useCheckAuth';
-
 const useStyles = makeStyles((theme) => ({
   Background: {
     backgroundImage: `url('${backapp3}')`,
@@ -18,14 +16,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Feed = (props) => {
+
+  const { auth, history } = props;
   
   const classes = useStyles();
 
   return (
     <div className={classes.Background}>
-      <SearchAppBar />
-      <FixedContainer>
-      </FixedContainer>
+      <SearchAppBar auth={auth} history={history}/>
+      <FixedContainer auth={auth}/>
     </div>
   );
 };

@@ -29,7 +29,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateCreation(ReplyViewModel model)
+        public ResponseApiError ValidateCreation(CReplyModel model)
         {
             if (model.PostID == null)
                 return new ResponseApiError
@@ -56,7 +56,7 @@ namespace Rest_API_PWII.Classes
                     Message = "UserID does not accept null"
                 };
 
-            var user = db.Users.FirstOrDefault(u => u.Id == model.UserID );
+            var user = db.Users.FirstOrDefault(u => u.Id == model.UserID);
             if (user == null)
                 return new ResponseApiError
                 {
@@ -68,17 +68,31 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateCUReply(ReplyViewModel model)
+        public ResponseApiError ValidateCReply ( CReplyModel model )
         {
-            //si el texto esta vacio
             bool textoValido = !string.IsNullOrEmpty(model.Content);
-            //y no hay media
-            bool mediaValido = model.mediaIDs?.Count > 0;
+            bool mediaValido = model.Files?.Count > 0;
 
             if (textoValido || mediaValido)
                 return null;
 
             //hay error
+            return new ResponseApiError
+            {
+                Code = (int)HttpStatusCode.BadRequest,
+                HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                Message = "Reply data not valid, must contain text or media"
+            };
+        }
+
+        public ResponseApiError ValidateUReply( UReplyModel model )
+        {
+            bool textoValido = !string.IsNullOrEmpty(model.Content);
+            bool mediaValido = model.Files?.Count > 0;
+
+            if (textoValido || mediaValido)
+                return null;
+
             return new ResponseApiError
             {
                 Code = (int)HttpStatusCode.BadRequest,
@@ -115,11 +129,11 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError Create(ReplyViewModel model)
+        public ResponseApiError Create(CReplyModel model)
         {
             try
             {
-                var err = ValidateCUReply(model);
+                var err = ValidateCReply(model);
                 if ( err != null )
                     return err;
 
@@ -131,6 +145,7 @@ namespace Rest_API_PWII.Classes
                 var user = db.Users.First( u => u.Id == model.UserID );
                 var reply = new Reply {
                     ContentReplies = model.Content,
+                    ReplyDate   = DateTime.Now
                 };
 
                 db.Replies.Add(reply);
@@ -164,7 +179,7 @@ namespace Rest_API_PWII.Classes
                     ReplyID = r.ReplyID,
                     Content = r.ContentReplies,
                     PostID  = r.Post.PostID,
-                    UserID  = r.User.Id,
+                    PublisherID  = r.User.Id,
                  }).ToList();
 
             return reply;
@@ -180,15 +195,15 @@ namespace Rest_API_PWII.Classes
                      ReplyID = r.ReplyID,
                      Content = r.ContentReplies,
                      PostID = r.Post.PostID,
-                     UserID = r.User.Id,
+                     PublisherID = r.User.Id,
                  }).FirstOrDefault();
         }
 
-        public ResponseApiError Update( int id, ReplyViewModel reply )
+        public ResponseApiError Update( int id, UReplyModel model )
         {
             try
             {
-                var err = ValidateCUReply( reply );
+                var err = ValidateUReply( model );
                 if (err != null)
                     return err;
 
@@ -198,7 +213,7 @@ namespace Rest_API_PWII.Classes
 
                 var replyDb = db.Replies.First( r => r.ReplyID == id );
 
-                replyDb.ContentReplies = reply.Content;
+                replyDb.ContentReplies = model.Content;
 
                 //TODO MEDIA
 

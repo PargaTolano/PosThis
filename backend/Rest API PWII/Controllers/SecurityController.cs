@@ -140,29 +140,26 @@ namespace Rest_API_PWII.Controllers
                 if (err != null)
                     return StatusCode( err.HttpStatusCode, err );
 
-                bool IsEmail = true;
+                var user   = await _userManager.FindByEmailAsync( login.UserName );
+                var userUN = await _userManager.FindByNameAsync ( login.UserName.ToUpper() );
 
-                var user = await  _userManager.FindByEmailAsync( login.UserName );
-                var userUN = await _userManager.FindByNameAsync( login.UserName.ToUpper() );
-
-                if ( user == null && userUN == null )
-                    return StatusCode(404);
+                user = user ?? userUN;
 
                 if ( user == null )
-                    IsEmail = false;
-                
-                var result = await _signInManager.CheckPasswordSignInAsync(IsEmail ? user : userUN , login.Password, false );
+                    return StatusCode(404);
+
+                var result = await _signInManager.CheckPasswordSignInAsync( user, login.Password, false );
 
                 if (!result.Succeeded)
-                    return StatusCode(404);
+                    return StatusCode( (int)HttpStatusCode.NotFound );
 
                 var secretKey = _configuration.GetValue<string>("SecretKey");
 
                 var key = Encoding.ASCII.GetBytes( secretKey );
 
                 var claims = new ClaimsIdentity( new[] {
-                    new Claim( ClaimTypes.NameIdentifier, IsEmail ? user.Id : userUN.Id),
-                    new Claim( ClaimTypes.Name, IsEmail ? user.UserName : userUN.UserName )
+                    new Claim( ClaimTypes.NameIdentifier, user.Id),
+                    new Claim( ClaimTypes.Name, user.UserName )
                 });
 
                 var tokenDescriptor = new SecurityTokenDescriptor
@@ -179,46 +176,20 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
-                        Data = tokenHandler.WriteToken(createdToken),
+                        Code = (int)HttpStatusCode.OK,
+                        Data = new UserAuthModel { 
+                            Id              = user.Id,
+                            UserName        = user.UserName,
+                            ProfilePicPath  = user.ProfilePic   != null ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/static/{user.ProfilePic.Name}" : "",
+                            Token           = tokenHandler.WriteToken(createdToken)
+                        },
                         Message = "Login Successful"
                     });
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode( ( int ) HttpStatusCode.InternalServerError, ex.Message );
             }
-        }
-
-        [HttpPost("{id}")]
-        [Authorize]
-        public async Task<IActionResult> ValidateToken(string id)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-
-            if (user == null)
-            {
-                return NotFound(new ResponseApiError {
-                    Code = (int)HttpStatusCode.NotFound,
-                    HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "User doest exist"
-                });
-            }
-
-            var model = new UserViewModel {
-                Id = user.Id,
-                UserName = user.UserName,
-                Tag = user.Tag,
-                Email = user.Email,
-                ProfilePicPath = user.ProfilePic != null ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/static/{user.ProfilePic.Name}" : null,
-                BirthDate = user.BirthDate
-            };
-
-            return Ok(new ResponseApiSuccess { 
-                Code = (int ) HttpStatusCode.OK,
-                Message = "", 
-                Data = model
-            });
         }
 
         [HttpPut("{id}")]

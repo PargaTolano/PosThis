@@ -162,6 +162,7 @@ namespace Rest_API_PWII.Classes
                         .Include( x=>x.Replies )
                         .Include( x=>x.Reposts )
                      where p.Content.ToLower().Contains( query.ToLower().Trim() )
+                     orderby p.PostDate descending
                      select new SearchResultPostModel
                      {
                          PostID              = p.PostID,
@@ -357,19 +358,24 @@ namespace Rest_API_PWII.Classes
             return feed;
         }
 
-        public UserViewModel GetOne( string id )
+        public UserViewModel    GetOne( string id )
         {
             return (from u
                     in db.Users
+                            .Include(x=>x.Follows)
+                            .Include(x=>x.Following)
                     where u.Id == id
                     select new UserViewModel
                     {
-                        Id = u.Id,
-                        UserName = u.UserName,
-                        Tag = u.Tag,
-                        Email = u.Email,
-                        BirthDate = u.BirthDate,
-                        ProfilePicPath = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.ProfilePic.Name}"
+                        Id              = u.Id,
+                        UserName        = u.UserName,
+                        Tag             = u.Tag,
+                        Email           = u.Email,
+                        BirthDate       = u.BirthDate,
+                        ProfilePicPath  = u.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.ProfilePic.Name}" : null,
+                        CoverPicPath    = u.CoverPic   != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.CoverPic.Name}"   : null,
+                        FollowerCount   = u.Follows.Count,
+                        FollowingCount  = u.Following.Count
                     }).FirstOrDefault();
         }
 

@@ -92,7 +92,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] ReplyViewModel model)
+        public IActionResult Create([FromForm] CReplyModel model)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] ReplyViewModel model)
+        public IActionResult Update(int id, [FromForm] UReplyModel model)
         {
             try
             {

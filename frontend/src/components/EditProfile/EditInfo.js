@@ -61,16 +61,11 @@ const useStyles = makeStyles((theme) => ({
 function EditInfo() {
   const classes = useStyles();
   
-
-  
-  
   return (
 
     <Container component='main' maxWidth='xs'>
       <CssBaseline />
       <div className={classes.paper}>
-
-        
 
         <AccountCircle className={classes.userIcon}/>
 

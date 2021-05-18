@@ -5,109 +5,133 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import EditInfo from 'components/EditProfile/EditInfo';
-import CustomizedDialogs from 'components/EditProfile/dialogEditInfo';
+import CustomizedDialog from 'components/EditProfile/dialogEditInfo';
 import {
   TextField,
   Button,
 } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    width: 200,
-    marginBottom: theme.spacing(5),
-    backgroundColor: '#2b387f',
-    height: 330,
+  cardContainer: {
+    position:       'absolute',
+    display:        'flex',
+    top:            theme.spacing( 48.66 ),
+    width:          '23%',
+    flexDirection:  'column',
+    alignContent:   'center',
+    alignItems:     'center',
+    justifyContent: 'center',
+    [theme.breakpoints.down('md')]:{
+      width:      '27%',
+    },
+    [theme.breakpoints.down('sm')]:{
+      width:      'auto',
+      top:        theme.spacing( 30 ),
+      left:       '50%',
+      transform:  'translateX(-50%)'
+    }
+  },
+  card: {
+    padding:          theme.spacing(2),
+    marginBottom:     theme.spacing(5),
+    backgroundColor:  '#ea5970',
+    borderRadius:     '10px',
+    zIndex: '10'
   },
   media: {
     height: 140,
   },
   cardBtn: {
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    color: 'white',
+    padding:        '0',
+    margin:         '0',
+    alignItems:     'center',
+    justifyContent: 'space-between',
+    color:          'white',
   },
   title: {
-    color: 'white',
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(2),
+    color:    'white',
+    fontSize: '1.1rem'
+  },
+  secondaryTitle: {
+    color:    'white',
+    fontSize: '0.8rem'
+    
   },
   content: {
-    color: 'white',
-    marginLeft: theme.spacing(7),
-    marginBottom: theme.spacing(1),
+    color:          'white',
+    marginLeft:     theme.spacing(7),
+    marginBottom:   theme.spacing(1),
   },
-
- layTitle:{
+  followContainer:{
+    marginBottom: theme.spacing(1)
+  },
+  layTitle:{
     display: 'inline-flex'
   },
   profilePicture:{
-    maxWidth: 150,
-    maxHeight: 150,
+    width:        150,
+    height:       150,
+    objectFit:    'cover',
+    borderRadius: '50%'
   },
   contImg:{
     alignItems: 'center',
-    textAlign: 'center',
+    textAlign:  'center',
   },
   followNum:{
     alignItems: 'center',
-    textAlign: 'center',
-    
+    textAlign:  'center',
   }
 }));
 
-function CardProfile() {
+const profilePic = "https://image.freepik.com/vector-gratis/perfil-avatar-hombre-icono-redondo_24640-14044.jpg";
+
+function CardProfile( props ) {
+  const { user } = props;
   const classes = useStyles();
   return (
-    <Card className={classes.root}>
-     
+
+    <div className={classes.cardContainer}>
+      <Card className={classes.card}>
+          
         <CardContent>
-
-        <div className={classes.displayTitle}>
-
+          <div className={classes.displayTitle}>
           </div>
           <div className={classes.contImg}>
-            <img className={classes.profilePicture} id="profilePicture" src="https://image.freepik.com/vector-gratis/perfil-avatar-hombre-icono-redondo_24640-14044.jpg"/>
-            <Typography id="userTag" variant="h6" component="h2" className={classes.title}>
-              <strong>Usuario @Tag</strong>
-              
+            <img className={classes.profilePicture} src={profilePic}/>
+            <Typography variant="h6" component="h2" className={classes.title}>
+              <strong>{user.userName} {'@'+user.tag}</strong>
             </Typography>
           </div>
-          
-
         </CardContent>
-
-     
-        <div id="followNum">
-        
-        <Typography id="followerNum" component="h2" className={classes.title}>
-              Followers: 20
-        </Typography>
-        <Typography id="followingNum"  component="h2" className={classes.title}>
-             Following: 45
-        </Typography>
+          
+        <div className={classes.followContainer}>
+          <Typography component="h2" className={classes.secondaryTitle}>
+            Followers - {user.followerCount}
+          </Typography>
+          <Typography component="h2" className={classes.secondaryTitle}>
+            Following - {user.followingCount}
+          </Typography>
         </div>
 
-     
-
         <CardActions disableSpacing className={classes.cardBtn}>
-        <div id="followBtn">
-        <Button
-             
+          <div>
+            <Button
               fullWidth
               variant="contained"
               color="secondary"
               className={classes.submit}
-             >
+            >
               Seguir
             </Button>
-          
-        </div>
-        <CustomizedDialogs>
-                  <EditInfo/>
-      </CustomizedDialogs>
-      </CardActions>
+          </div>
+          <CustomizedDialog color={'primary'}>
+            <EditInfo/>
+          </CustomizedDialog>
+        </CardActions>
+      </Card>
+    </div>
       
-    </Card>
   );
 }
 

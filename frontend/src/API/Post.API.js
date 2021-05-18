@@ -1,35 +1,41 @@
-import {  getURL  } from 'API/url.API';
+import {  getURL  }     from 'API/url.API';
 
-import CUPostModel from 'model/CUPostModel';
+import CPostModel      from 'model/CPostModel';
+import { authHeader }   from '_helpers';
 
 const getPosts = async () => {
     const url = getURL( 'api/post/Get' );
-    let res = await fetch( url );
-    return res.json();
+    return fetch( url );
 }
 
 const getPost = async ( id ) => {
-    let res = await fetch( getURL( `api/post/Get/${id}` ) );
-    return res.json();
+    return fetch( getURL( `api/post/Get/${id}` ) );
 };
 
 /**
- * @param {CUPostModel} model
+ * @param {CPostModel} model
  */
 const createPost = async ( model ) => {
 
     const headers = {
-        'Content-Type': 'application/json'
-    }
+        ...authHeader()
+    };
+
+    let fd = new FormData();
+    
+    fd.append( 'userID',  model.userID  );
+    fd.append( 'Content', model.content );
+    for( let file of model.files ){
+        fd.append('Files', file );
+    };
 
     const options = {
         method: "POST",
-        body: JSON.stringify( model ),
-        headers: headers
+        body: fd,
+        headers
     };
 
-    let res = await fetch( getURL( `api/post/Create` ), options );
-    return res.json();
+    return fetch( getURL( `api/post/Create` ), options );
 };
 
 /**

@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useState} from 'react';
 import {
   AppBar,
   Toolbar,
@@ -10,13 +10,14 @@ import {
   Button,
 } from '@material-ui/core';
 
-import {Link}                   from 'react-router-dom'
-import { fade, makeStyles }     from '@material-ui/core/styles';
-import SearchIcon               from '@material-ui/icons/Search';
-import AccountCircle            from '@material-ui/icons/AccountCircle';
-import Logo                     from 'assets/Logo.png';
-import LogoNominado             from 'assets/LogoNominado.png';
-import { routes, authTokenKey } from '_utils';
+import { Link, Redirect }         from 'react-router-dom';
+import { fade, makeStyles }       from '@material-ui/core/styles';
+import SearchIcon                 from '@material-ui/icons/Search';
+import AccountCircle              from '@material-ui/icons/AccountCircle';
+import Logo                       from 'assets/Logo.png';
+import LogoNominado               from 'assets/logPT.svg';
+import { routes }                 from '_utils';
+import { authenticationService }  from '_services';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -82,9 +83,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SearchAppBar() {
+export default function SearchAppBar(props) {
+
+  const { auth, history }= props;
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [query, setQuery]       = useState('');
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -95,10 +99,16 @@ export default function SearchAppBar() {
   };
 
   const handleLogOut = ()=>{
-    localStorage.removeItem( authTokenKey );
-    window.location.href = '/login';
-    setAnchorEl(null);
+    authenticationService.logout();
+    history.push( routes.login );
   }
+
+  const onChange = ( e )=>setQuery( e.target.value);
+
+  const onSearch = ( e )=>{
+    e.preventDefault();
+    history.push( routes.getSearch(query));
+  };
 
   return (
       <AppBar className={classes.Tool}>
@@ -117,18 +127,21 @@ export default function SearchAppBar() {
             <div className={classes.searchIcon}>
               <SearchIcon />
             </div>
-            <InputBase
-              placeholder='Buscar…'
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'search' }}
-              onSubmit ={e=>{
-                e.preventDefault();
-                console.log( e.target.value );
-              }}
-            />
+
+            <form onSubmit ={onSearch}>
+              <InputBase
+                placeholder='Buscar…'
+                value={query}
+                classes ={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput,
+                }}
+                inputProps={{ 'aria-label': 'search' }}
+                onChange  ={onChange}
+
+              />
+            </form>
+            
           </div>
 
           <div>
@@ -149,11 +162,10 @@ export default function SearchAppBar() {
               onClose={handleClose}
             >
               <MenuItem onClick={handleClose }>Perfil</MenuItem>
-              <MenuItem onClick={handleLogOut} component={Link} to='/'>Cerrar sesión</MenuItem>
+              <MenuItem onClick={handleLogOut}>Cerrar sesión</MenuItem>
             </Menu>
           </div>
         </Toolbar>
       </AppBar>
-
   );
 }

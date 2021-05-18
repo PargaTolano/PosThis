@@ -53,7 +53,7 @@ const DialogActions = withStyles((theme) => ({
 }))(MuiDialogActions);
 
 
-function CustomizedDialogs({children}) {
+function CustomizedDialog({children, color}) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -65,10 +65,14 @@ function CustomizedDialogs({children}) {
 
   return (
     <div>
-     
-      <IconButton  aria-label="upload picture" component="span" variant='contained' color='secondary' onClick={handleClickOpen}>
-                   <SettingsIcon />
-                    </IconButton>
+      <IconButton  
+          aria-label="upload picture"
+          component ="span" 
+          variant   ='contained' 
+          color     ={ color || 'secondary' } 
+          onClick   ={handleClickOpen}>
+        <SettingsIcon />
+      </IconButton>
       <Dialog onClose={handleClose} aria-labelledby='customized-dialog-title' open={open}>
         <DialogContent dividers>
             {children}
@@ -79,4 +83,4 @@ function CustomizedDialogs({children}) {
   );
 }
 
-export default CustomizedDialogs;
+export default CustomizedDialog;

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import {makeStyles} from '@material-ui/core/styles';
-import CardProfile from 'components/Profile/CardProfile';
-import FixedContainer from "components/Inicio/Container";
-import CreatePost from "components/Post/CreatePost";
+import {makeStyles}   from '@material-ui/core/styles';
+import CardProfile    from 'components/Profile/CardProfile';
+import FixedContainer from 'components/Inicio/Container';
+import CreatePost     from "components/Post/CreatePost";
 
 import {
   Grid,
@@ -20,53 +20,51 @@ import {
 import { createPost } from 'API/Post.API';
 
 const useStyles = makeStyles((theme) => ({
-  topHolder:{
-    backgroundColor: 'transparent',
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(1),
-    marginLeft : 'auto',
-    marginRight : 'auto',
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
+  root:{
+    width:        '100%',
+    maxWidth:     '1200px',
+    marginLeft:   'auto',
+    marginRight:  'auto'
+  },
+  coverPic:{
+    display: 'inline-block',
+    width: '100%',
+    height: theme.spacing( 50 ),
+    objectFit: 'cover',
+    borderRadius: '0px 0px 10px 10px',
+    marginBottom: theme.spacing( 3 ),
     [theme.breakpoints.down('sm')]:{
-      flexDirection: 'column',
+      marginBottom: theme.spacing( 33 ),
     }
   },
-  rightHolder:{
-
-  },
-  imgBackG: {
-    width: 580 ,
-    height: 180,
-    paddingLeft:theme.spacing(4),
-    borderRadius: 10,  
-    
-  },
-  title:{
-    color: '#f28a9a',
-    marginLeft : theme.spacing(50),
+  column:{
+    position:     'relative',
+    width:        '100%',
+    paddingLeft:  '30%',
+    [theme.breakpoints.down('sm')]:{
+      paddingLeft: '0'
+    }
   }
-  
 }));
 
-function ContainerPerfil() {
+const coverPlaceholder = "https://png.pngtree.com/thumb_back/fw800/background/20190220/ourmid/pngtree-blue-gradient-summer-creative-image_9270.jpg";
+
+function ContainerPerfil( props ) {
+  const { user, ...rest } = props;
   const classes = useStyles();
   return (
-        <div>
-        <div className = {classes.topHolder}>
-            <CardProfile/> 
-            <div className={classes.rightHolder}>
-            <img className={classes.imgBackG} id="imagenP" src="https://png.pngtree.com/thumb_back/fw800/background/20190220/ourmid/pngtree-blue-gradient-summer-creative-image_9270.jpg"/>
-           
-            <CreatePost/>
-            </div>
-          
+
+      <div className={classes.root}>
+
+        <img className={classes.coverPic} src={coverPlaceholder || user.coverPicPath} />
+
+        <CardProfile user={user} {...rest}/>
+        <div className={classes.column}>
+          <CreatePost     {...rest}/>
+          <FixedContainer {...rest}/>
         </div>
-       
-        <FixedContainer></FixedContainer>
-        </div>
+        
+      </div>
   );
 }
 export default ContainerPerfil;

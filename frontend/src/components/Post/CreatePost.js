@@ -1,33 +1,34 @@
-import React from 'react';
+import React,{useState, useEffect, useRef} from 'react';
 
-import {makeStyles} from '@material-ui/core/styles';
-import ImageIcon from '@material-ui/icons/Image';
+import { makeStyles }   from '@material-ui/core/styles';
+import ImageIcon      from '@material-ui/icons/Image';
+import CancelIcon     from '@material-ui/icons/Cancel';
+import { createPost } from 'API/Post.API';
 
-import IconButton from "@material-ui/core/IconButton";
+import CPostModel     from 'model/CPostModel';
+
+import IconButton     from "@material-ui/core/IconButton";
 
 import {
   TextField,
   Button,
+  Icon,
 } from "@material-ui/core";
 
+import { fileToBase64 } from '_utils';
+
 const useStyles = makeStyles((theme) => ({
- 
   form: {
-    marginLeft :theme.spacing(4),
-    marginRight:theme.spacing(35),
     background:'white',
-    width: '87%', 
-    marginTop: theme.spacing(0.5),
+    width: '100%',
     height:'40%',
     padding:theme.spacing(3),
     borderRadius: 10,  
     alignItems: 'center',
   },
   submit: {
-    
     width: '20%',
   },
- 
   cardBtn: {
     alignItems: 'center',
     justifyContent: 'space-around',
@@ -43,52 +44,165 @@ const useStyles = makeStyles((theme) => ({
   input: {
     display: 'none',
   },
+  previewGrid: {
+    display:        'flex',
+    width:          '100%',
+    justifyContent: 'center',
+    flexWrap:       'wrap',
+    borderRadius:   '10px',
+    boxShadow:      'black 0px 0px 2px',
+    overflow:       'hidden',
+  },
+  previewContainer:{
+    display:    'inline-block',
+    flexGrow:   '1',
+    width:      '50%',
+    height:     '180px',
+  },
+  previewImage:{
+    postion:    'absolute',
+    top:        '0',
+    left:       '0',
+    display:    'inline-block',
+    width:      '100%',
+    height:     '100%',
+    objectFit:  'cover'
+  },
+  closePreviewIcon:{
+    position: 'absolute',
+    zIndex: 1000,
+    root:{
+      "&:hover $icon": {
+        color: 'blue',
+      }
+    }
+  }
 }));
 
-function CreatePost() {
-  const classes = useStyles();
+const GridImage =( props )=>{
+
+  const { classes, image, index, images, setImages } = props;
+  const { preview, file } = image;
+
+  const deleteImage = ()=>{
+    const i = images.indexOf( image );
+    setImages( x => x.filter( (elem,index)=> index != i ) );
+  };
+
   return (
 
-             <form className={classes.form} noValidate>
-                <div component='h4' variant='h2' className={classes.titleForm}>
-                <strong>Nuevo PosThis!</strong>
-                </div>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              multiline
-              rows={3}
-              rowsMax={3}
-              fullWidth
-              id="postContent"
-              label="Escribir..."
-              name="postContent"
-              autoComplete="postContent"
-              autoFocus
-              className={classes.postContent}
-            />
+    <div className={classes.previewContainer}>
+      <IconButton className={classes.closePreviewIcon} color="secondary" aria-label="upload picture" component="span" onClick={deleteImage}>
+        <CancelIcon/>
+      </IconButton>
+      <img src={preview} className={classes.previewImage}/>
+    </div>
+    
+  );
 
-            <div className = {classes.cardBtn}>
-             
-              <Button
-               type="submit"
-               fullWidth
-               variant="contained"
-               color="primary"
-               className={classes.submit}
-              >
-                Publicar
-             </Button>
-                
-                  <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
-                  <label htmlFor="icon-button-file">
-                    <IconButton color="primary" aria-label="upload picture" component="span">
-                      <ImageIcon className={classes.imageIcon}/>
-                    </IconButton>
-                  </label>
-               
-              </div>
-            </form>
+};
+
+function CreatePost(props) {
+
+  const {auth} = props;
+  
+  const [images, setImages]   = useState( [] );
+  const [content, setContent] = useState( '' );
+  const [count, setCount]     = useState( 0  );
+
+  const inputFileRef = useRef(null);
+    
+  useEffect(()=>{
+    //console.log(count);
+    //setTimeout(()=>setCount(c=>c+1), 1000);
+  },[count]);
+  
+  const classes = useStyles();
+  
+  const onSubmit = async ( e )=>{
+    e.preventDefault();
+    let res = await createPost( new CPostModel({userID: auth.userId, content,files: images.map(x=>x.file)})) ;
+    setImages([]);
+    setContent('');
+  };
+
+  const onChange = async ( e )=>{
+    let { files } = e.target;
+
+    if( images.length + files.length > 4 )
+      return;
+
+    const filePairs = [];
+    for ( let i = 0; i < files.length; i++ ){
+      let file = files[i];
+      let preview = await fileToBase64( file );
+      filePairs.push( {
+        file,
+        preview
+      });
+    }
+
+    setImages( x=> [...x,...filePairs] );
+  };
+
+  const mediaBtnOnClick = () =>inputFileRef.current?.click();
+
+  return (
+
+    <form className={classes.form} noValidate onSubmit={onSubmit}>
+        <div component='h4' variant='h2' className={classes.titleForm}>
+          <strong>Nuevo PosThis!</strong>
+        </div>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          multiline
+          rows={3}
+          rowsMax={3}
+          fullWidth
+          id="postContent"
+          label="Escribir..."
+          name="postContent"
+          autoComplete="postContent"
+          autoFocus
+          className={classes.postContent}
+          onChange ={e=>setContent(e.target.value)}
+        />
+
+      <div className={classes.previewGrid}>
+        {
+          images.map( (image, i)=>( <GridImage
+                                      key={i}
+                                      index={i}
+                                      image={image}
+                                      images={images}
+                                      setImages={setImages}
+                                      classes={classes}
+                                    />))
+        }
+      </div>
+
+      <div className = {classes.cardBtn}>
+      
+        <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        color="primary"
+        className={classes.submit}
+        >
+          Publicar
+        </Button>
+          
+        <input accept="image/*" className={classes.input} type="file" multiple ref={inputFileRef} onChange={onChange}/>
+        <label htmlFor="icon-button-file">
+          <IconButton color="primary" aria-label="upload picture" component="span" onClick={mediaBtnOnClick}>
+            <ImageIcon className={classes.imageIcon}/>
+          </IconButton>
+        </label>
+        
+        </div>
+    </form>
        
 
   );

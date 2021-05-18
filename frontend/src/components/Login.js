@@ -11,14 +11,16 @@ import {
   Checkbox,
   Typography,
 } from '@material-ui/core';
-import { makeStyles }     from '@material-ui/core/styles';
-import PersonPinIcon      from '@material-ui/icons/PersonPin';
+import { makeStyles }             from '@material-ui/core/styles';
+import PersonPinIcon              from '@material-ui/icons/PersonPin';
 
-import CustomizedDialogs  from 'components/Registro/dialogSignup';
-import SignUp             from 'components/Registro/Signup';
+import CustomizedDialogs          from 'components/Registro/dialogSignup';
+import SignUp                     from 'components/Registro/Signup';
 
-import { loginHelper, authHeader } from '_helpers';
-import LoginModel from 'model/LogInModel';
+import { authenticationService }  from '_services';
+import { routes }                 from '_utils';
+
+import LoginModel                 from 'model/LogInModel';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,26 +51,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const makeOnSubmit = ( object ) =>
-  async e =>{
-    e.preventDefault();
-
-    const err = await loginHelper( new LoginModel(object) );
-    if ( err !== null ){
-      console.error( err );
-    }
-
-    console.log( err );
-  };
-
 const Login = (props) => {
 
+  const { history } = props;
   const classes = useStyles();
 
   const [ username, setUsername ] = useState('');
   const [ password, setPassword ] = useState('');
 
   const getOnChange = ( setState )=>e=>setState(e.target.value);
+
+  const onSubmit = async e =>{
+    e.preventDefault();
+
+    authenticationService
+      .login( username, password )
+      .then( () => history.push( routes.feed ) );
+  };
 
   return (
     <Grid container component='main' className={classes.root}>
@@ -84,7 +83,7 @@ const Login = (props) => {
             <strong>Inicia Sesión</strong>
           </Typography>
 
-          <form className={classes.form} noValidate onSubmit={makeOnSubmit({username, password})}>
+          <form className={classes.form} noValidate onSubmit={onSubmit}>
             <TextField
               variant='outlined'
               margin='normal'

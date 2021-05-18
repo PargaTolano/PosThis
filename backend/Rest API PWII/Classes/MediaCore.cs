@@ -137,7 +137,6 @@ namespace Rest_API_PWII.Classes
 
             list = new List<PostMedia>();
 
-
             foreach (var file in files)
             {
                 if (file.Length == 0)

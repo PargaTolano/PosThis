@@ -121,7 +121,13 @@ namespace Rest_API_PWII.Classes
                 var list = new List<PostMedia>();
 
                 var mediaCore = new MediaCore( db, env, request );
-                err = mediaCore.CreatePostMedia( model.Files, ref list );
+                if( model.Files != null)
+                {
+                    err = mediaCore.CreatePostMedia( model.Files, ref list );
+                    if (err != null)
+                        return err;
+                }
+                    
                 
                 if (list == null && model.Files?.Count != 0)
                     throw new Exception("Error subiendo media");
@@ -188,9 +194,11 @@ namespace Rest_API_PWII.Classes
 
         public PostViewModel GetOne( int id )
         {
-            return (from p in db.Posts.Include( p => p.Medias )
+            return (from p in db.Posts
+                            .Include( p => p.Medias )
+                            .Include( p => p.Replies)
                     where id == p.PostID
-                    select new PostViewModel
+                    select new PostDetailViewModel
                     {
                         PostID      = p.PostID,
                         Content     = p.Content,
@@ -204,7 +212,24 @@ namespace Rest_API_PWII.Classes
                                       MIME      = m.MIME,
                                       Path      = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
                                       IsVideo   = m.MIME.Contains("video")
-                                  }).ToList()
+                                  }).ToList(),
+                        Replies = (from r in p.Replies.AsQueryable().Include(p=>p.Medias)
+                                   select new ReplyViewModel
+                                   {
+                                       ReplyID = r.ReplyID,
+                                       Content = r.ContentReplies,
+                                       Date    = r.ReplyDate,
+                                       Medias  = (from mr in r.Medias
+                                                  select new MediaViewModel {
+                                                    MediaID = mr.MediaID,
+                                                    MIME    = mr.MIME,
+                                                    Path    = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{mr.Name}",
+                                                    IsVideo = mr.MIME.Contains("video")
+                                                  }).ToList(),
+                                       PublisherID       = r.User.Id,
+                                       PublisherUserName = r.User.UserName,
+                                       PublisherProfilePic = r.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{ r.User.ProfilePic.Name}" : ""
+                                   }).ToList()
                     }).FirstOrDefault();
         }
 

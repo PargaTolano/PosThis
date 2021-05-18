@@ -7,9 +7,7 @@ import UserCard from "components/Search/UserCard";
 
 import SearchRequestModel from 'model/SearchRequestModel';
 
-import { getPosts } from 'API/Post.API';
-import { getSearch } from 'API/User.API';
-import useRequestLoadOnMount from "hooks/useRequestLoadOnMount";
+import useMakeSearch from 'hooks/useMakeSearch';
 
 const useStyles = makeStyles( ( theme ) => ({
   Background: {
@@ -18,7 +16,7 @@ const useStyles = makeStyles( ( theme ) => ({
     backgroundPosition: "center",
     backgroundAttachment: "fixed",
     backgroundRepeat: "no-repeat",
-    height: "100%",
+    minHeight: "100vh",
   },
   cardHolder: {
     backgroundColor: "transparent",
@@ -57,20 +55,17 @@ const useStyles = makeStyles( ( theme ) => ({
 }));
 
 const SearchResult = ( props ) => {
-  //useCheckAuth();
-  const classes = useStyles();
 
-  const searchRequest = new SearchRequestModel({
-    query: '',
-    searchPosts: true, 
-    searchUsers: true,
-    hashtags: []
-  });
-  const [ readySearch, responsePosts ] = useRequestLoadOnMount( async ()=> await getSearch(searchRequest) );
+  const {auth, match, history } = props;
+
+  const { query } = match.params;
+
+  const classes = useStyles();
+  const [ready, response] = useMakeSearch(query || '');
   
   return (
     <div className={classes.Background}>
-      <SearchAppBar />
+      <SearchAppBar  auth={auth} history={history}/>
       <div className={classes.cardHolder}>
         <div component="h4" variant="h2" className={classes.titleBegin}>
           <strong>Resultado de Búsqueda</strong>
@@ -78,7 +73,7 @@ const SearchResult = ( props ) => {
       </div>
       <div className={classes.ucHolder}>
         {
-          readySearch && ( responsePosts.data.users.map( user =><UserCard key={user.publisherID} user={user}/>) )
+          ready && ( response.users?.map( user =><UserCard key={user.publisherID} user={user} auth={auth}/>) )
         }
         
       </div>
@@ -87,7 +82,7 @@ const SearchResult = ( props ) => {
           <strong>Posts/Hashtags Relacionados</strong>
         </div>
         {
-          readySearch && ( responsePosts.data.posts.map( post =><CardPost key={post.postId} post={post}/>) )
+          ready && ( response.posts?.map( post =><CardPost key={post.postId} post={post} auth={auth}/>) )
         }
       </div>
     </div>

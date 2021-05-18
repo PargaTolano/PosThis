@@ -34,7 +34,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function FixedContainer() {
+function FixedContainer(props) {
+
+  const { auth } = props;
   const classes = useStyles();
   return (
     <div className={classes.cardHolder}>
@@ -44,10 +46,10 @@ function FixedContainer() {
       </div>
       {
         <>
-          <CardPost post={PostMock} editMode={true}/>
-          <CardPost post={PostMock} editMode={true}/>
-          <CardPost post={PostMock} editMode={true}/>
-          <CardPost post={PostMock} editMode={true}/>
+          <CardPost post={PostMock} auth={auth}/>
+          <CardPost post={PostMock} auth={auth}/>
+          <CardPost post={PostMock} auth={auth}/>
+          <CardPost post={PostMock} auth={auth}/>
         </>
       }
         

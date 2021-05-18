@@ -1,11 +1,13 @@
-import React from "react";
-import SearchAppBar from "components/Inicio/Navbar";
-import ContainerPerfil from "components/Profile/ContainerProfile";
+import React                    from 'react';
+import SearchAppBar             from 'components/Inicio/Navbar';
+import ContainerPerfil          from 'components/Profile/ContainerProfile';
+import { Redirect }             from 'react-router-dom';
+import { getUser }              from 'API/User.API';
+import { routes }               from '_utils';
+import useRequestLoadOnMount    from 'hooks/useRequestLoadOnMount';
 
-import {makeStyles} from '@material-ui/core/styles'
-import backapp2 from 'assets/backapp2.png'
-
-//import useCheckAuth from 'hooks/useCheckAuth';
+import {makeStyles}             from '@material-ui/core/styles';
+import backapp2                 from 'assets/backapp2.png';
 
 const useStyles = makeStyles((theme) => ({
   Background:{
@@ -14,21 +16,35 @@ const useStyles = makeStyles((theme) => ({
     backgroundPosition: 'center',
     backgroundAttachment: 'fixed',
     backgroundRepeat: 'no-repeat',
-    height: '100%',
   }
 }));
 
 const Profile = (props) => {
-  //useCheckAuth();
+
+  const { match, ...rest } = props;
+  const { id }    = match.params;
   const classes = useStyles();
+
+  const [ready, response] = useRequestLoadOnMount(()=>getUser( id || ''));
+
+  if( id == 'undefined' || id === undefined || id === null || id === '' ){
+    return (<Redirect to={routes.feed}/>);
+  }
 
   return (
       <div className= {classes.Background}>
-        <SearchAppBar />
-       <ContainerPerfil></ContainerPerfil>
+      {
+        ( ready && response?.data ) 
+        && 
+        (
+          <>
+            <SearchAppBar {...rest}/>
+            <ContainerPerfil user={response.data} {...rest}/>
+          </>
+        )
+      }
+        
       </div>
-
-      
   );
 };
 

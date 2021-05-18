@@ -5,6 +5,8 @@ import backapp3 from 'assets/backapp3.png';
 import CardPost from 'components/Post/CardPost';
 import Reply from './Post/RepliePost';
 
+import PostMock from 'mock/post.json';
+
 const useStyles = makeStyles((theme) => ({
   Background: {
     backgroundImage: `url('${backapp3}')`,
@@ -25,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
   },
   titleBegin:{
+    postition: 'sticky',
+    display: 'inline-block',
+    top: '0',
     color: 'white',
     fontFamily: 'Arial',
     fontStyle: 'normal',
@@ -37,19 +42,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const DetailPost = (props) => {
-  //useCheckAuth();
-  const classes = useStyles();
+  
+  const { match, auth, history } = props;
+  const id        = match.params;
+  const classes   = useStyles();
 
   return (
     <div className={classes.Background}>
-      <SearchAppBar />
+      <SearchAppBar auth={auth} history={history}/>
+      
+      <div component='h4' variant='h2' className={classes.titleBegin}>
+        <strong>Detalle del post</strong>
+      </div>
       <div className={classes.cardHolder}>
-
-        <div component='h4' variant='h2' className={classes.titleBegin}>
-          <strong>Detalle del post</strong>
-        </div>
-
-        <CardPost />
+        <CardPost post={PostMock} auth={auth} history={history}/>
         <Reply />
         <Reply />
         <Reply />
