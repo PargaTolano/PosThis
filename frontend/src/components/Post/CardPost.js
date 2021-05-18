@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { makeStyles }     from '@material-ui/core/styles';
 import Card               from '@material-ui/core/Card';
 import CardActionArea     from '@material-ui/core/CardActionArea';
@@ -15,9 +15,16 @@ import Avatar             from '@material-ui/core/Avatar';
 import { Link }           from 'react-router-dom';
 import {routes}           from '_utils';
 import SaveIcon           from '@material-ui/icons/Save';
+import ImageIcon          from '@material-ui/icons/Image';
+import CancelIcon         from '@material-ui/icons/Cancel';
 import Button             from '@material-ui/core/Button';
 
-import { authenticationService }                  from '_services';
+import { handleResponse }         from '_helpers';
+import { authenticationService }  from '_services';
+import { fileToBase64 }           from '_utils';
+import { updatePost }             from 'API/Post.API';
+
+import UPostModel from 'model/UPostModel';
 
 const defaultImage = 'https://www.adobe.com/express/create/media_1900d303a701488626835756419ca3a50b83a2ae5.png?width=2000&format=webply&optimize=medium';
 
@@ -75,6 +82,9 @@ const useStyles = makeStyles((theme) => ({
   saveIcon:{
     color: '#33eaff',
   },
+  mediaIcon:{
+    color: '#ea5970'
+  },
   displayTitle:{
     display: 'inline-flex'
   },
@@ -116,6 +126,9 @@ const useStyles = makeStyles((theme) => ({
   displaybtn:{
     textAlign: 'right',
     marginTop: theme.spacing(2),
+  },
+  input:{
+    display: 'none'
   }
 }));
 
@@ -147,25 +160,51 @@ const useSubgridStyles = makeStyles((theme) => ({
 
 const useMediaContainerStyles= makeStyles((theme) => ({
   mediaContainer:{
-    display:  'inline-block',
-    flex: '1 1 0',
-    width:    '100%',
-    height:   '100%',
-    overflow: 'hidden',
-    backgroundColor: '#333333'
+    position:         'relative',
+    display:          'inline-block',
+    flex:             '1 1 0',
+    width:            '100%',
+    height:           '100%',
+    overflow:         'hidden',
+    backgroundColor:  '#333333'
   },
   mediaFit: {
-    display:  'inline-block',
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover'
+    display:    'inline-block',
+    width:      '100%',
+    height:     '100%',
+    objectFit:  'cover'
+  },
+  deleteIcon:{
+    position: 'absolute',
+    top:      0,
+    right:    0,
+    color:    'red',
+    '&:hover': {
+      color: 'white'
+    },
+    
   }
 }));
 
 function MediaContainer(props) {
 
-  const { media } = props;
+  const { media, state, setState } = props;
   const classes = useMediaContainerStyles();
+
+  const onClickDelete = ()=>{
+    const index = state.medias.indexOf(media);
+    if ( index === -1 )
+      return;
+
+    setState( x =>{
+      let copy = {...x};
+      copy.deleted = [...copy.deleted, copy.medias[index].mediaID];
+      copy.medias = copy.medias.filter((elem, i)=> i !== index);
+
+      console.log( copy.deleted, copy.medias );
+      return copy;
+    });
+  };
 
   return (
     <div className={classes.mediaContainer}>
@@ -178,6 +217,10 @@ function MediaContainer(props) {
         )
         :
         (<img src={media.path} className={classes.mediaFit}/>)
+      }
+      {
+        state.editMode &&
+          <CancelIcon className={classes.deleteIcon} onClick={onClickDelete}/>
       }
     </div>
   );
@@ -214,7 +257,7 @@ function SubGrid( props ){
 function MediaGrid( props ){
 
   const classes = useMediaGridStyles();
-  const { media } = props;
+  const { media, ...temp } = props;
 
   if ( media?.length === 0 )
     return (<></>);
@@ -224,25 +267,115 @@ function MediaGrid( props ){
   return (
     <Grid container className={classes.gridHeight}>
       <SubGrid size={ n === 1 ? 'f' : 'h' }>
-        { media[0] && <MediaContainer media={media[0]}/>}
-        { ( n === 4 && media[2] ) && <MediaContainer media={media[2]}/>}
+        { media[0]                && <MediaContainer media={media[0]} {...temp}/>}
+        { ( n === 4 && media[2] ) && <MediaContainer media={media[2]} {...temp}/>}
       </SubGrid>
       <SubGrid size={ n > 1 ? 'h' : 'n' }>
-        { ( n > 1 && media[1] ) && <MediaContainer media={media[1]}/>}
-        { ( n > 2 && ( n === 3 ? media[2] : media[3] )) && <MediaContainer media={ n === 3 ? media[2] : media[3]}/>}
+        { ( n > 1 && media[1] )   && <MediaContainer media={media[1]} {...temp}/>}
+        { ( n > 2 && ( n === 3 ? media[2] : media[3] )) && <MediaContainer media={ n === 3 ? media[2] : media[3]} {...temp}/>}
       </SubGrid>
     </Grid>
   );
 };
 
+/*
+  fileEntry = {
+    media: base64 String,
+    file: File,
+    id: Number?,
+  }
+*/
+
 function CardPost( props ) {
 
   const { post } = props;
 
-  let [editMode , setEditMode] = useState( false );
-  let [editValue, setEditValue] = useState(post.content);
-
+  let [ state, setState ] = useState({
+    editMode:         false,
+    content:          post.content,
+    originalContent:  post.content,
+    medias:           post.medias,
+    originalMedias:   post.medias,
+    deleted:          [],
+    newMedias:        []
+  });
   const classes = useStyles();
+  const inputFileRef = useRef();
+
+  const temp = { state, setState };
+
+  const onClickSave = ()=>{
+    updatePost( post.postID,  new UPostModel({content: state.content, deleted: state.deleted, files: state.newMedias}))
+      .then( handleResponse )
+      .then( res =>{
+
+        let { data } = res;
+
+        setState(x=>{
+          let copy              = {...x};
+          copy.editMode         = false;
+          copy.originalContent  = copy.content;
+          copy.medias           = data.medias;
+          copy.originalMedias   = data.medias;
+          return copy;
+        });
+      })
+      .catch( res =>{
+        console.log('err',res)
+      });
+  };
+  const onChangeContent = e=>{
+      setState( x =>{
+        let copy = {...x};
+        copy.content = e.target.value;
+        return copy;
+      });
+  };
+  const onChangeImages = async e=>{
+    let {files} = e.target;
+
+    if( state.medias.length + files.length > 4 )
+      return;
+
+    const mediaInfo    = [];
+    const newMediaFiles = [];
+    for ( let i = 0; i < files.length; i++ ){
+      let file = files[i];
+      let preview = await fileToBase64( file );
+
+      const mediaViewModel = {
+        mediaID:  null,
+        mime:     file.type,
+        path:     preview,
+        isVideo:  file.type.includes("video")
+      };
+
+      mediaInfo     .push( mediaViewModel );
+      newMediaFiles .push( file );
+    }
+
+    setState( x=>{
+      let copy = {...x};
+      copy.medias = [...copy.medias, ...mediaInfo];
+      copy.newMedias = [...copy.newMedias, ...newMediaFiles];
+      return copy;
+    });
+  };
+  const onClickFileOpen = ()=>inputFileRef.current?.click();
+  const onToggleEditMode = ()=>{
+    setState( x =>{
+      let copy = {...x};
+      copy.editMode = !copy.editMode;
+
+      if( copy.editMode === false ){
+        copy.medias     = [...copy.originalMedias];
+        copy.content    = copy.originalContent;
+        copy.deleted    = [];
+        copy.newMedias  = [];
+      }
+      return copy;
+    })
+  };
 
   return (
     <Card className={classes.root}>
@@ -258,21 +391,32 @@ function CardPost( props ) {
           </div>
           <Typography variant='body2' component='p' className={classes.content}>
             {
-              editMode ? 
-              (<textarea className={classes.contentEdit} value={editValue} onChange={e=>setEditValue(e.target.value)}></textarea>)
+              state.editMode ? 
+              (<textarea className={classes.contentEdit} value={state.content} onChange={onChangeContent}></textarea>)
               :
-              (post.content)
+              (state.originalContent)
             }
           </Typography>
+          {
+            state.editMode &&
+            <>
+            <input accept="image/*" className={classes.input} type="file" multiple ref={inputFileRef} onChange={onChangeImages}/>
+              <IconButton onClick={onClickFileOpen}>
+                <ImageIcon className={classes.mediaIcon}/>
+              </IconButton>
+            </>
+          }
+
           <div className={classes.contMedia}>
-            <MediaGrid media={post.medias}/>
+            <MediaGrid media={ state.editMode ? state.medias : state.originalMedias } {...temp}/>
           </div>
+
           <div  className={classes.displaybtn}>
           {
             (authenticationService.currentUserValue.id === post.publisherID)
              && 
-            <Button variant='contained' color='secondary' onClick={()=>setEditMode(x=>!x)}>
-              { editMode ? 'Cancelar' : 'Editar' }
+            <Button variant='contained' color='secondary' onClick={onToggleEditMode}>
+              { state.editMode ? 'Cancelar' : 'Editar' }
             </Button>
           }
           </div>
@@ -303,11 +447,11 @@ function CardPost( props ) {
         </div>
 
         {
-          (authenticationService.currentUserValue.Id === post.publisherID && editMode)
+          (authenticationService.currentUserValue.id === post.publisherID && state.editMode)
           && 
           <div>
             <IconButton>
-              <SaveIcon className={classes.saveIcon}/>
+              <SaveIcon className={classes.saveIcon} onClick={onClickSave}/>
             </IconButton>
           </div>
         }

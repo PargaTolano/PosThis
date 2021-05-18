@@ -17,7 +17,7 @@ namespace Rest_API_PWII.Models.ViewModels
 
         public string                   ReposterID  { get; set; }
 
-        public List<MediaViewModel>     Medias    { get; set; }
+        public List<MediaViewModel>     Medias      { get; set; }
 
         public DateTime?                Date        { get; set; }
     }

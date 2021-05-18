@@ -131,8 +131,9 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
+                var postViewModel = new PostViewModel();
                 var postCore= new PostCore(db, env, Request);
-                var err = postCore.Update(id, post);
+                var err = postCore.Update(id, post, ref postViewModel);
 
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
@@ -141,7 +142,7 @@ namespace Rest_API_PWII.Controllers
                     new ResponseApiSuccess
                     {
                         Code = (int)HttpStatusCode.OK,
-                        Data = post,
+                        Data = postViewModel,
                         Message = "Post update successful"
                     });
             }

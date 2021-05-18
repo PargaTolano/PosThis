@@ -15,7 +15,7 @@ export const useMakeSearch = ( query ) =>{
         useEffect( ()=>{
             getSearch(new SearchRequestModel({searchPosts: true, searchUsers: true, query, hashtags: []}))
                 .then ( handleResponse )
-                .then ( res =>{setState( [true, res.data] ); console.log( res.data );} )
+                .then ( res => setState( [true, res.data] ) )
                 .catch( err => setState( [true, err] ) );
         },[ query ] );
 

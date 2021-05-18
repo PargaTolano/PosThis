@@ -1,6 +1,6 @@
 import React,{useState, useEffect, useRef} from 'react';
 
-import { makeStyles }   from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import ImageIcon      from '@material-ui/icons/Image';
 import CancelIcon     from '@material-ui/icons/Cancel';
 import { createPost } from 'API/Post.API';
@@ -15,6 +15,7 @@ import {
   Icon,
 } from "@material-ui/core";
 
+import { authenticationService } from '_services';
 import { fileToBase64 } from '_utils';
 
 const useStyles = makeStyles((theme) => ({
@@ -90,14 +91,12 @@ const GridImage =( props )=>{
   };
 
   return (
-
     <div className={classes.previewContainer}>
       <IconButton className={classes.closePreviewIcon} color="secondary" aria-label="upload picture" component="span" onClick={deleteImage}>
         <CancelIcon/>
       </IconButton>
       <img src={preview} className={classes.previewImage}/>
     </div>
-    
   );
 
 };
@@ -121,7 +120,7 @@ function CreatePost(props) {
   
   const onSubmit = async ( e )=>{
     e.preventDefault();
-    let res = await createPost( new CPostModel({userID: auth.userId, content,files: images.map(x=>x.file)})) ;
+    let res = await createPost( new CPostModel({userID: authenticationService.currentUserValue.id, content,files: images.map(x=>x.file)})) ;
     setImages([]);
     setContent('');
   };
@@ -165,6 +164,7 @@ function CreatePost(props) {
           name="postContent"
           autoComplete="postContent"
           autoFocus
+          value = {content}
           className={classes.postContent}
           onChange ={e=>setContent(e.target.value)}
         />

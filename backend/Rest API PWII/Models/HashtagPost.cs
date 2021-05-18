@@ -14,16 +14,6 @@ namespace Rest_API_PWII.Models
         
         public int PostID { get; set; }
 
-        /*
-         Remove Range para remover registros donde se contenga un Post eliminado con un 
-
-                IQueryable<HastagPost> registrosRemovibles = db.HashtagPosts( x=> x.PostID == idPostEliminado);
-
-                db.RemoveRange( registrosRemovibles );
-
-                Altenativamente se puede usar el Include como parte del query del query builder
-         */
-
         public virtual Hashtag Hashtag { get; set; }
 
         public virtual Post Post { get; set; }

@@ -9,6 +9,8 @@ import useRequestLoadOnMount    from 'hooks/useRequestLoadOnMount';
 import {makeStyles}             from '@material-ui/core/styles';
 import backapp2                 from 'assets/backapp2.png';
 
+import { handleResponse }  from '_helpers';
+
 const useStyles = makeStyles((theme) => ({
   Background:{
     backgroundImage: `url('${backapp2}')`,
@@ -25,11 +27,13 @@ const Profile = (props) => {
   const { id }    = match.params;
   const classes = useStyles();
 
-  const [ready, response] = useRequestLoadOnMount(()=>getUser( id || ''));
+  const [ready, response] = useRequestLoadOnMount(()=>getUser( id || '').then(handleResponse));
 
   if( id == 'undefined' || id === undefined || id === null || id === '' ){
     return (<Redirect to={routes.feed}/>);
   }
+   
+  console.log( response );
 
   return (
       <div className= {classes.Background}>

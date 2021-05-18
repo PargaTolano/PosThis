@@ -1,7 +1,8 @@
 import {  getURL  }     from 'API/url.API';
-
-import CPostModel      from 'model/CPostModel';
 import { authHeader }   from '_helpers';
+
+import CPostModel       from 'model/CPostModel';
+import UPostModel       from 'model/UPostModel';
 
 const getPosts = async () => {
     const url = getURL( 'api/post/Get' );
@@ -15,7 +16,7 @@ const getPost = async ( id ) => {
 /**
  * @param {CPostModel} model
  */
-const createPost = async ( model ) => {
+const createPost = ( model ) => {
 
     const headers = {
         ...authHeader()
@@ -40,22 +41,33 @@ const createPost = async ( model ) => {
 
 /**
  * @param {Number} id 
- * @param {CUPostModel} model
+ * @param {UPostModel} model
  */
-const updatePost = async ( id, model ) =>{
+const updatePost = ( id, model ) =>{
 
     const headers = {
-        'Content-Type': 'application/json'
+        ...authHeader()
+    };
+
+    let fd = new FormData();
+
+    fd.append('Content', model.content);
+
+    for( let id of model.deleted){
+        fd.append('Deleted', id);
+    }
+
+    for( let file of model.files){
+        fd.append('Files', file);   
     }
 
     const options = {
         method: "PUT",
-        body: JSON.stringify( model ),
+        body: fd,
         headers: headers
     };
 
-    let res = await fetch( getURL( `api/post/Update/${id}` ), options );
-    return res.json();
+    return fetch( getURL( `api/post/Update/${id}` ), options );
 };
 
 /**
