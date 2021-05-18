@@ -21,7 +21,9 @@
 --Se ha eliminado un atributo ("Content") de la tabla Repost para 
 --para su mejor funcionamiento
 
---Query modificado 
+--Query modificado 12/05/21
+-- Se ha agregado ProfilePicID y CoverPicID	 al la tabla AspNetUsers y
+-- se ha eliminado las tablas MediaPosts y MediaReplies
 
 USE [master];
 
