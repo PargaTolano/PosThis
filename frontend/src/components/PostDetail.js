@@ -14,8 +14,6 @@ import {
 import { routes }                   from '_utils';
 import { useGetDetailedPost }       from '_hooks';
 
-import PostMock                     from 'mock/post.json';
-
 import backapp3                     from 'assets/backapp3.png';
 
 const useStyles = makeStyles( ( theme ) => ({

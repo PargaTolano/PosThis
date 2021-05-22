@@ -1,7 +1,7 @@
 import {  getURL  }     from '_config';
 import { authHeader }   from '_helpers';
 
-import { CReplyModel, UReplyModel } from 'model';
+import { CReplyModel, UReplyModel } from '_model';
 
 /**
  * @param   {Number} id

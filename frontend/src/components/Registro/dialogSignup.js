@@ -50,7 +50,7 @@ const DialogActions = withStyles((theme) => ({
 }))(MuiDialogActions);
 
 
-export function DialogSignup({children}) {
+export const DialogSignup = ({children}) => {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {

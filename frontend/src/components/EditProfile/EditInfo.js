@@ -1,4 +1,4 @@
-import React,{ useState, useRef } from 'react';
+import React,{ useState, useEffect, useRef } from 'react';
 
 import {
     Button,
@@ -17,12 +17,12 @@ import {
 
 import { makeStyles }     from '@material-ui/core/styles';
 
-import { updateUser }             from '_api';
-import { fileToBase64 }           from '_utils';
-import { handleResponse }         from '_helpers';
-import { authenticationService }  from '_services';    
+import { updateUser }                           from '_api';
+import { fileToBase64, validateUpdateUser }     from '_utils';
+import { handleResponse }                       from '_helpers';
+import { authenticationService }                from '_services';    
 
-import { UpdateUserViewModel }    from 'model';
+import { UpdateUserViewModel }                  from '_model';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -70,13 +70,18 @@ const useStyles = makeStyles((theme) => ({
   },
   inputImage:{
     display: 'none'
+  },
+  fieldWarning:{
+    color: '#ea5970',
+    fontSize: '0.8rem',
+    marginTop: theme.spacing(1)
   }
 }));
 
 const defaultProfilePic = 'https://image.freepik.com/vector-gratis/perfil-avatar-hombre-icono-redondo_24640-14044.jpg';
 const defaultCoverPic   = 'https://png.pngtree.com/thumb_back/fw800/background/20190220/ourmid/pngtree-blue-gradient-summer-creative-image_9270.jpg';
 
-export function EditInfo( props ) {
+export const EditInfo = ( props ) => {
 
   const { user, setUser } = props;
 
@@ -87,8 +92,8 @@ export function EditInfo( props ) {
 
   const [state, setState] = useState({
     userName:           user.userName,
-    userTag:            user.tag,
-    userEmail:          user.email,
+    tag:                user.tag,
+    email:              user.email,
     changedProfilePic:  false,
     profilePic:         null,
     profilePicPreview:  user.profilePicPath,
@@ -97,28 +102,22 @@ export function EditInfo( props ) {
     coverPicPreview:    user.coverPicPath,
   });
 
-  const onChangeUserName = e=>{
-    setState(x=>{
-      let copy = {...x};
-      copy.userName = e.target.value;
-      return copy;
-    })
-  };
+  const [validation, setValidation]= useState({
+    userName:   false,
+    tag:        false,
+    email:      false,
+    validated:  false,
+  });
 
-  const onChangeTag = e=>{
-    setState(x=>{
-      let copy = {...x};
-      copy.userTag = e.target.value;
-      return copy;
-    })
-  };
+  useEffect(()=>{
+    setValidation( validateUpdateUser( state ) );
+  },[state]);
 
-  const onChangeEmail = e=>{
-    setState(x=>{
-      let copy = {...x};
-      copy.userEmail = e.target.value;
-      return copy;
-    })
+  const onChangeTextField = e=>{
+    setState({
+      ...state,
+      [e.target.name]: e.target.value
+    });
   };
 
   const onChangeProfilePic = async (e) => {
@@ -160,14 +159,9 @@ export function EditInfo( props ) {
   const onSubmit = e=>{
     e.preventDefault();
 
-    updateUser(authenticationService.currentUserValue.id,
-      new UpdateUserViewModel({
-        userName:   state.userName,
-        tag:        state.userTag,
-        email:      state.userEmail,
-        profilePic: state.profilePic,
-        coverPic:   state.coverPic
-      }))
+    let model = new UpdateUserViewModel(state);
+
+    updateUser(authenticationService.currentUserValue.id, model)
       .then( handleResponse )
       .then( res =>{
         const { data } = res;
@@ -220,41 +214,63 @@ export function EditInfo( props ) {
           
             <Grid item xs={12} sm={6}>
               <TextField
+                name='userName'
                 autoComplete='fname'
-                name='Username'
                 variant='outlined'
                 required
                 fullWidth
                 value={state.userName}
-                onChange={onChangeUserName}
+                onChange={onChangeTextField}
                 label='Usuario'
                 autoFocus
               />
+              {
+                !validation.userName
+                && 
+                <Typography variant='body2' className={classes.fieldWarning}>
+                * Nombre de Usuario no valido
+                </Typography>
+              }
             </Grid>
 
             <Grid item xs={12} sm={6}>
               <TextField
+                name='tag'
                 variant='outlined'
                 required
                 fullWidth
                 label='Tag'
-                value={state.userTag}
-                onChange={onChangeTag}
+                value={state.tag}
+                onChange={onChangeTextField}
                 autoComplete='tagname'
               />
+              {
+                !validation.tag
+                && 
+                <Typography variant='body2' className={classes.fieldWarning}>
+                * Tag no valido
+                </Typography>
+              }
             </Grid>
 
             <Grid item xs={12}>
               <TextField
+                name='email'
                 variant='outlined'
                 required
                 fullWidth
                 label='Email'
-                name='email'
-                value={state.userEmail}
-                onChange = {onChangeEmail}
+                value={state.email}
+                onChange = {onChangeTextField}
                 autoComplete='email'
               />
+              {
+                !validation.email
+                && 
+                <Typography variant='body2' className={classes.fieldWarning}>
+                * Email no valido
+                </Typography>
+              }
             </Grid>
 
             <Grid item xs={12} className={classes.pictures}>
@@ -289,6 +305,7 @@ export function EditInfo( props ) {
             variant='contained'
             color='primary'
             className={classes.submit}
+            disabled = {!validation.validated}
           >
             Guardar información
           </Button>

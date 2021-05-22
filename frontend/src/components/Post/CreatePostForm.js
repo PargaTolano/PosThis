@@ -19,7 +19,7 @@ import { authenticationService }  from '_services';
 import { fileToBase64 }           from '_utils';
 import { createPost }             from '_api';
 
-import CPostModel     from 'model/CPostModel';
+import CPostModel     from '_model/CPostModel';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
   
 }));
 
-export function CreatePostForm(props){
+export const CreatePostForm = (props) => {
 
   const {afterUpdate} = props;
   

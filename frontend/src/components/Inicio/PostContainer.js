@@ -1,11 +1,8 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import PostCard   from 'components/Post/PostCard';
-import Typography from '@material-ui/core/Typography'
-import Divider    from '@material-ui/core/Divider';
-import Link       from '@material-ui/core/Link';
 
-import PostMock from 'mock/post.json';
+import { makeStyles } from '@material-ui/core/styles';
+
+import PostCard       from 'components/Post/PostCard';
 
 const useStyles = makeStyles((theme) => ({
   cardHolder: {
@@ -34,9 +31,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export function PostContainer(props) {
+export const PostContainer = (props) => {
 
-  const { auth, posts } = props;
+  const {  posts } = props;
   const classes = useStyles();
   return (
     <div className={classes.cardHolder}>
@@ -45,15 +42,9 @@ export function PostContainer(props) {
         <strong>Recientes</strong>
       </div>
       {
-        posts ?
+        posts 
+        &&
         posts.map(x=><PostCard key={x.postID} post={x}/>)
-        :
-        <>
-          <PostCard post={PostMock} auth={auth}/>
-          <PostCard post={PostMock} auth={auth}/>
-          <PostCard post={PostMock} auth={auth}/>
-          <PostCard post={PostMock} auth={auth}/>
-        </>
       }
         
     </div>

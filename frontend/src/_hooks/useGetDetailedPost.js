@@ -12,7 +12,7 @@ export const useGetDetailedPost = ( id ) =>{
         .then ( handleResponse )
         .then ( res =>{ setState( [ true, res.data ] ); console.warn(res); } )
         .catch( res =>{ setState( [ true, null     ] ); console.warn(res); });
-    }, []);
+    }, [id]);
 
     const setPost = ( post )=>{
         setState( [true, post ]);

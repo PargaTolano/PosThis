@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function NavBar(props) {
+export const NavBar = (props) => {
 
   const { history }= props;
   const classes = useStyles();

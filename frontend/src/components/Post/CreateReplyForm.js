@@ -19,7 +19,7 @@ import { authenticationService }  from '_services';
 import { fileToBase64 }           from '_utils';
 import { createReply }            from '_api';
 
-import {CReplyModel}     from 'model';
+import {CReplyModel}     from '_model';
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
   
 }));
 
-export function CreateReplyForm(props){
+export const CreateReplyForm = (props) => {
 
   const {postId, afterUpdate} = props;
   

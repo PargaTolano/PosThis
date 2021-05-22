@@ -1,7 +1,5 @@
 import {  getURL  }     from '_config';
 
-import HashtagViewModel from 'model/HashtagViewModel';
-
 /**
  * @param   {Number} id
  */
@@ -33,8 +31,7 @@ const createHashtag = async ( model ) => {
         headers: headers
     };
 
-    let res = await fetch( getURL( `api/hashtags/Create` ), options );
-    return res.json();
+    return fetch( getURL( `api/hashtags/Create` ), options );
 };
 
 export{

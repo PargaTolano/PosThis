@@ -28,7 +28,7 @@ import { authenticationService }  from '_services';
 import { handleResponse }         from '_helpers';
 import { fileToBase64, routes }   from '_utils';
 import { updateReply }            from '_api';
-import { UReplyModel }            from 'model';
+import { UReplyModel }            from '_model';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -152,7 +152,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function ReplyCard( props ) {
+export const ReplyCard = ( props ) => {
 
   const { reply, first, last }    = props;
   const classes = useStyles();

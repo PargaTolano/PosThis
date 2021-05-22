@@ -1,7 +1,7 @@
 import {  getURL  }     from '_config';
 import { authHeader } from '_helpers';
 
-import LikeViewModel from 'model/LikeViewModel';
+import LikeViewModel from '_model/LikeViewModel';
 
 /**
  * @param   {Number} id

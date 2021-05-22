@@ -41,7 +41,7 @@ import{
   UPostModel,
   LikeViewModel,
   RepostViewModel
-} from 'model';
+} from '_model';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -187,7 +187,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export function PostCard( props ) {
+export const PostCard = ( props ) => {
 
   const [ post, setPost ] = useState( props.post );
 

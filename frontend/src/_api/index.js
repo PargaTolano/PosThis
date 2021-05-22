@@ -1,6 +1,5 @@
 export * from './users';
 export * from './follow';
-export * from './hashtag';
 export * from './likes';
 export * from './posts';
 export * from './replies';

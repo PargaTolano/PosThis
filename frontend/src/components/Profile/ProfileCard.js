@@ -15,7 +15,7 @@ import { DialogEditInfo, EditInfo }   from 'components/EditProfile';
 import { createFollow, deleteFollow } from '_api';
 import { handleResponse }             from '_helpers';
 import { authenticationService}       from '_services';
-import { FollowViewModel }            from 'model';
+import { FollowViewModel }            from '_model';
 
 const useStyles = makeStyles((theme) => ({
   cardContainer: {
@@ -93,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
 
 const profilePicPlaceholder = 'https://image.freepik.com/vector-gratis/perfil-avatar-hombre-icono-redondo_24640-14044.jpg';
 
-export function ProfileCard( props ) {
+export const ProfileCard = ( props ) => {
   const { user, setUser } = props;
   const classes = useStyles();
 

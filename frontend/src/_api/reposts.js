@@ -1,7 +1,7 @@
 import {  getURL  }     from '_config';
 import { authHeader }   from '_helpers';
 
-import RepostViewModel  from 'model/RepostViewModel';
+import RepostViewModel  from '_model/RepostViewModel';
 
 
 /**

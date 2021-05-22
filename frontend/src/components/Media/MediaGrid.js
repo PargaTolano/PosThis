@@ -58,7 +58,7 @@ const useMediaContainerStyles= makeStyles((theme) => ({
   }
 }));
 
-function MediaContainer(props) {
+const MediaContainer = (props) => {
 
   const { media, state, setState } = props;
   const classes = useMediaContainerStyles();
@@ -96,7 +96,7 @@ function MediaContainer(props) {
   );
 }
 
-function SubGrid( props ){
+const SubGrid = ( props ) => {
 
   const {children, size} = props;
   const classes = useSubgridStyles();
@@ -124,7 +124,7 @@ function SubGrid( props ){
   );
 }
 
-export function MediaGrid( props ){
+export const MediaGrid = ( props ) => {
 
   const classes = useMediaGridStyles();
   const { media, ...temp } = props;

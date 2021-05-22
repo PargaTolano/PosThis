@@ -1,4 +1,3 @@
-
 const fileToBase64 = ( file )=>new Promise((res, rej)=>{
     var reader  = new FileReader();
 
@@ -6,12 +5,11 @@ const fileToBase64 = ( file )=>new Promise((res, rej)=>{
     reader.onerror      = ( err )  => rej( err );
     reader.onabort      = ( err )  => rej( err );
 
-    if (file) {
+    if ( file ) {
         reader.readAsDataURL(file);
     }else{
         rej();
     }
-
 });
 
 

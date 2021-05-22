@@ -13,11 +13,12 @@ import backapp2                 from 'assets/backapp2.png';
 
 const useStyles = makeStyles((theme) => ({
   Background:{
-    backgroundImage: `url('${backapp2}')`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+    backgroundImage:      `url('${backapp2}')`,
+    backgroundSize:       'cover',
+    backgroundPosition:   'center',
     backgroundAttachment: 'fixed',
-    backgroundRepeat: 'no-repeat',
+    backgroundRepeat:     'no-repeat',
+    minHeight:            '100vh'
   }
 }));
 

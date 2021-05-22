@@ -1,7 +1,6 @@
-import {  getURL  }     from '_config';
-
-import { authHeader } from '_helpers'
-import { FollowViewModel } from 'model';
+import {  getURL  }         from '_config';
+import { authHeader }       from '_helpers'
+import { FollowViewModel }  from '_model';
 
 /**
  * @param   {Number} id

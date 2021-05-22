@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 
 const coverPlaceholder = 'https://png.pngtree.com/thumb_back/fw800/background/20190220/ourmid/pngtree-blue-gradient-summer-creative-image_9270.jpg';
 
-export function ProfileContainer( props ) {
+export const ProfileContainer = ( props ) => {
   const { user, ...rest } = props;
   const classes = useStyles();
 

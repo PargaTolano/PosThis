@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme)=>({
       }
 }));
 
-function GridImage( props ){
+const GridImage = ( props ) => {
 
   const { classes, image, index, images, setImages } = props;
   const { preview, file } = image;
@@ -66,7 +66,7 @@ function GridImage( props ){
   );
 };
 
-export function FormMediaGrid(props){
+export const FormMediaGrid = (props) =>{
 
     const classes = useStyles();
     const { images, setImages } = props;

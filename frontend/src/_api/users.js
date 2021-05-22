@@ -3,7 +3,7 @@ import { arrayToCSV }               from '_utils';
 import { authHeader }               from '_helpers';
 import { authenticationService }    from '_services';
 
-import { SignUpModel, LogInModel, SearchRequestModel, UpdateUserViewModel} from 'model';
+import { SignUpModel, LogInModel, SearchRequestModel, UpdateUserViewModel} from '_model';
 
 const getUsers = () => {
 

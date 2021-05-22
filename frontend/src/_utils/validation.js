@@ -1,6 +1,6 @@
 import { emailRegex, userNameRegex, passwordRegex, tagRegex } from '_utils';
 
-export const validateLogin = (userName, password)=>{
+const validateLogin = ({userName, password})=>{
 
     const validation = {
         userName:   true,
@@ -22,7 +22,7 @@ export const validateLogin = (userName, password)=>{
     return validation;
 };
 
-export const validateSignup = ( {userName, tag, email, password} ) =>{
+const validateSignup = ( {userName, tag, email, password} ) =>{
 
     const validation = {
         userName:   true,
@@ -53,9 +53,36 @@ export const validateSignup = ( {userName, tag, email, password} ) =>{
     }
     
     return validation;
-}
+};
 
-export const validateCreateAndUpdatePost = ( content, mediaCount )=>{
+const validateUpdateUser = ( {userName, tag, email} ) =>{
+
+    const validation = {
+        userName:   true,
+        tag:        true,
+        email:      true,
+        validated:  true,
+    };
+
+    if ( !userNameRegex .test( userName || '' ) ){
+        validation.userName     = false;
+        validation.validated    = false;
+    }
+
+    if ( !tagRegex .test( tag || '' ) ){
+        validation.tag          = false;
+        validation.validated    = false;
+    }       
+
+    if ( !emailRegex .test( email || '' ) ){
+        validation.email        = false;
+        validation.validated    = false;
+    }
+    
+    return validation;
+};
+
+const validateCreateAndUpdatePost = ( {content, mediaCount} )=>{
 
     const validation = {
         content:    true,
@@ -75,3 +102,10 @@ export const validateCreateAndUpdatePost = ( content, mediaCount )=>{
 
     return validation;
 };
+
+export{
+    validateLogin,
+    validateSignup,
+    validateUpdateUser,
+    validateCreateAndUpdatePost
+}

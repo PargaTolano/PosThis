@@ -23,7 +23,7 @@ import { handleResponse } from '_helpers';
 import { validateSignup } from '_utils';
 import { createUser }     from '_api';
 
-import { SignUpModel }    from 'model';
+import { SignUpModel }    from '_model';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export function SignUp() {
+export const SignUp = ()=>{
   const classes = useStyles();
 
   const [state, setState] = useState({
