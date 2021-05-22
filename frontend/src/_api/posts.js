@@ -84,10 +84,10 @@ const updatePost = ( id, model ) =>{
 const deletePost = async ( id ) =>{
     const options = {
         method: 'DELETE',
+        headers: authHeader()
     };
     
-    let res = await fetch( getURL( `api/post/Delete/${id}` ), options );
-    return res.json();
+    return fetch( getURL( `api/post/Delete/${id}` ), options );
 };
 
 export{

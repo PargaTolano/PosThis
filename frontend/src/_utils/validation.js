@@ -98,7 +98,7 @@ const validateCreateAndUpdatePost = ( {content, mediaCount} )=>{
         validation.mediaCount = false;
     }
 
-    validation.validated = validation.content || validation.validated;
+    validation.validated = validation.content || validation.mediaCount;
 
     return validation;
 };

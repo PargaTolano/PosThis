@@ -93,7 +93,7 @@ export const ProfileContainer = ( props ) => {
           <div className={classes.column}>
 
             {
-              ( authenticationService.currentUserValue.id === user.id ) && <CreatePostForm {...rest}/>
+              ( authenticationService.currentUserValue.id === user.id ) && <CreatePostForm afterUpdate={loadFeed} {...rest}/>
             }
 
             <PostContainer posts={posts} {...rest}/>

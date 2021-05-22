@@ -119,7 +119,7 @@ namespace Rest_API_PWII.Classes
 
         public ResponseApiError ValidateExists( int id )
         {
-            var res = (from r in db.Replies where r.ReplyID == id select r).First();
+            var res = (from r in db.Replies where r.ReplyID == id select r).FirstOrDefault();
 
             if (res == null)
                 return new ResponseApiError { 
@@ -131,7 +131,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError Create( CReplyModel model )
+        public ResponseApiError Create( CReplyModel model, ref List<ReplyViewModel> replyViewModels )
         {
             try
             {
@@ -163,6 +163,29 @@ namespace Rest_API_PWII.Classes
                 reply.Medias = list;
 
                 db.SaveChanges();
+
+                replyViewModels = (from r in db.Replies
+                                                .Include(r=>r.User)
+                                                .Include(r => r.Medias)
+                                   where r.PostID == model.PostID 
+                                   select new ReplyViewModel {
+                                       ReplyID = r.ReplyID,
+                                       Content = r.ContentReplies,
+                                       PostID = r.Post.PostID,
+                                       PublisherID = r.User.Id,
+                                       PublisherUserName = r.User.UserName,
+                                       PublisherTag = r.User.Tag,
+                                       PublisherProfilePic = r.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{ r.User.ProfilePic.Name}" : "",
+                                       Date = r.ReplyDate,
+                                       Medias = (from mr in r.Medias
+                                                 select new MediaViewModel
+                                                 {
+                                                     MediaID = mr.MediaID,
+                                                     MIME = mr.MIME,
+                                                     Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{mr.Name}",
+                                                     IsVideo = mr.MIME.Contains("video")
+                                                 }).ToList(),
+                                   }).ToList();
 
                 return null;
             }
@@ -283,13 +306,20 @@ namespace Rest_API_PWII.Classes
         {
             try
             {
-                ResponseApiError err = ValidateExists(id);
+                var err = ValidateExists(id);
                 if (err != null)
                     return err;
 
-                Reply replyDb = db.Replies.First(r => r.ReplyID == id);
+                var reply = db.Replies
+                    .Include(r => r.Medias)
+                    .First(r => r.ReplyID == id);
 
-                db.Replies.Remove(replyDb);
+                foreach (var m in reply.Medias)
+                {
+                    File.Delete(Path.Combine("static", m.Name));
+                }
+
+                db.Replies.Remove(reply);
 
                 db.SaveChanges();
 

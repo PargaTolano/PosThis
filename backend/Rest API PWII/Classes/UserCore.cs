@@ -149,6 +149,7 @@ namespace Rest_API_PWII.Classes
                 return null;
 
             var query = model.Query != null ? model.Query : "";
+            query = query.ToLower().Trim();
 
             var searchResultModel = new SearchResultModel();
 
@@ -159,10 +160,8 @@ namespace Rest_API_PWII.Classes
                         .Include( x=>x.Medias  )
                         .Include( x=>x.Replies )
                         .Include( X=>X.Likes   )
-                        .ThenInclude( x=>x.User )
                         .Include( x=>x.Reposts )
-                        .ThenInclude( x=>x.User)
-                     where p.Content.ToLower().Contains( query.ToLower().Trim() )
+                     where p.Content.ToLower().Contains( query )
                      orderby p.PostDate descending
                      select new SearchResultPostModel
                      {

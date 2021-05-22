@@ -72,6 +72,23 @@ namespace Rest_API_PWII.Models
                 user.HasOne ( x => x.CoverPic )
                     .WithOne( x => x.CoverPicOwner )
                     .HasForeignKey<User>(x => x.CoverPicID);
+
+                user
+                    .HasMany(e => e.Posts)
+                    .WithOne(u => u.User)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                user.HasMany(x => x.Replies)
+                    .WithOne(x => x.User)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                user.HasMany(x => x.Likes)
+                    .WithOne(x => x.User)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                user.HasMany(x => x.Reposts)
+                    .WithOne(x => x.User)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Post>(post =>
@@ -95,7 +112,20 @@ namespace Rest_API_PWII.Models
 
                 post
                     .HasMany(x => x.Medias)
-                    .WithOne();
+                    .WithOne(x => x.Post)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                post.HasMany(x => x.Replies)
+                    .WithOne(x => x.Post)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                post.HasMany(x => x.Likes)
+                    .WithOne(x => x.Post)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                post.HasMany(x => x.Reposts)
+                    .WithOne(x => x.Post)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Repost>(repost =>
@@ -156,9 +186,10 @@ namespace Rest_API_PWII.Models
                     .IsRequired()
                     .OnDelete(DeleteBehavior.Cascade);
 
-                //reply
-                //    .HasMany(x => x.Medias)
-                //    .WithOne();
+                reply
+                    .HasMany(x => x.Medias)
+                    .WithOne(x => x.Reply)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Hashtag>(hashtag =>

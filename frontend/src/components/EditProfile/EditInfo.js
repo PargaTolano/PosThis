@@ -300,12 +300,12 @@ export const EditInfo = ( props ) => {
           </Grid>
 
           <Button
-            type='submit'
+            type      ='submit'
             fullWidth
-            variant='contained'
-            color='primary'
-            className={classes.submit}
-            disabled = {!validation.validated}
+            variant   ='contained'
+            color     ='primary'
+            className ={classes.submit}
+            disabled  = {!validation.validated}
           >
             Guardar información
           </Button>

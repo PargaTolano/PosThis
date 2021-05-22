@@ -56,7 +56,7 @@ export const PostDetail = ( props ) => {
   const { id }    = match.params;
   const classes   = useStyles();
 
-  const [[ready, post], setPost] = useGetDetailedPost( id );
+  const [[ready, post], setPost, setReplies] = useGetDetailedPost( id );
 
   if( id == 'undefined' || id === undefined || id === null || id === '' ){
     return (<Redirect to={routes.feed}/>);
@@ -75,7 +75,7 @@ export const PostDetail = ( props ) => {
         </div>
         <div className={classes.cardHolder}>
           <PostCard post={post} history={history}/>
-          <CreateReplyForm postId={post?.postID}/>
+          <CreateReplyForm postId={post?.postID} setReplies={setReplies}/>
           {
             post.replies?.map((reply,i)=>{
               

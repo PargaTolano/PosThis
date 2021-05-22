@@ -10,15 +10,19 @@ export const useGetDetailedPost = ( id ) =>{
     useEffect(()=>{
         getPost( id )
         .then ( handleResponse )
-        .then ( res =>{ setState( [ true, res.data ] ); console.warn(res); } )
-        .catch( res =>{ setState( [ true, null     ] ); console.warn(res); });
+        .then ( res => setState( [ true, res.data ] ) )
+        .catch( res => setState( [ true, null     ] ) );
     }, [id]);
 
     const setPost = ( post )=>{
         setState( [true, post ]);
     };
 
-    return [ state, setPost ];
+    const setReplies = ( replies )=>{
+        setState( [true, {...state, replies }]);
+    };
+
+    return [ state, setPost, setReplies];
 };
 
 export default useGetDetailedPost;

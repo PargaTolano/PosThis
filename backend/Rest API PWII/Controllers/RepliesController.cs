@@ -103,16 +103,18 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
+                var list = new List<ReplyViewModel>();
                 var repliesCore = new RepliesCore(db, env, Request);
-                var err = repliesCore.Create(model);
+                var err = repliesCore.Create(model, ref list);
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = (int)HttpStatusCode.OK,
-                        Message = "Reply create successful"
+                        Code    = (int)HttpStatusCode.OK,
+                        Message = "Reply create successful",
+                        Data    = list
                     });
             }
             catch(Exception ex)

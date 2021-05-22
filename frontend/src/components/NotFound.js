@@ -59,8 +59,7 @@ const useStyles = makeStyles((theme)=>({
     }
 }));
 
-
-export const NotFound = (props) => {
+export const NotFound = ( props ) => {
 
     const {history} = props;
 
@@ -82,4 +81,4 @@ export const NotFound = (props) => {
     );
 }
 
-export default NotFound
+export default NotFound;

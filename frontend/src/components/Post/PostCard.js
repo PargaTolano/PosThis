@@ -25,16 +25,17 @@ import {
 
 import { MediaGrid }                from 'components/Media';
 
-import { handleResponse }           from '_helpers';
+import { handleResponse, history }  from '_helpers';
 import { authenticationService }    from '_services';
 import { routes, fileToBase64 }     from '_utils';
 
 import { 
   updatePost,
+  deletePost,
   createLike,
   deleteLike,
   createRepost,
-  deleteRepost 
+  deleteRepost
 } from '_api';
 
 import{
@@ -184,6 +185,9 @@ const useStyles = makeStyles((theme) => ({
     '&:hover':{
       color: '##ea5970'
     }
+  },
+  deleteBtn:{
+    marginRight: theme.spacing(2)
   }
 }));
 
@@ -369,6 +373,17 @@ export const PostCard = ( props ) => {
     })
   };
 
+  const onClickDelete = ()=>{
+    if(window.confirm('Seguro que quiere borrar el post')){
+      deletePost(post.postID)
+      .then(handleResponse)
+      .then(res=>{
+        history.replace(routes.feed);
+      })
+      .catch(console.warn);
+    }
+  };
+
   const dateString = new Date(Date.parse( post.date )).toLocaleString();
 
   return (
@@ -415,10 +430,24 @@ export const PostCard = ( props ) => {
           <div  className={classes.displaybtn}>
           {
             (authenticationService.currentUserValue.id === post.publisherID)
-             && 
-            <Button variant='contained' color='secondary' onClick={onToggleEditMode}>
-              { state.editMode ? 'Cancelar' : 'Editar' }
-            </Button>
+            && 
+            <>
+              <Button 
+                variant='contained' 
+                color='secondary' 
+                onClick={onClickDelete}
+                className={classes.deleteBtn}
+              >
+                  Eliminar
+              </Button>
+              <Button 
+                variant='contained' 
+                color='secondary' 
+                onClick={onToggleEditMode}
+              >
+                { state.editMode ? 'Cancelar' : 'Editar' }
+              </Button>
+            </>
           }
           </div>
         </CardContent>

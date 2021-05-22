@@ -1,4 +1,4 @@
-import React,{useState, useRef} from 'react';
+import React,{useState, useEffect, useRef} from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -12,12 +12,15 @@ import {
   IconButton,
 } from '@material-ui/core';
 
-import { FormMediaGrid }           from 'components/Media';
+import { FormMediaGrid }            from 'components/Media';
 
-import { handleResponse }         from '_helpers';
-import { authenticationService }  from '_services';
-import { fileToBase64 }           from '_utils';
-import { createReply }            from '_api';
+import { handleResponse }           from '_helpers';
+import { authenticationService }    from '_services';
+import { 
+  fileToBase64,
+   validateCreateAndUpdatePost 
+} from '_utils';
+import { createReply }              from '_api';
 
 import {CReplyModel}     from '_model';
 
@@ -80,10 +83,20 @@ const useStyles = makeStyles((theme) => ({
 
 export const CreateReplyForm = (props) => {
 
-  const {postId, afterUpdate} = props;
+  const {postId, setReplies} = props;
   
   const [images, setImages]   = useState( [] );
   const [content, setContent] = useState( '' );
+
+  const [validation, setValidation] = useState({
+    content:    false,
+    mediaCount: false,
+    validated:  false
+  });
+
+  useEffect(() => {
+    setValidation( validateCreateAndUpdatePost( {content, mediaCount: images.length}) );
+  }, [images, content])
 
   const inputFileRef = useRef(null);
   
@@ -101,15 +114,15 @@ export const CreateReplyForm = (props) => {
     createReply( model )
           .then(handleResponse)
           .then( res =>{
-            setImages([]);
+            let { data } = res;
+            setImages ([]);
             setContent('');
-            if( afterUpdate )
-              afterUpdate();
+            setReplies( data );
           })
           .catch( console.warn );
   };
 
-  const onChange = async ( e )=>{
+  const onChangeImage = async ( e )=>{
     let { files } = e.target;
 
     if( images.length + files.length > 4 )
@@ -127,46 +140,72 @@ export const CreateReplyForm = (props) => {
 
     setImages( x=> [...x,...filePairs] );
   };
-
+  
+  const onChangeContent = e=>setContent(e.target.value);
+  
   const mediaBtnOnClick = () =>inputFileRef.current?.click();
 
   return (
-    <form className={classes.form} noValidate onSubmit={onSubmit}>
-        <div component='h4' variant='h2' className={classes.titleForm}>
+    <form 
+      className={classes.form} 
+      noValidate 
+      onSubmit={onSubmit}
+    >
+        <div 
+          component='h4' 
+          variant='h2' 
+          className={classes.titleForm}
+        >
           <strong>Nueva Respuesta!</strong>
         </div>
         <TextField
-            variant='outlined'
-            margin='normal'
+            variant      = 'outlined'
+            margin       = 'normal'
             multiline
-            rows={3}
-            rowsMax={3}
+            rows         = {3}
+            rowsMax      = {3}
             fullWidth
-            label='Escribir...'
-            name='postContent'
-            autoComplete='postContent'
+            label        = 'Escribir...'
+            name         = 'postContent'
+            autoComplete = 'postContent'
             autoFocus
-            value = {content}
-            className={classes.postContent}
-            onChange ={e=>setContent(e.target.value)}
+            value        = {content}
+            className    = {classes.postContent}
+            onChange     = {onChangeContent}
         />
 
       <FormMediaGrid images={images} setImages={setImages}/>
       <div className = {classes.cardBtn}>
       
         <Button
-            type='submit'
+            type     = 'submit'
             fullWidth
-            variant='contained'
-            color='primary'
-            className={classes.submit}
+            variant  = 'contained'
+            color    = 'primary'
+            className= {classes.submit}
+            disabled = {!validation.validated}
         >
           Publicar
         </Button>
           
-        <input accept='image/*' className={classes.input} type='file' multiple ref={inputFileRef} onChange={onChange}/>
-        <label htmlFor='icon-button-file' className={classes.imageIcon}>
-          <IconButton color='primary' aria-label='upload picture' component='span' onClick={mediaBtnOnClick}>
+        <input 
+          accept='image/*' 
+          className={classes.input} 
+          type='file' 
+          multiple 
+          ref={inputFileRef} 
+          onChange={onChangeImage}
+        />
+        <label
+          htmlFor='icon-button-file' 
+          className={classes.imageIcon}
+        >
+          <IconButton
+            color='primary' 
+            aria-label='upload picture' 
+            component='span' 
+            onClick={mediaBtnOnClick}
+          >
             <ImageIcon className={classes.imageIcon}/>
           </IconButton>
         </label>

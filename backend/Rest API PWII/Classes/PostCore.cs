@@ -326,13 +326,30 @@ namespace Rest_API_PWII.Classes
         {
             try
             {
-                ResponseApiError err = ValidateExists( id );
+                var err = ValidateExists( id );
                 if (err != null)
                     return err;
 
-                Post postDb = db.Posts.First( p => p.PostID == id );
+                var post = db.Posts
+                    .Include(p=>p.Medias)
+                    .Include(p=>p.Replies)
+                    .ThenInclude(r=>r.Medias)
+                    .First( p => p.PostID == id );
 
-                db.Posts.Remove( postDb );
+                foreach (var m in post.Medias)
+                {
+                    File.Delete(Path.Combine("static", m.Name));
+                }
+
+                foreach ( var r in post.Replies)
+                {
+                    foreach (var m in r.Medias)
+                    {
+                        File.Delete(Path.Combine("static", m.Name));
+                    }
+                }
+
+                db.Posts.Remove(post);
 
                 db.SaveChanges();
 

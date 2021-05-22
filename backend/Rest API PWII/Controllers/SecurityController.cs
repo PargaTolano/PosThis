@@ -171,6 +171,7 @@ namespace Rest_API_PWII.Controllers
                 var tokenHandler = new JwtSecurityTokenHandler();
 
                 var createdToken = tokenHandler.CreateToken(tokenDescriptor);
+                var tokenString = tokenHandler.WriteToken(createdToken);
 
                 return Ok(
                     new ResponseApiSuccess
@@ -180,7 +181,7 @@ namespace Rest_API_PWII.Controllers
                             Id              = user.Id,
                             UserName        = user.UserName,
                             ProfilePicPath  = user.ProfilePic   != null ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/static/{user.ProfilePic.Name}" : "",
-                            Token           = tokenHandler.WriteToken(createdToken)
+                            Token           = tokenString
                         },
                         Message = "Login Successful"
                     });

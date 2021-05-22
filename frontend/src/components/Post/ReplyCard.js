@@ -22,13 +22,13 @@ import {
 
 } from '@material-ui/icons';
 
-import { MediaGrid }              from 'components/Media';
+import { MediaGrid }                from 'components/Media';
 
-import { authenticationService }  from '_services';
-import { handleResponse }         from '_helpers';
-import { fileToBase64, routes }   from '_utils';
-import { updateReply }            from '_api';
-import { UReplyModel }            from '_model';
+import { authenticationService }    from '_services';
+import { handleResponse, history }  from '_helpers';
+import { fileToBase64, routes }     from '_utils';
+import { updateReply, deleteReply } from '_api';
+import { UReplyModel }              from '_model';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -150,6 +150,9 @@ const useStyles = makeStyles((theme) => ({
   mediaIcon:{
     color: '#ea5970'
   },
+  deleteBtn:{
+    marginRight: theme.spacing(2)
+  }
 }));
 
 export const ReplyCard = ( props ) => {
@@ -167,6 +170,7 @@ export const ReplyCard = ( props ) => {
     deleted:          [],
     newMedias:        []
   });
+  const [del, setDel] = useState(false);
 
   const temp = { state, setState};
 
@@ -266,6 +270,21 @@ export const ReplyCard = ( props ) => {
     })
   };
 
+  const onClickDelete = ()=>{
+    if(window.confirm('Seguro que quiere borrar la respuesta')){
+      deleteReply(reply.replyID)
+      .then(handleResponse)
+      .then( res =>{
+        setDel( true );
+      })
+      .catch(console.warn);
+    }
+  };
+
+  if( del ){
+    return <></>
+  }
+
   return (
     <Card className={cardRootClass}>
         <CardContent>
@@ -309,10 +328,24 @@ export const ReplyCard = ( props ) => {
           <div  className={classes.displaybtn}>
           {
             (authenticationService.currentUserValue.id === reply.publisherID)
-             && 
-            <Button variant='contained' color='secondary' onClick={onToggleEditMode}>
-              { state.editMode ? 'Cancelar' : 'Editar' }
-            </Button>
+            && 
+            <>
+              <Button 
+                variant='contained' 
+                color='secondary' 
+                onClick={onClickDelete}
+                className={classes.deleteBtn}
+              >
+                  Eliminar
+              </Button>
+              <Button 
+                variant='contained' 
+                color='secondary' 
+                onClick={onToggleEditMode}
+              >
+                { state.editMode ? 'Cancelar' : 'Editar' }
+              </Button>
+            </>
           }
           </div>
         </CardContent>

@@ -8,10 +8,9 @@ export const useGetUserProfile = ( id ) =>{
     const [ state, setState ] =  useState([false, null]);
 
     useEffect(()=>{
-        console.log( id );
         getUser( id )
         .then ( handleResponse )
-        .then ( res =>{ setState( [ true, res.data ]); console.log(res.data); } )
+        .then ( res => setState( [ true, res.data ] ) )
         .catch( res => setState( [ true, null     ] ) );
     }, [id]);
 
