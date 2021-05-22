@@ -52,7 +52,7 @@ const DialogActions = withStyles((theme) => ({
   },
 }))(MuiDialogActions);
 
-export function DialogEditInfo({children, color}) {
+export const DialogEditInfo = ({children, color}) => {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -80,6 +80,6 @@ export function DialogEditInfo({children, color}) {
       </Dialog>
     </div>
   );
-}
+};
 
 export default DialogEditInfo;

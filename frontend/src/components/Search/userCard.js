@@ -1,6 +1,15 @@
 import React from 'react';
-import {Grid, Typography, makeStyles, Avatar, Link, Button} from '@material-ui/core';
+import { Link } from 'react-router-dom';
+import { 
+    Grid,
+    Typography,
+    makeStyles,
+    Avatar,
+    Button
+} from '@material-ui/core';
 import veryfied from 'assets/veryfied.svg';
+
+import { routes } from '_utils';
 
 const defaultImage = 'https://www.adobe.com/express/create/media_1900d303a701488626835756419ca3a50b83a2ae5.png?width=2000&format=webply&optimize=medium';
 
@@ -39,6 +48,7 @@ const useStyles = makeStyles(theme => ({
         paddingLeft: theme.spacing(6),
         paddingRight: theme.spacing(6),
         fontWeight: theme.typography.fontWeightMedium,
+        textDecoration: 'none'
     },
 }));
 const ChannelPhoto = ({classes, user}) => 
@@ -67,14 +77,18 @@ const ChannelUsername = ({classes, user}) => {
 
 const SeeButton = ({classes, user}) => {
     return(
-        <Button disableElevation component={Link} to='/' color='primary' variant = 'contained' size = 'small' className={classes.btn}>
-            Ver Perfil
-        </Button>
+
+        <Link to={routes.getProfile(user.userId)}>
+            <Button color='primary' variant = 'contained' size = 'small' className={classes.btn}>
+                Ver Perfil
+            </Button>
+        </Link>
     );
 };
 
 export const UserCard = ( {user} ) => {
     const classes = useStyles();
+    
     return(
         <Grid container direction = 'column' className = {classes.root}>
             <ChannelPhoto  classes = {classes} user={user}/>

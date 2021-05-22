@@ -110,11 +110,6 @@ export const Login = (props) => {
               onChange = {getOnChange(setPassword)}
             />
 
-            <FormControlLabel
-              control={<Checkbox value='remember' color='primary' />}
-              label='Recordar contraseña'
-            />
-
             <Button
               type='submit'
               fullWidth
@@ -124,19 +119,7 @@ export const Login = (props) => {
             >
               Ingresar
             </Button>
-
-            <Grid container>
-              <Grid item xs>
-                <Link href='#' variant='body2'>
-                  ¿Olvidaste tu contraseña?
-                </Link>
-              </Grid>
-              <Grid item>
-                <DialogSignup>
-                  <SignUp/>
-                </DialogSignup>
-              </Grid>
-            </Grid>
+            
           </form>
         </div>
       </Grid>

@@ -42,8 +42,8 @@ namespace Rest_API_PWII.Classes
             if (string.IsNullOrEmpty( model.UserName )  &&
                 string.IsNullOrEmpty( model.Tag      )  &&
                 string.IsNullOrEmpty( model.Email    )  &&
-                model.ProfilePic?.Length == 0           &&
-                model.CoverPic  ?.Length == 0)
+                !(model.ProfilePic?.Length == 0)           &&
+                !(model.CoverPic  ?.Length == 0))
                     return new ResponseApiError
                     {
                         Code            = (int)HttpStatusCode.BadRequest,
@@ -383,7 +383,7 @@ namespace Rest_API_PWII.Classes
                    .Include(x => x.Post.User)
                    .Include(x => x.User)
                 where rp.User.Id == id      &&
-                    rp.User.Id != viewerId  && 
+                    (rp.User.Id != viewerId || (viewerId == id))  && 
                     rp.Post.User.Id != id
                 select new FeedPostModel
                 {
@@ -501,6 +501,25 @@ namespace Rest_API_PWII.Classes
                 db.SaveChanges();
                 db.Attach( user );
 
+                outModel = (from u in db.Users
+                                            .Include(u => u.Follows)
+                                            .Include(u => u.Following)
+                                            .Include(u => u.ProfilePic)
+                                            .Include(u => u.CoverPic)
+                            where id == u.Id
+                            select new UserViewModel
+                            {
+                                Id = u.Id,
+                                UserName = u.UserName,
+                                Tag = u.Tag,
+                                Email = u.Email,
+                                ProfilePicPath = u.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.ProfilePic.Name}" : null,
+                                CoverPicPath = u.CoverPic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.CoverPic.Name}" : null,
+                                BirthDate = u.BirthDate,
+                                FollowerCount = u.Follows != null ? u.Follows.Count : 0,
+                                FollowingCount = u.Following != null ? u.Following.Count : 0
+                            }).First();
+
                 if ( model.ProfilePic == null && model.CoverPic == null )
                     return null;
 
@@ -529,25 +548,6 @@ namespace Rest_API_PWII.Classes
                 }
 
                 db.SaveChanges();
-
-                outModel = (from u in db.Users
-                                            .Include(u => u.Follows   )
-                                            .Include(u => u.Following )
-                                            .Include(u => u.ProfilePic)
-                                            .Include(u => u.CoverPic  )
-                            where id == u.Id
-                            select new UserViewModel
-                            {
-                                Id              = u.Id,
-                                UserName        = u.UserName,
-                                Tag             = u.Tag,
-                                Email           = u.Email,
-                                ProfilePicPath  = u.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.ProfilePic.Name}" : null,
-                                CoverPicPath    = u.CoverPic != null   ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.CoverPic.Name}" : null,
-                                BirthDate       = u.BirthDate,
-                                FollowerCount   = u.Follows   != null ? u.Follows.Count   : 0,
-                                FollowingCount  = u.Following != null ? u.Following.Count : 0
-                            }).First();
 
                 return null;
             }
