@@ -1,4 +1,4 @@
-class CUPostModel {
+export class CPostModel {
     userID;
     content;
     files;
@@ -10,4 +10,4 @@ class CUPostModel {
     }
 }
 
-export default CUPostModel;
+export default CPostModel;

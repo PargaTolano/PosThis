@@ -8,6 +8,7 @@ using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
 using System.Net;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -57,12 +58,13 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get( int id )
+        [Authorize]
+        public IActionResult Get( int id, [FromHeader(Name ="UserID")] string viewerId )
         {
             try
             {
                 var postCore = new PostCore( db, env, Request);
-                var post = postCore.GetOne( id );
+                var post = postCore.GetOne( id, viewerId );
 
                 if (post == null)
                     return StatusCode((int)HttpStatusCode.NotFound,
@@ -96,6 +98,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Create( [FromForm] CPostModel post )
         {
             try
@@ -127,6 +130,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult Update( int id, [FromForm] UPostModel post )
         {
             try
@@ -160,6 +164,7 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Delete( int id )
         {
             try

@@ -1,4 +1,4 @@
-class FollowViewModel {
+export class FollowViewModel {
     followerID;
     followedID;
 

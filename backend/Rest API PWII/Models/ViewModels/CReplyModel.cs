@@ -8,14 +8,9 @@ namespace Rest_API_PWII.Models.ViewModels
 {
     public class CReplyModel
     {
-        public virtual int?             ReplyID { get; set; }
-
+        public virtual string           UserID  { get; set; }
+        public virtual int?             PostID  { get; set; }
         public virtual string           Content { get; set; }
-
-        public virtual int?             PostID { get; set; }
-
-        public virtual string           UserID { get; set; }
-
-        public virtual List<IFormFile>  Files { get; set; }
+        public virtual List<IFormFile>  Files   { get; set; }
     }
 }

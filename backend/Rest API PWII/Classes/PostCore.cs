@@ -192,20 +192,28 @@ namespace Rest_API_PWII.Classes
             return posts;
         }
 
-        public PostViewModel GetOne( int id )
+        public PostDetailViewModel GetOne( int id, string viewerId )
         {
             return (from p in db.Posts
                             .Include( p => p.Medias )
+                            .Include( p => p.Likes )
                             .Include( p => p.Replies)
+                            .Include( p => p.Reposts)
                     where id == p.PostID
                     select new PostDetailViewModel
                     {
-                        PostID      = p.PostID,
-                        Content     = p.Content,
-                        PublisherID = p.User.Id,
-                        PublisherUserName = p.User.UserName,
-                        PublisherTag = p.User.Tag,
-                        PublisherProfilePic = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{""/*p.User.ProfilePic.Name*/}",
+                        PostID                  = p.PostID,
+                        Content                 = p.Content,
+                        PublisherID             = p.User.Id,
+                        PublisherUserName       = p.User.UserName,
+                        PublisherTag            = p.User.Tag,
+                        PublisherProfilePic     = p.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{p.User.ProfilePic.Name}" : "",
+                        IsLiked                 = p.Likes   .FirstOrDefault(l => l.UserID == viewerId) != null,
+                        IsReposted              = p.Reposts .FirstOrDefault(l => l.UserID == viewerId) != null,
+                        LikeCount               = p.Likes   .Count,
+                        ReplyCount              = p.Replies .Count,
+                        RepostCount             = p.Reposts .Count,
+                        Date                    = p.PostDate,
                         Medias = (from m in p.Medias
                                   select new MediaViewModel{
                                       MediaID   = m.MediaID,
@@ -216,9 +224,14 @@ namespace Rest_API_PWII.Classes
                         Replies = (from r in p.Replies.AsQueryable().Include(p=>p.Medias)
                                    select new ReplyViewModel
                                    {
-                                       ReplyID = r.ReplyID,
-                                       Content = r.ContentReplies,
-                                       Date    = r.ReplyDate,
+                                       ReplyID              = r.ReplyID,
+                                       Content              = r.ContentReplies,
+                                       PostID               = r.Post.PostID,
+                                       PublisherID          = r.User.Id,
+                                       PublisherUserName    = r.User.UserName,
+                                       PublisherTag         = r.User.Tag,
+                                       PublisherProfilePic  = r.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{ r.User.ProfilePic.Name}" : "",
+                                       Date                 = r.ReplyDate,
                                        Medias  = (from mr in r.Medias
                                                   select new MediaViewModel {
                                                     MediaID = mr.MediaID,
@@ -226,9 +239,6 @@ namespace Rest_API_PWII.Classes
                                                     Path    = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{mr.Name}",
                                                     IsVideo = mr.MIME.Contains("video")
                                                   }).ToList(),
-                                       PublisherID       = r.User.Id,
-                                       PublisherUserName = r.User.UserName,
-                                       PublisherProfilePic = r.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{ r.User.ProfilePic.Name}" : ""
                                    }).ToList()
                     }).FirstOrDefault();
         }
@@ -246,7 +256,7 @@ namespace Rest_API_PWII.Classes
                 //    return err;
 
                 var post = db.Posts.Where(u => u.PostID == id)
-                    .Include(x=>x.Medias)
+                    .Include(x => x.Medias)
                     .Include(x => x.Likes)
                     .Include(x => x.Replies)
                     .Include(x => x.Reposts)

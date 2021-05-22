@@ -1,4 +1,4 @@
-class SearchRequestModel {
+export class SearchRequestModel {
     searchPosts;
     searchUsers;
     query;

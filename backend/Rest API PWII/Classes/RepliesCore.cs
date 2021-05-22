@@ -1,7 +1,11 @@
-﻿using Rest_API_PWII.Models;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -11,13 +15,17 @@ namespace Rest_API_PWII.Classes
     public class RepliesCore
     {
         private PosThisDbContext db;
+        private IHostingEnvironment env;
+        private HttpRequest request;
 
-        public RepliesCore(PosThisDbContext db)
+        public RepliesCore( PosThisDbContext db, IHostingEnvironment env, HttpRequest request )
         {
             this.db = db;
+            this.env = env;
+            this.request = request;
         }
 
-        public ResponseApiError Validate(Reply reply)
+        public ResponseApiError Validate( Reply reply )
         {
             if (reply.Post.Content == null || reply.Post.Content == "")
                 return new ResponseApiError{
@@ -29,7 +37,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateCreation(CReplyModel model)
+        public ResponseApiError ValidateC ( CReplyModel model )
         {
             if (model.PostID == null)
                 return new ResponseApiError
@@ -65,18 +73,12 @@ namespace Rest_API_PWII.Classes
                     Message = "User not found"
                 };
 
-            return null;
-        }
-
-        public ResponseApiError ValidateCReply ( CReplyModel model )
-        {
             bool textoValido = !string.IsNullOrEmpty(model.Content);
             bool mediaValido = model.Files?.Count > 0;
 
             if (textoValido || mediaValido)
                 return null;
 
-            //hay error
             return new ResponseApiError
             {
                 Code = (int)HttpStatusCode.BadRequest,
@@ -101,7 +103,7 @@ namespace Rest_API_PWII.Classes
             };
         }
 
-        public ResponseApiError ValidateExists(Reply reply)
+        public ResponseApiError ValidateExists( Reply reply )
         {
             var res = (from r in db.Replies where r.ReplyID == reply.ReplyID select r).First();
 
@@ -115,7 +117,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateExists(int id)
+        public ResponseApiError ValidateExists( int id )
         {
             var res = (from r in db.Replies where r.ReplyID == id select r).First();
 
@@ -129,32 +131,36 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError Create(CReplyModel model)
+        public ResponseApiError Create( CReplyModel model )
         {
             try
             {
-                var err = ValidateCReply(model);
-                if ( err != null )
-                    return err;
-
-                err = ValidateCreation( model );
+                var err = ValidateC(model);
                 if ( err != null )
                     return err;
 
                 var post = db.Posts.First( p => p.PostID == model.PostID );
                 var user = db.Users.First( u => u.Id == model.UserID );
                 var reply = new Reply {
+                    User = user,
+                    Post = post,
                     ContentReplies = model.Content,
-                    ReplyDate   = DateTime.Now
+                    ReplyDate   = DateTime.Now,
                 };
+
+                var list        = new List<ReplyMedia>();
+                var mediaCore   = new MediaCore(db, env, request);
+                if (model.Files != null)
+                {
+                    err = mediaCore.CreateReplyMedia(model.Files, ref list);
+                    if (err != null)
+                        return err;
+                }
 
                 db.Replies.Add(reply);
                 db.SaveChanges();
 
-                db.Attach(reply);
-
-                reply.Post = post;
-                reply.User = user;
+                reply.Medias = list;
 
                 db.SaveChanges();
 
@@ -185,7 +191,7 @@ namespace Rest_API_PWII.Classes
             return reply;
         }
 
-        public ReplyViewModel GetOne(int id)
+        public ReplyViewModel GetOne( int id )
         {
             return 
                 (from r in db.Replies 
@@ -199,25 +205,66 @@ namespace Rest_API_PWII.Classes
                  }).FirstOrDefault();
         }
 
-        public ResponseApiError Update( int id, UReplyModel model )
+        public ResponseApiError Update( int id, UReplyModel model, ref ReplyViewModel refModel)
         {
             try
             {
-                var err = ValidateUReply( model );
+               var err = ValidateExists(id);
                 if (err != null)
                     return err;
 
-                err = ValidateExists(id);
-                if (err != null)
-                    return err;
+                var reply = (from r in db.Replies.Include(r=>r.Medias) where r.ReplyID == id select r).First();
+                
+                db.Attach(reply);
+                reply.ContentReplies = model.Content;
 
-                var replyDb = db.Replies.First( r => r.ReplyID == id );
+                if (model.Deleted != null)
+                {
+                    var medias = (from m in db.ReplyMedias where model.Deleted.Contains(m.MediaID) select m).ToList();
 
-                replyDb.ContentReplies = model.Content;
+                    foreach (var m in medias)
+                    {
+                        File.Delete(Path.Combine("static", m.Name));
 
-                //TODO MEDIA
+                        reply.Medias.Remove(m);
+                        db.ReplyMedias.Remove(m);
+                    }
+                }
+
+                if (model.Files != null)
+                {
+                    var list = new List<ReplyMedia>();
+                    var mediaCore = new MediaCore(db, env, request);
+                    err = mediaCore.CreateReplyMedia(model.Files, ref list);
+
+                    if (list == null && model.Files?.Count != 0)
+                        throw new Exception("Error subiendo media");
+
+                    reply.Medias.AddRange(list);
+                }
 
                 db.SaveChanges();
+
+                refModel =(from r in db.Replies.Include(r=>r.User).Include(r=>r.Medias)
+                           where r.ReplyID == id
+                           select new ReplyViewModel{
+                           ReplyID              = r.ReplyID,
+                           Content              = r.ContentReplies,
+                           PostID               = r.Post.PostID,
+                           PublisherID          = r.User.Id,
+                           PublisherUserName    = r.User.UserName,
+                           PublisherTag         = r.User.Tag,
+                           PublisherProfilePic  = r.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{ r.User.ProfilePic.Name}" : "",
+                           Date                 = r.ReplyDate,
+                           Medias      = (from m in reply.Medias
+                                           select new MediaViewModel
+                                           {
+                                               MediaID = m.MediaID,
+                                               MIME = m.MIME,
+                                               Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                               IsVideo = m.MIME.Contains("video")
+                                           }).ToList()
+                            }).First();
 
                 return null;
             }

@@ -61,12 +61,12 @@ namespace Rest_API_PWII.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public IActionResult Get( string id )
+        public IActionResult Get( string id, [FromHeader(Name = "UserID")] string viewerId )
         {
             try
             {
                 var userCore = new UserCore(db, env, Request);
-                var user = userCore.GetOne(id);
+                var user = userCore.GetOne(id, viewerId);
                 if (user == null)
                     return StatusCode(
                         (int)HttpStatusCode.NotFound,
@@ -177,12 +177,12 @@ namespace Rest_API_PWII.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public IActionResult GetUserPosts( string id )
+        public IActionResult GetUserPosts( string id, [FromHeader(Name = "UserID")] string viewerId)
         {
             try
             {
                 var userCore = new UserCore(db, env, Request);
-                var searchResult = userCore.GetUserPosts( id );
+                var searchResult = userCore.GetUserPosts( id, viewerId);
                 if (searchResult == null)
                     return StatusCode(
                         (int)HttpStatusCode.InternalServerError,
@@ -216,12 +216,13 @@ namespace Rest_API_PWII.Controllers
 
         [HttpPut("{id}")]
         [Authorize]
-        public IActionResult Update( string id, [FromBody] UserViewModel user )
+        public IActionResult Update( string id, [FromForm] UpdateUserViewModel model )
         {
             try
             {
+                var user = new UserViewModel();
                 var userCore = new UserCore(db, env, Request);
-                var err = userCore.Update(id, user);
+                var err = userCore.Update(id, model, ref user);
 
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);

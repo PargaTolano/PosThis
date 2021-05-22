@@ -1,4 +1,7 @@
-import React,{useState} from 'react';
+import React,{ useState, useEffect } from 'react';
+
+import { makeStyles } from '@material-ui/core/styles';
+
 import {
     Avatar,
     Button,
@@ -12,8 +15,15 @@ import {
     Container,
 }from  '@material-ui/core';
 
-import AccessibilityNewRoundedIcon from '@material-ui/icons/AccessibilityNewRounded';
-import { makeStyles } from '@material-ui/core/styles';
+import { 
+  AccessibilityNewRounded as AccessibilityNewRoundedIcon 
+} from '@material-ui/icons';
+
+import { handleResponse } from '_helpers';
+import { validateSignup } from '_utils';
+import { createUser }     from '_api';
+
+import { SignUpModel }    from 'model';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -32,30 +42,57 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  fieldWarning:{
+    color: '#ea5970',
+    fontSize: '0.8rem',
+    marginTop: theme.spacing(1)
+  }
 }));
 
-function SignUp() {
+export function SignUp() {
   const classes = useStyles();
 
-  const [datos, setDatos] = useState({
-      Username: '',
+  const [state, setState] = useState({
+      userName: '',
       tag: '',
       email: '',
       password:''
-  })
+  });
 
-  const handleInputChange = (event) =>{
-    //console.log(event.target.value)
-    setDatos({
-      ...datos,
-      [event.target.name] : event.target.value
+  const [ validation, setValidation] = useState({
+    userName:   false,
+    tag:        false,
+    email:      false,
+    password:   false,
+    validated:  false,
+  });
+
+  const OnChangeInput = (e) =>{
+    setState({
+      ...state,
+      [e.target.name] : e.target.value
+    });
+  }
+
+  const onSubmit = (e) =>{
+    
+    e.preventDefault();
+
+    const model = new SignUpModel(state);
+
+    console.log( model );
+
+    createUser(model)
+    .then( handleResponse)
+    .then( res =>{
+      console.log( res );
     })
-  }
+    .catch(console.warn);
+  };
 
-  const SendData = (event) =>{
-    event.preventDefault();
-    console.log(datos.Username + ' ' + datos.tag + ' ' + datos.email + ' ' + datos.password)
-  }
+  useEffect(() => {
+    setValidation( validateSignup( state ) );
+  }, [state]);
 
   return (
 
@@ -67,43 +104,56 @@ function SignUp() {
           <AccessibilityNewRoundedIcon/>
         </Avatar>
 
-        <Typography component='h1' variant='h5'>
+        <Typography component='h2' variant='h5'>
           <strong>Regístrate</strong>
         </Typography>
 
-        <Typography variant='h7'>
+        <Typography variant='body2'>
           Únete a la nueva comunidad de PosThis
         </Typography>
 
-        <form className={classes.form} noValidate onSubmit = {SendData}>
-
+        <form className={classes.form} noValidate onSubmit = {onSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
                 autoComplete='fname'
-                name='Username'
+                name='userName'
                 variant='outlined'
                 required
                 fullWidth
-                id='Username'
                 label='Username'
                 autoFocus
-                onChange = {handleInputChange}
+                onChange = {OnChangeInput}
               />
+              {
+                !validation.userName
+                && 
+                <Typography variant='body2' className={classes.fieldWarning}>
+                * Nombre de usuario no valido
+                </Typography>
+              }
             </Grid>
+            
 
             <Grid item xs={12} sm={6}>
               <TextField
                 variant='outlined'
                 required
                 fullWidth
-                id='tag'
                 label='Tag'
                 name='tag'
                 autoComplete='tagname'
-                onChange = {handleInputChange}
+                onChange = {OnChangeInput}
               />
+              {
+                !validation.tag
+                && 
+                <Typography variant='body2' className={classes.fieldWarning}>
+                * Tag no valido
+                </Typography>
+              }
             </Grid>
+            
 
             <Grid item xs={12}>
               <TextField
@@ -114,9 +164,18 @@ function SignUp() {
                 label='Email'
                 name='email'
                 autoComplete='email'
-                onChange = {handleInputChange}
+                onChange = {OnChangeInput}
               />
+              {
+                !validation.email
+                && 
+                <Typography variant='body2' className={classes.fieldWarning}>
+                * Email no valido
+                </Typography>
+              }
             </Grid>
+            
+
             <Grid item xs={12}>
               <TextField
                 variant='outlined'
@@ -125,10 +184,16 @@ function SignUp() {
                 name='password'
                 label='Contraseña'
                 type='password'
-                id='password'
                 autoComplete='current-password'
-                onChange = {handleInputChange}
+                onChange = {OnChangeInput}
               />
+              {
+                !validation.password 
+                &&
+                <Typography variant='body2' className={classes.fieldWarning}>
+                * Contraseña no valida
+                </Typography>
+              }
             </Grid>
            
           </Grid>
@@ -139,6 +204,7 @@ function SignUp() {
             variant='contained'
             color='secondary'
             className={classes.submit}
+            disabled = {!validation.validated}
           >
             Regístrate ahora
           </Button>

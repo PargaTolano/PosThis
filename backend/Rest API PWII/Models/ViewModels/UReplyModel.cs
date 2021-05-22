@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace Rest_API_PWII.Models.ViewModels
 {
-    public class UReplyModel
+    public class UReplyModel : UPostModel
     {
-        public virtual string           Content { get; set; }
-        public virtual List<int>        Deleted { get; set; }
-        public virtual List<IFormFile>  Files { get; set; }
     }
 }

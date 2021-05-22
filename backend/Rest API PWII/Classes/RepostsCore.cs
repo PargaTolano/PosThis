@@ -1,4 +1,7 @@
-﻿using Rest_API_PWII.Models;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -9,14 +12,18 @@ namespace Rest_API_PWII.Classes
 {
     public class RepostsCore
     {
-        private PosThisDbContext db;
+        private PosThisDbContext    db;
+        private IHostingEnvironment env;
+        private HttpRequest         request;
 
-        public RepostsCore( PosThisDbContext db )
+        public RepostsCore( PosThisDbContext db, IHostingEnvironment env, HttpRequest request )
         {
             this.db = db;
+            this.env = env;
+            this.request = request;
         }
 
-        public ResponseApiError Validate( CRepostModel model )
+        public ResponseApiError Validate( RepostViewModel model )
         {
             if ( model.PostID == null )
                 return new ResponseApiError
@@ -73,29 +80,28 @@ namespace Rest_API_PWII.Classes
             if( repost == null )
                 return new ResponseApiError
                 {
-                    Code = (int)HttpStatusCode.NotFound,
-                    HttpStatusCode = (int)HttpStatusCode.NotFound,
-                    Message = "Repost not found in database"
+                    Code            = (int)HttpStatusCode.NotFound,
+                    HttpStatusCode  = (int)HttpStatusCode.NotFound,
+                    Message         = "Repost not found in database"
                 };
 
             return null;
         }
 
-        public List<CRepostModel> Get()
+        public List<RepostViewModel> Get()
         {
             var reposts = 
                 (from rp in db.Reposts
-                 select new CRepostModel 
+                 select new RepostViewModel 
                 {
                      UserID = rp.UserID,
                      PostID = rp.PostID,
-                     RepostDate = rp.RepostDate
                 }).ToList();
 
             return reposts;
         } 
         
-        public ResponseApiError Create( CRepostModel model )
+        public ResponseApiError Create( RepostViewModel model, ref FeedPostModel feedPostModel)
         {
             try
             {
@@ -120,6 +126,41 @@ namespace Rest_API_PWII.Classes
 
                 db.SaveChanges();
 
+                feedPostModel = (from p in db.Posts
+                                .Include(x => x.User)
+                                .Include(x => x.Medias)
+                                .Include(X => X.Likes)
+                                .Include(x => x.Replies)
+                                .Include(x => x.Reposts)
+                                 where p.PostID == model.PostID
+                                 select new FeedPostModel
+                                 {
+                                     PostID = p.PostID,
+                                     Content = p.Content,
+                                     PublisherID = p.User.Id,
+                                     PublisherUserName = p.User.UserName,
+                                     PublisherTag = p.User.Tag,
+                                     PublisherProfilePic = p.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{p.User.ProfilePic.Name}" : null,
+                                     Date = p.PostDate,
+                                     LikeCount = p.Likes.Count,
+                                     ReplyCount = p.Replies.Count,
+                                     RepostCount = p.Reposts.Count,
+                                     ReposterID = null,
+                                     ReposterUserName = null,
+                                     IsRepost = false,
+                                     IsLiked = p.Likes.FirstOrDefault(l => l.UserID == model.UserID) != null,
+                                     IsReposted = p.Reposts.FirstOrDefault(l => l.UserID == model.UserID) != null,
+                                     Medias = (from m in p.Medias
+                                               select new MediaViewModel
+                                               {
+                                                   MediaID = m.MediaID,
+                                                   MIME = m.MIME,
+                                                   Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                                   IsVideo = m.MIME.Contains("video")
+                                               }).ToList()
+
+                                 }).FirstOrDefault();
+
                 return null;
             }
             catch ( Exception ex )
@@ -133,20 +174,55 @@ namespace Rest_API_PWII.Classes
             }
         }
 
-        public ResponseApiError Delete( int id )
+        public ResponseApiError Delete( RepostViewModel model, ref FeedPostModel feedPostModel )
         {
             try
             {
-                var err = ValidateExists( id) ;
+                var err = Validate(model) ;
 
                 if (err != null)
                     return err;
 
-                var repost = db.Reposts.FirstOrDefault( rp => rp.RepostID == id);
+                var repost = db.Reposts.FirstOrDefault( rp => rp.PostID == model.PostID && rp.UserID == model.UserID);
 
                 db.Remove( repost );
 
                 db.SaveChanges();
+
+                feedPostModel = (from p in db.Posts
+                                .Include(x => x.User)
+                                .Include(x => x.Medias)
+                                .Include(X => X.Likes)
+                                .Include(x => x.Replies)
+                                .Include(x => x.Reposts)
+                                 where p.PostID == model.PostID
+                                 select new FeedPostModel
+                                 {
+                                     PostID = p.PostID,
+                                     Content = p.Content,
+                                     PublisherID = p.User.Id,
+                                     PublisherUserName = p.User.UserName,
+                                     PublisherTag = p.User.Tag,
+                                     PublisherProfilePic = p.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{p.User.ProfilePic.Name}" : null,
+                                     Date = p.PostDate,
+                                     LikeCount = p.Likes.Count,
+                                     ReplyCount = p.Replies.Count,
+                                     RepostCount = p.Reposts.Count,
+                                     ReposterID = null,
+                                     ReposterUserName = null,
+                                     IsRepost = false,
+                                     IsLiked = p.Likes.FirstOrDefault(l => l.UserID == model.UserID) != null,
+                                     IsReposted = p.Reposts.FirstOrDefault(l => l.UserID == model.UserID) != null,
+                                     Medias = (from m in p.Medias
+                                               select new MediaViewModel
+                                               {
+                                                   MediaID = m.MediaID,
+                                                   MIME = m.MIME,
+                                                   Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                                   IsVideo = m.MIME.Contains("video")
+                                               }).ToList()
+
+                                 }).FirstOrDefault();
 
                 return null;
             }

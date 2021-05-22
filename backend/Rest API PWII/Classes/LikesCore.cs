@@ -1,4 +1,7 @@
-﻿using Rest_API_PWII.Models;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -10,11 +13,15 @@ namespace Rest_API_PWII.Classes
 {
     public class LikesCore
     {
-        private PosThisDbContext db;
+        private PosThisDbContext db; 
+        private IHostingEnvironment env;
+        private HttpRequest request;
 
-        public  LikesCore(PosThisDbContext db)
+        public  LikesCore(PosThisDbContext db, IHostingEnvironment env, HttpRequest request)
         {
             this.db = db;
+            this.env = env;
+            this.request = request;
         }
         
         private ResponseApiError ValidateCreation(LikeViewModel model )
@@ -92,7 +99,7 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public  ResponseApiError Create( LikeViewModel model )
+        public  ResponseApiError Create( LikeViewModel model, ref FeedPostModel feedPostModel )
         {
             try
             {
@@ -110,15 +117,50 @@ namespace Rest_API_PWII.Classes
 
                 var like = new Like 
                 { 
-                    PostID = post.PostID,
-                    Post = post,
-                    UserID = user.Id,
-                    User = user
+                    PostID  = post.PostID,
+                    Post    = post,
+                    UserID  = user.Id,
+                    User    = user
                 };
 
                 db.Add( like );
 
                 db.SaveChanges();
+
+                feedPostModel = (from p in db.Posts
+                                .Include(x => x.User)
+                                .Include(x => x.Medias)
+                                .Include(X => X.Likes)
+                                .Include(x => x.Replies)
+                                .Include(x => x.Reposts)
+                                 where p.PostID == model.PostID
+                                 select new FeedPostModel
+                                 {
+                                     PostID = p.PostID,
+                                     Content = p.Content,
+                                     PublisherID = p.User.Id,
+                                     PublisherUserName = p.User.UserName,
+                                     PublisherTag = p.User.Tag,
+                                     PublisherProfilePic = p.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{p.User.ProfilePic.Name}" : null,
+                                     Date = p.PostDate,
+                                     LikeCount = p.Likes.Count,
+                                     ReplyCount = p.Replies.Count,
+                                     RepostCount = p.Reposts.Count,
+                                     ReposterID = null,
+                                     ReposterUserName = null,
+                                     IsRepost = false,
+                                     IsLiked = p.Likes.FirstOrDefault(l => l.UserID == model.UserID) != null,
+                                     IsReposted = p.Reposts.FirstOrDefault(l => l.UserID == model.UserID) != null,
+                                     Medias = (from m in p.Medias
+                                               select new MediaViewModel
+                                               {
+                                                   MediaID = m.MediaID,
+                                                   MIME = m.MIME,
+                                                   Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                                   IsVideo = m.MIME.Contains("video")
+                                               }).ToList()
+
+                                 }).FirstOrDefault();
 
                 return null;
             }
@@ -126,14 +168,14 @@ namespace Rest_API_PWII.Classes
             {
                 return new ResponseApiError
                 {
-                    Code = 3,
+                    Code = (int) HttpStatusCode.InternalServerError,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                     Message = ex.Message
                 };
             }
         }
 
-        public  ResponseApiError Delete( LikeViewModel model )
+        public  ResponseApiError Delete( LikeViewModel model, ref FeedPostModel feedPostModel )
         {
             try
             {
@@ -158,6 +200,41 @@ namespace Rest_API_PWII.Classes
                 db.Remove( like );
 
                 db.SaveChanges();
+
+                feedPostModel = (from p in db.Posts
+                                .Include(x => x.User)
+                                .Include(x => x.Medias)
+                                .Include(X => X.Likes)
+                                .Include(x => x.Replies)
+                                .Include(x => x.Reposts)
+                                 where p.PostID == model.PostID
+                                 select new FeedPostModel
+                                 {
+                                     PostID = p.PostID,
+                                     Content = p.Content,
+                                     PublisherID = p.User.Id,
+                                     PublisherUserName = p.User.UserName,
+                                     PublisherTag = p.User.Tag,
+                                     PublisherProfilePic = p.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{p.User.ProfilePic.Name}" : null,
+                                     Date = p.PostDate,
+                                     LikeCount = p.Likes.Count,
+                                     ReplyCount = p.Replies.Count,
+                                     RepostCount = p.Reposts.Count,
+                                     ReposterID = null,
+                                     ReposterUserName = null,
+                                     IsRepost = false,
+                                     IsLiked = p.Likes.FirstOrDefault(l => l.UserID == model.UserID) != null,
+                                     IsReposted = p.Reposts.FirstOrDefault(l => l.UserID == model.UserID) != null,
+                                     Medias = (from m in p.Medias
+                                               select new MediaViewModel
+                                               {
+                                                   MediaID = m.MediaID,
+                                                   MIME = m.MIME,
+                                                   Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                                   IsVideo = m.MIME.Contains("video")
+                                               }).ToList()
+
+                                 }).FirstOrDefault();
 
                 return null;
             }

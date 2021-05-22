@@ -1,24 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
+﻿
 namespace Rest_API_PWII.Models.ViewModels
 {
-    public class FeedPostModel
+    public class FeedPostModel : PostViewModel
     {
-        public bool                     IsRepost    { get; set; }
-
-        public string                   Content     { get; set; }
-
-        public string                   PublisherID { get; set; }
-
-        public int?                     PostID      { get; set; }
-
-        public string                   ReposterID  { get; set; }
-
-        public List<MediaViewModel>     Medias      { get; set; }
-
-        public DateTime?                Date        { get; set; }
+        public string                   ReposterID          { get; set; }
+        public string                   ReposterUserName    { get; set; }
+        public bool                     IsRepost            { get; set; }
+        public bool                     IsLiked             { get; set; }
+        public bool                     IsReposted          { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
 
@@ -38,6 +39,32 @@ namespace Rest_API_PWII.Classes
                     Code = ( int ) HttpStatusCode.BadRequest,
                     HttpStatusCode = ( int ) HttpStatusCode.BadRequest,
                     Message = "FollowedID does not accept null"
+                };
+
+            var follower = db.Users.FirstOrDefault(x => x.Id == model.FollowerID);
+            if (follower == null)
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.NotFound,
+                    HttpStatusCode = (int)HttpStatusCode.NotFound,
+                    Message = "Follower User does not exist"
+                };
+
+            var followed = db.Users.FirstOrDefault(x => x.Id == model.FollowedID);
+            if (followed == null)
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.NotFound,
+                    HttpStatusCode = (int)HttpStatusCode.NotFound,
+                    Message = "Followed User does not exist"
+                };
+
+            if (model.FollowerID == model.FollowedID)
+                return new ResponseApiError
+                {
+                    Code = (int)HttpStatusCode.BadRequest,
+                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "FollowerID and FollowedID cannot be the same"
                 };
 
             return null;
@@ -157,8 +184,8 @@ namespace Rest_API_PWII.Classes
 
                 var follow = new Follow
                 {
-                    UserFollowID    = followed.Id,
-                    UserFollow      = followed,
+                    UserFollowID     = followed.Id,
+                    UserFollow       = followed,
                     UserFollowerID   = follower.Id,
                     UserFollower     = follower
                 };
@@ -179,17 +206,23 @@ namespace Rest_API_PWII.Classes
             }
         }
 
-        public ResponseApiError Delete( int id )
+        public ResponseApiError Delete( FollowViewModel model )
         {
             try
             {
-                var followDb = db.Follows.FirstOrDefault( u => u.FollowID == id );
+                var followDb = (from f in db.Follows
+                                                .Include(x => x.UserFollower)
+                                                .Include(x => x.UserFollow   )
+                                where model.FollowerID == f.UserFollower.Id &&
+                                      model.FollowedID == f.UserFollow.Id
+                                select f).FirstOrDefault();
+
                 if ( followDb == null )
                     return new ResponseApiError
                     {
-                        Code = (int)HttpStatusCode.NotFound,
-                        HttpStatusCode = (int)HttpStatusCode.NotFound,
-                        Message = "Follow does not exist"
+                        Code            = (int)HttpStatusCode.NotFound,
+                        HttpStatusCode  = (int)HttpStatusCode.NotFound,
+                        Message         = "Follow does not exist"
                     };
 
                 db.Follows.Remove( followDb );
@@ -201,9 +234,9 @@ namespace Rest_API_PWII.Classes
             {
                 return new ResponseApiError
                 {
-                    Code = (int)HttpStatusCode.InternalServerError,
-                    HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                    Message = ex.Message
+                    Code            = (int)HttpStatusCode.InternalServerError,
+                    HttpStatusCode  = (int)HttpStatusCode.InternalServerError,
+                    Message         = ex.Message
                 };
             }
         }

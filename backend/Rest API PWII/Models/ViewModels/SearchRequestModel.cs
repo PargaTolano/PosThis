@@ -8,12 +8,10 @@ namespace Rest_API_PWII.Models.ViewModels
     [BindProperties]
     public class SearchRequestModel
     {
+        public string       UserID      { get; set; }
         public bool         SearchPosts { get; set; }
-
         public bool         SearchUsers { get; set; }
-
         public string       Query       { get; set; }
-
         public List<string> Hashtags    { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Rest_API_PWII.Classes;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
@@ -15,10 +17,12 @@ namespace Rest_API_PWII.Controllers
     public class RepostsController : ControllerBase
     {
         private PosThisDbContext db;
+        private IHostingEnvironment env;
 
-        public RepostsController(PosThisDbContext db)
+        public RepostsController(IHostingEnvironment env, PosThisDbContext db)
         {
             this.db = db;
+            this.env = env;
         }
 
         [HttpGet]
@@ -26,13 +30,13 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var repostsCore = new RepostsCore(db);
+                var repostsCore = new RepostsCore(db, env, Request);
                 var reposts = repostsCore.Get();
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
+                        Code = (int) HttpStatusCode.OK,
                         Data = reposts,
                         Message = "Reposts retrieve successful"
                     });
@@ -51,19 +55,22 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create( [FromBody] CRepostModel model )
+        [Authorize]
+        public IActionResult Create( [FromBody] RepostViewModel model )
         {
             try
             {
-                var repostsCore = new RepostsCore( db );
-                var err = repostsCore.Create( model );
+                var feedPostModel = new FeedPostModel();
+                var repostsCore = new RepostsCore( db, env, Request);
+                var err = repostsCore.Create( model, ref feedPostModel);
                 if ( err != null )
                     return StatusCode( err.HttpStatusCode, err );
 
                 return Ok(
                     new ResponseApiSuccess 
                     { 
-                        Code = 200, 
+                        Code    = ( int ) HttpStatusCode.OK,
+                        Data    = feedPostModel,
                         Message = "Repost create successful"
                     });
             }
@@ -73,40 +80,43 @@ namespace Rest_API_PWII.Controllers
                    ( int ) HttpStatusCode.InternalServerError,
                    new ResponseApiError
                    {
-                       Code = ( int ) HttpStatusCode.InternalServerError,
-                       HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
-                       Message = ex.Message
+                       Code             = ( int ) HttpStatusCode.InternalServerError,
+                       HttpStatusCode   = ( int ) HttpStatusCode.InternalServerError,
+                       Message          = ex.Message
                    });
             }
 
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete( int id )
+        [HttpDelete]
+        [Authorize]
+        public IActionResult Delete( [FromBody] RepostViewModel id )
         {
             try
             {
-                var repostsCore = new RepostsCore( db );
-                var err = repostsCore.Delete( id );
+                var feedPostModel   = new FeedPostModel();
+                var repostsCore     = new RepostsCore( db, env, Request);
+                var err = repostsCore.Delete( id, ref feedPostModel);
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
 
                 return Ok(
                     new ResponseApiSuccess 
                     { 
-                        Code = 200, 
+                        Code    = (int) HttpStatusCode.OK, 
+                        Data    = feedPostModel,
                         Message = "Repost deletion successful"
                     });
             }
             catch ( Exception ex )
             {
                 return StatusCode(
-                   (int)HttpStatusCode.InternalServerError,
+                   ( int ) HttpStatusCode.InternalServerError,
                    new ResponseApiError
                    {
-                       Code = (int)HttpStatusCode.InternalServerError,
-                       HttpStatusCode = (int)HttpStatusCode.InternalServerError,
-                       Message = ex.Message
+                       Code             = ( int ) HttpStatusCode.InternalServerError,
+                       HttpStatusCode   = ( int ) HttpStatusCode.InternalServerError,
+                       Message          = ex.Message
                    });
             }
         }

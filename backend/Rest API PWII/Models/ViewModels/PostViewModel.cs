@@ -14,6 +14,7 @@ namespace Rest_API_PWII.Models.ViewModels
         public string                   PublisherUserName       { get; set; }
         public string                   PublisherTag            { get; set; }
         public string                   PublisherProfilePic     { get; set; }
+        public DateTime?                Date                    { get; set; }
         public int                      LikeCount               { get; set; }
         public int                      ReplyCount              { get; set; }
         public int                      RepostCount             { get; set; }

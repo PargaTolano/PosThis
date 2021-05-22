@@ -16,6 +16,7 @@ import SearchIcon                 from '@material-ui/icons/Search';
 import AccountCircle              from '@material-ui/icons/AccountCircle';
 import Logo                       from 'assets/Logo.png';
 import LogoNominado               from 'assets/logPT.svg';
+
 import { routes }                 from '_utils';
 import { authenticationService }  from '_services';
 
@@ -83,9 +84,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SearchAppBar(props) {
+export function NavBar(props) {
 
-  const { auth, history }= props;
+  const { history }= props;
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const [query, setQuery]       = useState('');
@@ -96,6 +97,10 @@ export default function SearchAppBar(props) {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const onClickProfile = ()=>{
+    history.push( routes.getProfile( authenticationService.currentUserValue.id ) );
   };
 
   const handleLogOut = ()=>{
@@ -161,7 +166,7 @@ export default function SearchAppBar(props) {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose }>Perfil</MenuItem>
+              <MenuItem onClick={onClickProfile }>Perfil</MenuItem>
               <MenuItem onClick={handleLogOut}>Cerrar sesión</MenuItem>
             </Menu>
           </div>
@@ -169,3 +174,5 @@ export default function SearchAppBar(props) {
       </AppBar>
   );
 }
+
+export default NavBar;

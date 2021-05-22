@@ -1,4 +1,5 @@
 import React,{ useState, useEffect }from 'react';
+
 import {
   Grid,
   TextField,
@@ -11,16 +12,14 @@ import {
   Checkbox,
   Typography,
 } from '@material-ui/core';
+
 import { makeStyles }             from '@material-ui/core/styles';
 import PersonPinIcon              from '@material-ui/icons/PersonPin';
 
-import CustomizedDialogs          from 'components/Registro/dialogSignup';
-import SignUp                     from 'components/Registro/Signup';
+import { DialogSignup, SignUp }   from 'components/Registro';
 
 import { authenticationService }  from '_services';
 import { routes }                 from '_utils';
-
-import LoginModel                 from 'model/LogInModel';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = (props) => {
+export const Login = (props) => {
 
   const { history } = props;
   const classes = useStyles();
@@ -66,7 +65,8 @@ const Login = (props) => {
 
     authenticationService
       .login( username, password )
-      .then( () => history.push( routes.feed ) );
+      .then( () => history.push( routes.feed ) )
+      .catch( console.warn );
   };
 
   return (
@@ -132,9 +132,9 @@ const Login = (props) => {
                 </Link>
               </Grid>
               <Grid item>
-                <CustomizedDialogs>
+                <DialogSignup>
                   <SignUp/>
-                </CustomizedDialogs>
+                </DialogSignup>
               </Grid>
             </Grid>
           </form>

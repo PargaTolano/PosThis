@@ -1,4 +1,4 @@
-class SignUpModel{
+export class SignUpModel{
 
     userName;
     tag;

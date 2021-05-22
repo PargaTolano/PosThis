@@ -2,7 +2,7 @@ import { BehaviorSubject }  from 'rxjs';
 import { authTokenKey }     from '_utils';
 import { handleResponse }   from '_helpers';
 
-import { logIn }            from 'API/User.API';
+import { logIn }            from '_api/users';
 
 const currentUserSubject = new BehaviorSubject( JSON.parse( localStorage.getItem( authTokenKey ) ) );
 
@@ -25,9 +25,6 @@ function login( username, password ) {
             currentUserSubject.next( user );
             
             return user;
-        })
-        .catch( res =>{
-            
         });
 }
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Rest_API_PWII.Classes;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
@@ -15,24 +17,27 @@ namespace Rest_API_PWII.Controllers
     public class RepliesController : ControllerBase
     {
         private PosThisDbContext db;
+        private readonly IHostingEnvironment env;
 
-        public RepliesController(PosThisDbContext db)
+        public RepliesController(IHostingEnvironment env, PosThisDbContext db)
         {
             this.db = db;
+            this.env = env;
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Get()
         {
             try
             {
-                var replyCore = new RepliesCore( db );
+                var replyCore = new RepliesCore( db, env, Request );
                 var replies = replyCore.GetAll();
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 1,
+                        Code = (int)HttpStatusCode.OK,
                         Data = replies,
                         Message = "Replies retrieve successful"
                     });
@@ -43,7 +48,7 @@ namespace Rest_API_PWII.Controllers
                     (int)HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
-                        Code = 3,
+                        Code = (int)HttpStatusCode.InternalServerError,
                         HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });
@@ -51,11 +56,12 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public IActionResult Get(int id)
         {
             try
             {
-                var replyCore = new RepliesCore(db);
+                var replyCore = new RepliesCore(db, env, Request);
                 var reply   = replyCore.GetOne(id);
                 if ( reply == null )
                     return StatusCode(
@@ -92,11 +98,12 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Create([FromForm] CReplyModel model)
         {
             try
             {
-                var repliesCore = new RepliesCore(db);
+                var repliesCore = new RepliesCore(db, env, Request);
                 var err = repliesCore.Create(model);
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
@@ -104,7 +111,7 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
+                        Code = (int)HttpStatusCode.OK,
                         Message = "Reply create successful"
                     });
             }
@@ -122,20 +129,23 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult Update(int id, [FromForm] UReplyModel model)
         {
             try
             {
-                var repliesCore = new RepliesCore( db );
-                var err = repliesCore.Update( id, model );
+                var replyViewModel = new ReplyViewModel();
+                var repliesCore = new RepliesCore( db, env, Request );
+                var err = repliesCore.Update( id, model, ref replyViewModel);
                 if ( err != null )
                     return StatusCode( err.HttpStatusCode, err );
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
-                        Message = "Reply update successful"
+                        Code = (int)HttpStatusCode.OK,
+                        Message = "Reply update successful",
+                        Data = replyViewModel
                     });
             }
             catch (Exception ex)
@@ -152,11 +162,12 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Delete(int id)
         {
             try
             {
-                RepliesCore repliesCore = new RepliesCore(db);
+                RepliesCore repliesCore = new RepliesCore(db, env, Request);
                 ResponseApiError err = repliesCore.Delete(id);
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);

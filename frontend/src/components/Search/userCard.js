@@ -1,5 +1,5 @@
 import React from 'react';
-import {Grid, Typography, makeStyles, Avatar, Link, Button} from '@material-ui/core'
+import {Grid, Typography, makeStyles, Avatar, Link, Button} from '@material-ui/core';
 import veryfied from 'assets/veryfied.svg';
 
 const defaultImage = 'https://www.adobe.com/express/create/media_1900d303a701488626835756419ca3a50b83a2ae5.png?width=2000&format=webply&optimize=medium';
@@ -41,18 +41,6 @@ const useStyles = makeStyles(theme => ({
         fontWeight: theme.typography.fontWeightMedium,
     },
 }));
-
-const UserCard = ( {user} ) => {
-    const classes = useStyles();
-    return(
-    <Grid container direction = 'column' className = {classes.root}>
-        <ChannelPhoto  classes = {classes} user={user}/>
-        <ChannelUsername  classes = {classes} user={user}/>
-        <SeeButton classes = {classes} user={user}/>
-    </Grid>
-    );
-}
-
 const ChannelPhoto = ({classes, user}) => 
 {
     return(
@@ -76,12 +64,24 @@ const ChannelUsername = ({classes, user}) => {
         </Grid>
     );
 };
+
 const SeeButton = ({classes, user}) => {
     return(
-        <Button disableElevation component={Link} to="/" color='primary' variant = 'contained' size = 'small' className={classes.btn}>
+        <Button disableElevation component={Link} to='/' color='primary' variant = 'contained' size = 'small' className={classes.btn}>
             Ver Perfil
         </Button>
     );
 };
+
+export const UserCard = ( {user} ) => {
+    const classes = useStyles();
+    return(
+        <Grid container direction = 'column' className = {classes.root}>
+            <ChannelPhoto  classes = {classes} user={user}/>
+            <ChannelUsername  classes = {classes} user={user}/>
+            <SeeButton classes = {classes} user={user}/>
+        </Grid>
+    );
+}
 
 export default UserCard;

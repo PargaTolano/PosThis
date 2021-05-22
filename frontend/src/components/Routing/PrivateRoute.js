@@ -2,7 +2,7 @@ import React                    from 'react';
 import { Route, Redirect }      from 'react-router-dom';
 import {  routes }              from '_utils';
 
-const PrivateRoute = ({ component: Component, user, ...rest }) => {
+export const PrivateRoute = ({ component: Component, user, ...rest }) => {
     return <Route {...rest} render={props => (
         user
             ? <Component {...props} />
@@ -10,4 +10,4 @@ const PrivateRoute = ({ component: Component, user, ...rest }) => {
     )} />
 };
 
-export { PrivateRoute };
+export default PrivateRoute;

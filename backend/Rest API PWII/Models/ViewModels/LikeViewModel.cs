@@ -7,8 +7,7 @@ namespace Rest_API_PWII.Models.ViewModels
 {
     public class LikeViewModel
     {
-        public virtual int? PostID { get; set; }
-
-        public virtual string UserID { get; set; }
+        public int?     PostID  { get; set; }
+        public string   UserID  { get; set; }
     }
 }

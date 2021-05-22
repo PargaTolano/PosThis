@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Rest_API_PWII.Classes;
 using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
@@ -17,10 +19,12 @@ namespace Rest_API_PWII.Controllers
     public class LikesController : ControllerBase
     {
         private PosThisDbContext db;
+        private IHostingEnvironment env;
 
-        public  LikesController(PosThisDbContext db)
+        public  LikesController( IHostingEnvironment env, PosThisDbContext db)
         {
             this.db = db;
+            this.env = env;
         }
 
         [HttpGet]
@@ -28,7 +32,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var likesCore = new LikesCore( db );
+                var likesCore = new LikesCore( db, env, Request );
                 var likes = likesCore.GetLikes();
                 return Ok(
                     new ResponseApiSuccess
@@ -56,7 +60,7 @@ namespace Rest_API_PWII.Controllers
         {
             try
             {
-                var likesCore = new LikesCore( db );
+                var likesCore = new LikesCore( db, env, Request );
                 var likes = likesCore.GetPostLikes( id );
 
                 if ( likes == null )
@@ -91,12 +95,14 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public  IActionResult Create( [FromBody]LikeViewModel likes )
         {
             try 
-            {        
-                var likesCore = new LikesCore( db );
-                var err = likesCore.Create( likes );
+            {
+                var feedPostModel = new FeedPostModel();
+                var likesCore = new LikesCore( db, env, Request);
+                var err = likesCore.Create( likes, ref feedPostModel);
 
                 if( err != null )
                     return StatusCode( err.HttpStatusCode, err );
@@ -104,7 +110,8 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess 
                     { 
-                        Code = 200,
+                        Code    = (int) HttpStatusCode.OK,
+                        Data    = feedPostModel,
                         Message = "Like create successful"
                     });
             }
@@ -114,7 +121,7 @@ namespace Rest_API_PWII.Controllers
                     ( int ) HttpStatusCode.InternalServerError,
                     new ResponseApiError 
                     { 
-                        Code = 500,
+                        Code = (int)HttpStatusCode.InternalServerError,
                         HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
                         Message = ex.Message
                     });
@@ -123,12 +130,14 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         public  IActionResult Delete( [FromBody] LikeViewModel likes )
         {
             try
             {
-                var likesCore = new LikesCore( db );
-                var responseApiError = likesCore.Delete( likes );
+                var feedPostModel = new FeedPostModel();
+                var likesCore = new LikesCore( db, env, Request );
+                var responseApiError = likesCore.Delete( likes, ref feedPostModel );
 
                 if ( responseApiError != null )
                 {
@@ -138,7 +147,8 @@ namespace Rest_API_PWII.Controllers
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
+                        Code    = (int)HttpStatusCode.OK,
+                        Data    = feedPostModel,
                         Message = "Dislike successful"
                     });
             }
@@ -148,9 +158,9 @@ namespace Rest_API_PWII.Controllers
                     ( int ) HttpStatusCode.InternalServerError,
                     new ResponseApiError
                     {
-                        Code = 500,
-                        HttpStatusCode = ( int ) HttpStatusCode.InternalServerError,
-                        Message = ex.Message
+                        Code            = ( int ) HttpStatusCode.InternalServerError,
+                        HttpStatusCode  = ( int ) HttpStatusCode.InternalServerError,
+                        Message         = ex.Message
                     });
             }
         }

@@ -1,4 +1,4 @@
-class UPostModel
+export class UPostModel
 {
     content;
     deleted;

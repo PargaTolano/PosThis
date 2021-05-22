@@ -1,13 +1,13 @@
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import React,{useState} from 'react';
+import { withStyles }   from '@material-ui/core/styles';
+import Button           from '@material-ui/core/Button';
+import Dialog           from '@material-ui/core/Dialog';
+import MuiDialogTitle   from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
+import IconButton       from '@material-ui/core/IconButton';
+import CloseIcon        from '@material-ui/icons/Close';
+import Typography       from '@material-ui/core/Typography';
 
 const styles = (theme) => ({
   root: {
@@ -50,8 +50,8 @@ const DialogActions = withStyles((theme) => ({
 }))(MuiDialogActions);
 
 
-function CustomizedDialogs({children}) {
-  const [open, setOpen] = React.useState(false);
+export function DialogSignup({children}) {
+  const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -75,4 +75,4 @@ function CustomizedDialogs({children}) {
   );
 }
 
-export default CustomizedDialogs;
+export default DialogSignup;

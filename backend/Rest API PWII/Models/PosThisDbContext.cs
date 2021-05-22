@@ -11,20 +11,20 @@ namespace Rest_API_PWII.Models
 {
     public class PosThisDbContext : IdentityDbContext<User>
     {
-        public DbSet<Post>          Posts { get; set; }
+        public DbSet<Post>          Posts       { get; set; }
 
-        public DbSet<Repost>        Reposts { get; set; }
+        public DbSet<Repost>        Reposts     { get; set; }
 
-        public DbSet<Like>          Likes { get; set; }
+        public DbSet<Like>          Likes       { get; set; }
 
-        public DbSet<Reply>         Replies { get; set; }
+        public DbSet<Reply>         Replies     { get; set; }
 
-        public DbSet<Hashtag>       Hashtags { get; set; }
+        public DbSet<Hashtag>       Hashtags    { get; set; }
 
-        public DbSet<Follow>        Follows { get; set; }
+        public DbSet<Follow>        Follows     { get; set; }
 
-        public DbSet<UserMedia>     UserMedias { get; set; }
-        public DbSet<PostMedia>     PostMedias { get; set; }
+        public DbSet<UserMedia>     UserMedias  { get; set; }
+        public DbSet<PostMedia>     PostMedias  { get; set; }
         public DbSet<ReplyMedia>    ReplyMedias { get; set; }
 
         public DbSet<HashtagPost>   HashtagPosts { get; set; }
@@ -40,6 +40,7 @@ namespace Rest_API_PWII.Models
 
         protected override void OnModelCreating( ModelBuilder modelBuilder)
         {
+
             base.OnModelCreating( modelBuilder );
 
             modelBuilder.Entity<User>( user =>
@@ -177,13 +178,13 @@ namespace Rest_API_PWII.Models
                     .ValueGeneratedOnAdd();
 
                 follow
-                    .HasOne( e => e.UserFollow )
+                    .HasOne( e => e.UserFollower )
                     .WithMany( u => u.Following)
                     .IsRequired()
                     .OnDelete(DeleteBehavior.Cascade);
 
                 follow
-                    .HasOne( e => e.UserFollower )
+                    .HasOne( e => e.UserFollow )
                     .WithMany( u => u.Follows)
                     .IsRequired()
                     .OnDelete(DeleteBehavior.Cascade);

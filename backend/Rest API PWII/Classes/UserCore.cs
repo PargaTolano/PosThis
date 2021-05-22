@@ -37,20 +37,19 @@ namespace Rest_API_PWII.Classes
             return null;
         }
 
-        public ResponseApiError ValidateUpdate( UserViewModel model )
+        public ResponseApiError ValidateUpdate(UpdateUserViewModel model )
         {
-            if( 
-                model.UserName  == null &&
-                model.Tag       == null &&
-                model.Email     == null &&
-                model.BirthDate == null 
-                )
-                return new ResponseApiError
-                {
-                    Code = (int)HttpStatusCode.BadRequest,
-                    HttpStatusCode = (int)HttpStatusCode.BadRequest,
-                    Message = "Must edit at least one field" 
-                };
+            if (string.IsNullOrEmpty( model.UserName )  &&
+                string.IsNullOrEmpty( model.Tag      )  &&
+                string.IsNullOrEmpty( model.Email    )  &&
+                model.ProfilePic?.Length == 0           &&
+                model.CoverPic  ?.Length == 0)
+                    return new ResponseApiError
+                    {
+                        Code            = (int)HttpStatusCode.BadRequest,
+                        HttpStatusCode  = (int)HttpStatusCode.BadRequest,
+                        Message         = "Must edit at least one field" 
+                    };
 
             return null;
         }
@@ -158,9 +157,11 @@ namespace Rest_API_PWII.Classes
                     (from p 
                      in db.Posts
                         .Include( x=>x.Medias  )
-                        .Include( X=>X.Likes   )
                         .Include( x=>x.Replies )
+                        .Include( X=>X.Likes   )
+                        .ThenInclude( x=>x.User )
                         .Include( x=>x.Reposts )
+                        .ThenInclude( x=>x.User)
                      where p.Content.ToLower().Contains( query.ToLower().Trim() )
                      orderby p.PostDate descending
                      select new SearchResultPostModel
@@ -171,10 +172,12 @@ namespace Rest_API_PWII.Classes
                          PublisherUserName   = p.User.UserName,
                          PublisherTag        = p.User.Tag,
                          PublisherProfilePic = p.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{p.User.ProfilePic.Name}" : null,
-                         PublishingTime      = p.PostDate,
+                         Date                = p.PostDate,
                          LikeCount           = p.Likes.Count,
                          ReplyCount          = p.Replies.Count,
                          RepostCount         = p.Reposts.Count,
+                         IsLiked             = p.Likes.FirstOrDefault(l => l.UserID == model.UserID) != null,
+                         IsReposted          = p.Reposts.FirstOrDefault(l => l.UserID == model.UserID) != null,
                          Medias              = ( from m in p.Medias
                                                  select new MediaViewModel
                                                  {
@@ -212,16 +215,30 @@ namespace Rest_API_PWII.Classes
                              select f.UserFollowID).ToList();
 
             var posts =
-                (from p in db.Posts.Include(x=>x.Medias)
+                (from p in db.Posts
+                                .Include(x => x.User   )
+                                .Include(x => x.Medias )
+                                .Include(X => X.Likes  )
+                                .Include(x => x.Replies)
+                                .Include(x => x.Reposts)
                  orderby p.PostDate descending,
                          (following.Contains( p.User.Id )) descending
                  select new FeedPostModel {
-                     IsRepost       = false,
-                     Content        = p.Content,
-                     PublisherID    = p.User.Id,
-                     ReposterID     = null,
-                     PostID         = p.PostID,
-                     Date           = p.PostDate,
+                     PostID                 = p.PostID,
+                     Content                = p.Content,
+                     PublisherID            = p.User.Id,
+                     PublisherUserName      = p.User.UserName,
+                     PublisherTag           = p.User.Tag,
+                     PublisherProfilePic    = p.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{p.User.ProfilePic.Name}" : null,
+                     Date                   = p.PostDate,
+                     LikeCount              = p.Likes.Count,
+                     ReplyCount             = p.Replies.Count,
+                     RepostCount            = p.Reposts.Count,
+                     ReposterID             = null,
+                     ReposterUserName       = null,
+                     IsRepost               = false,
+                     IsLiked                = p.Likes   .FirstOrDefault( l => l.UserID == id ) != null,
+                     IsReposted             = p.Reposts .FirstOrDefault( l => l.UserID == id ) != null,
                      Medias       = (from m in p.Medias
                                      select new MediaViewModel
                                      {
@@ -231,106 +248,39 @@ namespace Rest_API_PWII.Classes
                                          IsVideo = m.MIME.Contains("video")
                                      }).ToList()
 
-                 });
+                 }).ToList();
             
              var reposts = 
                 (from rp 
                  in db.Reposts
-                    .Include(x=>x.Post)
-                    .Include(x=>x.Post.Medias)
-                    .Include(x=>x.User)
+                    .Include(x => x.Post)
+                    .Include(x => x.Post.Likes)
+                    .Include(x => x.Post.Replies)
+                    .Include(x => x.Post.Reposts)
+                    .Include(x => x.Post.Medias)
+                    .Include(x => x.Post.User)
+                    .Include(x => x.User)
                  orderby rp.RepostDate descending,
                          (following.Contains(rp.User.Id)) descending
                  where id != rp.UserID
                  select new FeedPostModel
                  {
-                     IsRepost        = true,
-                     Content         = rp.Post.Content,
-                     PublisherID     = rp.Post.User.Id,
-                     ReposterID      = rp.User.Id,
-                     PostID          = rp.PostID,
-                     Date            = rp.RepostDate,
-                     Medias        = (from m in rp.Post.Medias
-                                      select new MediaViewModel
-                                      {
-                                          MediaID = m.MediaID,
-                                          MIME = m.MIME,
-                                          Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
-                                          IsVideo = m.MIME.Contains("video")
-                                      }).ToList()
-                 });
-
-            var query = posts
-                            .Union(reposts)
-                            .OrderByDescending(x => x.Date);
-
-            var feed = (from fp in query
-                        group fp by fp.PostID into groupedFP
-                        select new FeedPostModel { 
-                            IsRepost    = groupedFP.Any( fp => fp.IsRepost ),
-                            Content     = groupedFP.First().Content,
-                            PublisherID = groupedFP.First().PublisherID,
-                            ReposterID  = groupedFP.First().ReposterID,
-                            PostID      = groupedFP.First().PostID,
-                            Date        = groupedFP.First().Date,
-                            Medias      = groupedFP.First().Medias
-                        }).ToList();
-
-            return feed;
-        }
-
-        public List<FeedPostModel> GetUserPosts(string id)
-        {
-            var err = ValidateExists(id);
-            if (err != null)
-                return null;
-
-            var following = (from f in db.Follows
-                             where f.UserFollowerID == id
-                             select f.UserFollowID).ToList();
-
-            var posts =
-                (from p in db.Posts
-                                .Include(x => x.Medias)
-                 orderby p.PostDate descending,
-                         (following.Contains(p.User.Id)) descending
-                 where id == p.User.Id
-                 select new FeedPostModel
-                 {
-                     IsRepost       = false,
-                     Content        = p.Content,
-                     PublisherID    = p.User.Id,
-                     ReposterID     = null,
-                     PostID         = p.PostID,
-                     Date           = p.PostDate,
-                     Medias = (from m in p.Medias
-                                select new MediaViewModel { 
-                                   MediaID = m.MediaID,
-                                   MIME    = m.MIME,
-                                   Path    = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
-                                   IsVideo = m.MIME.Contains("video")
-                                }).ToList()
-
-                 });
-
-            var reposts =
-               (from rp
-                in db.Reposts
-                   .Include(x => x.Post)
-                   .Include(x => x.Post.Medias)
-                   .Include(x => x.User)
-                orderby rp.RepostDate descending,
-                        (following.Contains(rp.User.Id)) descending
-                where id == rp.UserID
-                select new FeedPostModel
-                {
-                    IsRepost = true,
-                    Content = rp.Post.Content,
-                    PublisherID = rp.Post.User.Id,
-                    ReposterID = rp.User.Id,
-                    PostID = rp.PostID,
-                    Date = rp.RepostDate,
-                    Medias = (from m in rp.Post.Medias
+                     PostID              = rp.Post.PostID,
+                     Content             = rp.Post.Content,
+                     PublisherID         = rp.Post.User.Id,
+                     PublisherUserName   = rp.Post.User.UserName,
+                     PublisherTag        = rp.Post.User.Tag,
+                     PublisherProfilePic = rp.Post.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{rp.Post.User.ProfilePic.Name}" : null,
+                     Date                = rp.RepostDate,
+                     LikeCount           = rp.Post.Likes.Count,
+                     ReplyCount          = rp.Post.Replies.Count,
+                     RepostCount         = rp.Post.Reposts.Count,
+                     ReposterID          = rp.User.Id,
+                     ReposterUserName    = rp.User.UserName,
+                     IsRepost            = true,
+                     IsLiked             = rp.Post.Likes.FirstOrDefault(l => l.UserID == id)   != null,
+                     IsReposted          = rp.Post.Reposts.FirstOrDefault(l => l.UserID == id) != null,
+                     Medias  = (from m in rp.Post.Medias
                                 select new MediaViewModel
                                 {
                                     MediaID = m.MediaID,
@@ -338,27 +288,174 @@ namespace Rest_API_PWII.Classes
                                     Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
                                     IsVideo = m.MIME.Contains("video")
                                 }).ToList()
-                });
+                 }).ToList();
 
-            var query = posts.Union(reposts).OrderByDescending(x => x.Date);
+            var query = posts.AsQueryable()
+                            .Union(reposts.AsQueryable());
+
+            Func<IGrouping<int, FeedPostModel>, FeedPostModel> GetReposted =
+                groupedFP => (from g in groupedFP
+                              where g.IsRepost == true
+                              select g
+                              ).FirstOrDefault();
+
+            Func<IGrouping<int, FeedPostModel>, FeedPostModel> GetNotReposted =
+                groupedFP => (from g in groupedFP
+                              where g.IsRepost == false
+                              select g
+                              ).FirstOrDefault();
+
+            Func<IGrouping<int, FeedPostModel>, bool> IsReposted = groupedFP => GetReposted(groupedFP) != null;
+
+            var feed = (from fp in query
+                        group fp by fp.PostID into groupedFP
+                        select new FeedPostModel {
+                            PostID              = groupedFP.Key,
+                            IsRepost            = groupedFP.Any( fp => fp.IsRepost ),
+                            Content             = groupedFP.First().Content,
+                            PublisherID         = groupedFP.First().PublisherID,
+                            PublisherUserName   = groupedFP.First().PublisherUserName,
+                            PublisherTag        = groupedFP.First().PublisherTag,
+                            PublisherProfilePic = groupedFP.First().PublisherProfilePic,
+                            Date                = IsReposted(groupedFP) ? GetReposted(groupedFP).Date : GetNotReposted(groupedFP).Date,
+                            LikeCount           = groupedFP.First().LikeCount,
+                            ReplyCount          = groupedFP.First().ReplyCount,
+                            RepostCount         = groupedFP.First().RepostCount,
+                            ReposterID          = IsReposted(groupedFP) ? GetReposted(groupedFP).ReposterID         : null,
+                            ReposterUserName    = IsReposted(groupedFP) ? GetReposted(groupedFP).ReposterUserName   : null,
+                            IsLiked             = groupedFP.First().IsLiked,
+                            IsReposted          = groupedFP.First().IsReposted,
+                            Medias = groupedFP.First().Medias
+                        }).OrderByDescending(x=>x.Date).ToList();
+
+            return feed;
+        }
+
+        public List<FeedPostModel> GetUserPosts(string id, string viewerId)
+        {
+            var err = ValidateExists(id);
+            if (err != null)
+                return null;
+
+            var posts =
+                (from p in db.Posts
+                                .Include(x => x.User)
+                                .Include(x => x.Medias)
+                                .Include(X => X.Likes)
+                                .Include(x => x.Replies)
+                                .Include(x => x.Reposts)
+                 where id == p.User.Id
+                 select new FeedPostModel
+                 {
+                     PostID = p.PostID,
+                     Content = p.Content,
+                     PublisherID = p.User.Id,
+                     PublisherUserName = p.User.UserName,
+                     PublisherTag = p.User.Tag,
+                     PublisherProfilePic = p.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{p.User.ProfilePic.Name}" : null,
+                     Date = p.PostDate,
+                     LikeCount = p.Likes.Count,
+                     ReplyCount = p.Replies.Count,
+                     RepostCount = p.Reposts.Count,
+                     ReposterID = null,
+                     ReposterUserName = null,
+                     IsRepost = false,
+                     IsLiked = p.Likes.FirstOrDefault(l => l.UserID == viewerId) != null,
+                     IsReposted = p.Reposts.FirstOrDefault(l => l.UserID == viewerId) != null,
+                     Medias = (from m in p.Medias
+                               select new MediaViewModel
+                               {
+                                   MediaID = m.MediaID,
+                                   MIME = m.MIME,
+                                   Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                   IsVideo = m.MIME.Contains("video")
+                               }).ToList()
+
+                 }).ToList();
+
+            var reposts =
+               (from rp
+                in db.Reposts
+                   .Include(x => x.Post)
+                   .Include(x => x.Post.Likes)
+                   .Include(x => x.Post.Replies)
+                   .Include(x => x.Post.Reposts)
+                   .Include(x => x.Post.Medias)
+                   .Include(x => x.Post.User)
+                   .Include(x => x.User)
+                where rp.User.Id == id      &&
+                    rp.User.Id != viewerId  && 
+                    rp.Post.User.Id != id
+                select new FeedPostModel
+                {
+                    PostID = rp.Post.PostID,
+                    Content = rp.Post.Content,
+                    PublisherID = rp.Post.User.Id,
+                    PublisherUserName = rp.Post.User.UserName,
+                    PublisherTag = rp.Post.User.Tag,
+                    PublisherProfilePic = rp.Post.User.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{rp.Post.User.ProfilePic.Name}" : null,
+                    Date = rp.RepostDate,
+                    LikeCount = rp.Post.Likes.Count,
+                    ReplyCount = rp.Post.Replies.Count,
+                    RepostCount = rp.Post.Reposts.Count,
+                    ReposterID = rp.User.Id,
+                    ReposterUserName = rp.User.UserName,
+                    IsRepost = true,
+                    IsLiked = rp.Post.Likes.FirstOrDefault(l => l.UserID == viewerId) != null,
+                    IsReposted = rp.Post.Reposts.FirstOrDefault(l => l.UserID == viewerId) != null,
+                    Medias = (from m in rp.Post.Medias
+                              select new MediaViewModel
+                              {
+                                  MediaID = m.MediaID,
+                                  MIME = m.MIME,
+                                  Path = $"{request.Scheme}://{request.Host}{request.PathBase}/static/{m.Name}",
+                                  IsVideo = m.MIME.Contains("video")
+                              }).ToList()
+                }).ToList();
+
+            var query = posts.AsQueryable()
+                            .Union(reposts.AsQueryable());
+
+            Func<IGrouping<int, FeedPostModel>, FeedPostModel> GetReposted =
+                groupedFP => (from g in groupedFP
+                              where g.IsRepost == true
+                              select g
+                              ).FirstOrDefault();
+
+            Func<IGrouping<int, FeedPostModel>, FeedPostModel> GetNotReposted =
+                groupedFP => (from g in groupedFP
+                              where g.IsRepost == false
+                              select g
+                              ).FirstOrDefault();
+
+            Func<IGrouping<int, FeedPostModel>, bool> IsReposted = groupedFP => GetReposted(groupedFP) != null;
 
             var feed = (from  fp in query
                         group fp by fp.PostID into groupedFP
                         select new FeedPostModel
                         {
-                            IsRepost    = groupedFP.Any(fp => fp.IsRepost),
-                            Content     = groupedFP.First().Content,
-                            PublisherID = groupedFP.First().PublisherID,
-                            ReposterID  = groupedFP.First().ReposterID,
-                            PostID      = groupedFP.First().PostID,
-                            Date        = groupedFP.First().Date,
-                            Medias      = groupedFP.First().Medias
-                        }).ToList();
+                            PostID              = groupedFP.Key,
+                            IsRepost            = groupedFP.Any(fp => fp.IsRepost),
+                            Content             = groupedFP.First().Content,
+                            PublisherID         = groupedFP.First().PublisherID,
+                            PublisherUserName   = groupedFP.First().PublisherUserName,
+                            PublisherTag        = groupedFP.First().PublisherTag,
+                            PublisherProfilePic = groupedFP.First().PublisherProfilePic,
+                            Date                = IsReposted(groupedFP) ? GetReposted(groupedFP).Date : GetNotReposted(groupedFP).Date,
+                            LikeCount           = groupedFP.First().LikeCount,
+                            ReplyCount          = groupedFP.First().ReplyCount,
+                            RepostCount         = groupedFP.First().RepostCount,
+                            ReposterID          = IsReposted(groupedFP) ? GetReposted(groupedFP).ReposterID : null,
+                            ReposterUserName    = IsReposted(groupedFP) ? GetReposted(groupedFP).ReposterUserName : null,
+                            IsLiked             = groupedFP.First().IsLiked,
+                            IsReposted          = groupedFP.First().IsReposted,
+                            Medias              = groupedFP.First().Medias
+                        }).OrderByDescending(fp=>fp.Date).ToList();
 
             return feed;
         }
 
-        public UserViewModel    GetOne( string id )
+        public UserViewModel    GetOne( string id, string viewerId)
         {
             return (from u
                     in db.Users
@@ -375,15 +472,16 @@ namespace Rest_API_PWII.Classes
                         ProfilePicPath  = u.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.ProfilePic.Name}" : null,
                         CoverPicPath    = u.CoverPic   != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.CoverPic.Name}"   : null,
                         FollowerCount   = u.Follows.Count,
-                        FollowingCount  = u.Following.Count
+                        FollowingCount  = u.Following.Count,
+                        IsFollowed      = u.Follows.FirstOrDefault( x=> x.UserFollowerID == (viewerId != null ? viewerId : "" ) ) != null
                     }).FirstOrDefault();
         }
 
-        public ResponseApiError Update( string id, UserViewModel user )
+        public ResponseApiError Update( string id, UpdateUserViewModel model, ref UserViewModel outModel )
         {
             try
             {
-                var err = ValidateUpdate( user );
+                var err = ValidateUpdate( model );
                 if (err != null)
                     return err;
 
@@ -391,19 +489,66 @@ namespace Rest_API_PWII.Classes
                 if (err != null)
                     return err;
 
-                User userDb = db.Users.First( u => u.Id == id );
+                var user = db.Users.First( u => u.Id == id );
 
-                userDb.Tag       = user.Tag != null ? user.Tag : userDb.Tag;
+                user.Tag  = model.Tag != null ? model.Tag : user.Tag;
 
-                userDb.UserName  = user.UserName != null ? user.UserName : userDb.UserName;
-                userDb.NormalizedUserName = user.UserName != null ? user.UserName.ToUpper() : userDb.NormalizedUserName;
+                user.UserName             = model.UserName != null ? model.UserName : user.UserName;
+                user.NormalizedUserName   = model.UserName != null ? model.UserName.ToUpper() : user.NormalizedUserName;
 
-                userDb.Email     = user.Email != null ? user.Email : userDb.Email;
-                userDb.NormalizedEmail = user.Email != null ? user.Email.ToUpper() : userDb.NormalizedEmail;
-
-                userDb.BirthDate = user.BirthDate != null ? user.BirthDate : userDb.BirthDate;
+                user.Email            = model.Email != null ? model.Email : user.Email;
+                user.NormalizedEmail  = model.Email != null ? model.Email.ToUpper() : user.NormalizedEmail;
 
                 db.SaveChanges();
+                db.Attach( user );
+
+                if ( model.ProfilePic == null && model.CoverPic == null )
+                    return null;
+
+                var mediaCore = new MediaCore(db, env, request);
+                
+                if( model.ProfilePic != null)
+                {
+                    if( user.ProfilePic != null)
+                        mediaCore.DeleteUserMedia( user.ProfilePic.MediaID );
+
+                    var um = new UserMedia();
+                    mediaCore.CreateUserMedia( model.ProfilePic, ref um );
+                    user.ProfilePic = um;
+                    user.ProfilePicID = um.MediaID;
+                }
+
+                if ( model.CoverPic != null )
+                {
+                    if ( user.CoverPic != null )
+                        mediaCore.DeleteUserMedia(user.CoverPic.MediaID);
+
+                    var um = new UserMedia();
+                    mediaCore.CreateUserMedia( model.CoverPic, ref um );
+                    user.CoverPic = um;
+                    user.CoverPicID = um.MediaID;
+                }
+
+                db.SaveChanges();
+
+                outModel = (from u in db.Users
+                                            .Include(u => u.Follows   )
+                                            .Include(u => u.Following )
+                                            .Include(u => u.ProfilePic)
+                                            .Include(u => u.CoverPic  )
+                            where id == u.Id
+                            select new UserViewModel
+                            {
+                                Id              = u.Id,
+                                UserName        = u.UserName,
+                                Tag             = u.Tag,
+                                Email           = u.Email,
+                                ProfilePicPath  = u.ProfilePic != null ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.ProfilePic.Name}" : null,
+                                CoverPicPath    = u.CoverPic != null   ? $"{request.Scheme}://{request.Host}{request.PathBase}/static/{u.CoverPic.Name}" : null,
+                                BirthDate       = u.BirthDate,
+                                FollowerCount   = u.Follows   != null ? u.Follows.Count   : 0,
+                                FollowingCount  = u.Following != null ? u.Following.Count : 0
+                            }).First();
 
                 return null;
             }
@@ -411,7 +556,7 @@ namespace Rest_API_PWII.Classes
             {
                 return new ResponseApiError
                 {
-                    Code = 3,
+                    Code = (int)HttpStatusCode.InternalServerError,
                     HttpStatusCode = (int)HttpStatusCode.InternalServerError,
                     Message = ex.Message
                 };

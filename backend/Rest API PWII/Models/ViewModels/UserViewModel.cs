@@ -16,5 +16,6 @@ namespace Rest_API_PWII.Models.ViewModels
         public DateTime?    BirthDate           { get; set; }
         public int?         FollowerCount       { get; set; }
         public int?         FollowingCount      { get; set; }
+        public bool         IsFollowed          { get; set; }
     }
 }

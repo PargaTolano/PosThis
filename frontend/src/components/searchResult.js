@@ -1,52 +1,53 @@
-import React from "react";
-import SearchAppBar from "components/Inicio/Navbar";
-import { makeStyles } from "@material-ui/core/styles";
-import backapp3 from "assets/backapp3.png";
-import CardPost from "./Post/CardPost";
-import UserCard from "components/Search/UserCard";
+import React                  from 'react';
 
-import SearchRequestModel from 'model/SearchRequestModel';
+import { makeStyles }         from '@material-ui/core/styles';
 
-import useMakeSearch from 'hooks/useMakeSearch';
+import { NavBar   }           from 'components/Inicio';
+import { PostCard }           from 'components/Post';
+import { UserCard }           from 'components/Search';
+
+import { useMakeSearch }      from '_hooks';
+
+import backapp3               from 'assets/backapp3.png';
 
 const useStyles = makeStyles( ( theme ) => ({
   Background: {
     backgroundImage: `url('${backapp3}')`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundAttachment: "fixed",
-    backgroundRepeat: "no-repeat",
-    minHeight: "100vh",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundAttachment: 'fixed',
+    backgroundRepeat: 'no-repeat',
+    minHeight: '100vh',
   },
   cardHolder: {
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(2),
-    marginLeft: "auto",
-    marginRight: "auto",
-    display: "flex",
-    alignItems: "center",
-    flexDirection: "column",
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'column',
   },
   titleBegin: {
-    color: "white",
-    fontFamily: "Arial",
-    fontStyle: "normal",
+    color: 'white',
+    fontFamily: 'Arial',
+    fontStyle: 'normal',
     fontSize: 30,
-    width: "100%",
+    width: '100%',
     paddingBottom: theme.spacing(3),
-    textAlign: "center",
-    flexDirection: "column",
+    textAlign: 'center',
+    flexDirection: 'column',
   },
   ucHolder: {
-    marginLeft: "auto",
-    marginRight: "auto",
-    flexWrap: "wrap",
-    flexDirection: "row",
-    display: "flex",
-    alignItems: "center",
-    textAlign: "center",
-    justifyContent: "center",
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    display: 'flex',
+    alignItems: 'center',
+    textAlign: 'center',
+    justifyContent: 'center',
     width: 600,
     [theme.breakpoints.down('md')]:{
       width: 'auto'
@@ -54,7 +55,7 @@ const useStyles = makeStyles( ( theme ) => ({
   },
 }));
 
-const SearchResult = ( props ) => {
+export const SearchResult = ( props ) => {
 
   const {auth, match, history } = props;
 
@@ -65,9 +66,9 @@ const SearchResult = ( props ) => {
   
   return (
     <div className={classes.Background}>
-      <SearchAppBar  auth={auth} history={history}/>
+      <NavBar  auth={auth} history={history}/>
       <div className={classes.cardHolder}>
-        <div component="h4" variant="h2" className={classes.titleBegin}>
+        <div component='h4' variant='h2' className={classes.titleBegin}>
           <strong>Resultado de Búsqueda</strong>
         </div>
       </div>
@@ -78,11 +79,11 @@ const SearchResult = ( props ) => {
         
       </div>
       <div className={classes.cardHolder}>
-        <div component="h4" variant="h2" className={classes.titleBegin}>
+        <div component='h4' variant='h2' className={classes.titleBegin}>
           <strong>Posts/Hashtags Relacionados</strong>
         </div>
         {
-          ready && ( response.posts?.map( post =><CardPost key={post.postId} post={post} auth={auth}/>) )
+          ready && ( response.posts?.map( post =><PostCard key={post.postId} post={post} auth={auth}/>) )
         }
       </div>
     </div>

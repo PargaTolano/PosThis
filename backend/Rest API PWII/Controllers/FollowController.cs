@@ -9,6 +9,7 @@ using Rest_API_PWII.Models;
 using Rest_API_PWII.Models.ViewModels;
 using Rest_API_PWII.Classes;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Rest_API_PWII.Controllers
 {
@@ -141,7 +142,8 @@ namespace Rest_API_PWII.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create( FollowViewModel model )
+        [Authorize]
+        public IActionResult Create( [FromBody] FollowViewModel model )
         {
             try
             {
@@ -150,11 +152,15 @@ namespace Rest_API_PWII.Controllers
                 if (err != null)
                     return StatusCode( err.HttpStatusCode, err );
 
+                var userCore = new UserCore(db, env, Request);
+                var user = userCore.GetOne(model.FollowedID, model.FollowerID);
+
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
-                        Message = "Follow successful"
+                        Code    = (int)HttpStatusCode.OK,
+                        Message = "Follow successful",
+                        Data    = user
                     });
             }
             catch (Exception ex)
@@ -170,21 +176,26 @@ namespace Rest_API_PWII.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete( int id )
+        [HttpDelete]
+        [Authorize]
+        public IActionResult Delete( [FromBody] FollowViewModel model )
         {
             try
             {
                 var followCore = new FollowCore(db, env, Request);
-                var err = followCore.Delete( id );
+                var err = followCore.Delete( model );
                 if (err != null)
                     return StatusCode(err.HttpStatusCode, err);
+
+                var userCore = new UserCore(db, env, Request);
+                var user = userCore.GetOne(model.FollowedID, model.FollowerID);
 
                 return Ok(
                     new ResponseApiSuccess
                     {
-                        Code = 200,
-                        Message = "Unfollow successful"
+                        Code    = (int)HttpStatusCode.OK,
+                        Message = "Unfollow successful",
+                        Data    = user
                     });
             }
             catch (Exception ex)

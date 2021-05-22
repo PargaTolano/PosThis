@@ -11,7 +11,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Primitives;
 
 namespace Rest_API_PWII.Controllers
 {
@@ -35,7 +34,7 @@ namespace Rest_API_PWII.Controllers
             if (signup.UserName == null)
                 return new ResponseApiError
                 {
-                    Code = 400,
+                    Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
                     Message = "User name not valid"
                 };
@@ -43,7 +42,7 @@ namespace Rest_API_PWII.Controllers
             if (signup.Email == null)
                 return new ResponseApiError
                 {
-                    Code = 400,
+                    Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
                     Message = "Email not valid"
                 };
@@ -51,7 +50,7 @@ namespace Rest_API_PWII.Controllers
             if (signup.Tag == null)
                 return new ResponseApiError
                 {
-                    Code = 400,
+                    Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
                     Message = "Tag not valid"
                 };
@@ -59,7 +58,7 @@ namespace Rest_API_PWII.Controllers
             if (signup.Password == null)
                 return new ResponseApiError
                 {
-                    Code = 400,
+                    Code = (int)HttpStatusCode.BadRequest,
                     HttpStatusCode = (int)HttpStatusCode.BadRequest,
                     Message = "Password not valid"
                 };
@@ -120,13 +119,13 @@ namespace Rest_API_PWII.Controllers
                 }, signUpModel.Password ) ;
 
                 if ( !result.Succeeded )
-                    return StatusCode( 500, "User create failed" );
+                    return StatusCode((int)HttpStatusCode.InternalServerError, "User create failed" );
 
                 return Ok( "User create successful" );
             }
             catch ( Exception ex )
             {
-                return StatusCode( 500, ex.Message );
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message );
             }
         }
 
@@ -146,7 +145,7 @@ namespace Rest_API_PWII.Controllers
                 user = user ?? userUN;
 
                 if ( user == null )
-                    return StatusCode(404);
+                    return StatusCode((int)HttpStatusCode.NotFound);
 
                 var result = await _signInManager.CheckPasswordSignInAsync( user, login.Password, false );
 

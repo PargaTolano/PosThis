@@ -4,14 +4,14 @@
 const arrayToCSV = ( arr ) =>{
 
     if (arr.length === 0)
-        return "";
+        return '';
 
-    let buff = "";
+    let buff = '';
 
     for( let i=0; i<arr.length; ++i ){
         buff = arr[i].toString();
         if ( i < arr.length-1)
-            buff += ",";
+            buff += ',';
     }
 
     return buff;
