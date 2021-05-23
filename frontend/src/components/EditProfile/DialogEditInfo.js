@@ -1,13 +1,20 @@
-import React,{useState} from 'react';
-import { withStyles }   from '@material-ui/core/styles';
-import Button           from '@material-ui/core/Button';
-import Dialog           from '@material-ui/core/Dialog';
-import MuiDialogTitle   from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogActions from '@material-ui/core/DialogActions';
-import IconButton       from '@material-ui/core/IconButton';
-import CloseIcon        from '@material-ui/icons/Close';
-import Typography       from '@material-ui/core/Typography';
+import React from 'react';
+
+import { withStyles } from '@material-ui/core/styles';
+
+import {
+  Dialog,
+  DialogTitle as MuiDialogTitle,
+  DialogContent as MuiDialogContent,
+  DialogActions as MuiDialogActions,
+  IconButton,
+  Typography
+} from '@material-ui/core';
+
+import {
+  Close as CloseIcon,
+  Settings as SettingsIcon
+} from '@material-ui/icons';
 
 const styles = (theme) => ({
   root: {
@@ -20,6 +27,7 @@ const styles = (theme) => ({
     top: theme.spacing(1),
     color: theme.palette.grey[500],
   },
+  
 });
 
 const DialogTitle = withStyles(styles)((props) => {
@@ -49,9 +57,8 @@ const DialogActions = withStyles((theme) => ({
   },
 }))(MuiDialogActions);
 
-
-export const DialogSignup = ({children}) => {
-  const [open, setOpen] = useState(false);
+export const DialogEditInfo = ({children, color}) => {
+  const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -62,9 +69,14 @@ export const DialogSignup = ({children}) => {
 
   return (
     <div>
-      <Button variant='contained' color='secondary' onClick={handleClickOpen}>
-        Regístrate
-      </Button>
+      <IconButton  
+          aria-label='upload picture'
+          component ='span' 
+          variant   ='contained' 
+          color     ={ color || 'secondary' } 
+          onClick   ={handleClickOpen}>
+        <SettingsIcon />
+      </IconButton>
       <Dialog onClose={handleClose} aria-labelledby='customized-dialog-title' open={open}>
         <DialogContent dividers>
             {children}
@@ -73,6 +85,6 @@ export const DialogSignup = ({children}) => {
       </Dialog>
     </div>
   );
-}
+};
 
-export default DialogSignup;
+export default DialogEditInfo
