@@ -87,7 +87,7 @@ namespace Rest_API_PWII
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                Path.Combine( env.ContentRootPath, "static") ),
+                Path.Combine( Directory.GetCurrentDirectory(), "static") ),
                 RequestPath = "/static"
             });
 

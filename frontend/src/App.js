@@ -10,7 +10,7 @@ import {
   SearchResult 
 } from 'components';
 
-import { PrivateRoute }                           from 'components/Routing';
+import { PrivateRoute, PublicRoute }              from 'components/Routing';
 
 import { routes }                                 from '_utils';
 import { history }                                from '_helpers';
@@ -36,7 +36,7 @@ function App() {
           <PrivateRoute exact path={routes.postDetail}    component={PostDetail}      {...temp}   />
           <PrivateRoute       path={routes.searchResult}  component={SearchResult}    {...temp}   />
           <PrivateRoute exact path={routes.profile}       component={ProfileDetail}   {...temp}   />
-          <Route        exact path={routes.login}         component={Login}           {...temp}   />
+          <PublicRoute  exact path={routes.login}         component={Login}           {...temp}   />
           <Route        exact path={'*'}                  component={NotFound}        {...temp}   />
         </Switch>
       </Router>

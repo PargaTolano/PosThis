@@ -1,10 +1,10 @@
-const protocol = 'https';
+const protocol = 'http';
 
-const host =  window.location.hostname;
+const host =  'pargatolano-001-site1.dtempurl.com';
 
-const port = '44325';
+const port = '';
 
-const url = `${protocol}://${host}:${port}`;
+const url = `${protocol}://${host}${port}`;
 
 const getURL = ( subroute ) =>`${url}/${subroute}`;
 
