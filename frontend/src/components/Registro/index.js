@@ -1,2 +1,2 @@
 export * from './DialogSignup';
-export * from './SignUp';
+export * from './Signup';
