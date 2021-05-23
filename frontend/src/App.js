@@ -1,5 +1,5 @@
 import React, { useState, useEffect }                         from 'react';
-import { Router, Route, Switch }  from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch }  from 'react-router-dom';
 
 import { 
   Feed, 
@@ -30,7 +30,7 @@ function App() {
 
   return (
     <div className= 'App'>
-      <Router history={history}>
+      <Router>
         <Switch>
           <PrivateRoute exact path={routes.feed}          component={Feed}            {...temp}   />
           <PrivateRoute exact path={routes.postDetail}    component={PostDetail}      {...temp}   />

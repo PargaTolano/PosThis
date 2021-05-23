@@ -25,7 +25,7 @@ import {
 
 import { MediaGrid }                from 'components/Media';
 
-import { handleResponse, history }  from '_helpers';
+import { handleResponse }  from '_helpers';
 import { authenticationService }    from '_services';
 import { routes, fileToBase64 }     from '_utils';
 
@@ -192,6 +192,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const PostCard = ( props ) => {
+
+  const { history } = props;
 
   const [ post, setPost ] = useState( props.post );
 

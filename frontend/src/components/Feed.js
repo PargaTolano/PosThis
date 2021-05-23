@@ -98,7 +98,7 @@ export const Feed = (props) => {
       </div>
       <CreatePostForm afterUpdate={loadFeed}/>
       {
-        (posts.length !== 0) && <PostContainer posts={posts}/>
+        (posts.length !== 0) && <PostContainer posts={posts} history={history}/>
       }
     </div>
   </>

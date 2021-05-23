@@ -83,7 +83,7 @@ export const SearchResult = ( props ) => {
           <strong>Posts/Hashtags Relacionados</strong>
         </div>
         {
-          ready && ( response.posts?.map( post =><PostCard key={post.postId} post={post} auth={auth}/>) )
+          ready && ( response.posts?.map( post =><PostCard key={post.postId} post={post} history={history}/>) )
         }
       </div>
     </div>

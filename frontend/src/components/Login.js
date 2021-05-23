@@ -52,7 +52,8 @@ const useStyles = makeStyles((theme) => ({
 
 export const Login = (props) => {
 
-  const { history } = props;
+  const { match, history} = props;
+
   const classes = useStyles();
 
   const [ username, setUsername ] = useState('');
@@ -119,8 +120,14 @@ export const Login = (props) => {
             >
               Ingresar
             </Button>
-            
           </form>
+          <Grid container>
+              <Grid item>
+                <DialogSignup>
+                  <SignUp/>
+                </DialogSignup>
+              </Grid>
+            </Grid>
         </div>
       </Grid>
     </Grid>

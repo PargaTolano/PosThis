@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ Children, cloneElement } from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -67,6 +67,12 @@ export const DialogEditInfo = ({children, color}) => {
     setOpen(false);
   };
 
+  const childrenWithProps = Children.map(children, (child, index) => {
+    return cloneElement(child, {
+      handleClose,
+    });
+  });
+
   return (
     <div>
       <IconButton  
@@ -79,7 +85,7 @@ export const DialogEditInfo = ({children, color}) => {
       </IconButton>
       <Dialog onClose={handleClose} aria-labelledby='customized-dialog-title' open={open}>
         <DialogContent dividers>
-            {children}
+            {childrenWithProps}
         </DialogContent>
         
       </Dialog>

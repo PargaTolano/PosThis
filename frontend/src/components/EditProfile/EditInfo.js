@@ -83,7 +83,7 @@ const defaultCoverPic   = 'https://png.pngtree.com/thumb_back/fw800/background/2
 
 export const EditInfo = ( props ) => {
 
-  const { user, setUser } = props;
+  const { user, setUser, handleClose } = props;
 
   const classes           = useStyles();
 
@@ -166,6 +166,8 @@ export const EditInfo = ( props ) => {
       .then( res =>{
         const { data } = res;
         setUser( data );
+        handleClose();
+        authenticationService.logout();
       })
       .catch( console.warn );
   };

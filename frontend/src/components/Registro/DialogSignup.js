@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{ Children, cloneElement, useState} from 'react';
 import { withStyles }   from '@material-ui/core/styles';
 import Button           from '@material-ui/core/Button';
 import Dialog           from '@material-ui/core/Dialog';
@@ -60,6 +60,12 @@ export const DialogSignup = ({children}) => {
     setOpen(false);
   };
 
+  const childrenWithProps = Children.map(children, (child, index) => {
+    return cloneElement(child, {
+      handleClose,
+    });
+  });
+
   return (
     <div>
       <Button variant='contained' color='secondary' onClick={handleClickOpen}>
@@ -67,7 +73,10 @@ export const DialogSignup = ({children}) => {
       </Button>
       <Dialog onClose={handleClose} aria-labelledby='customized-dialog-title' open={open}>
         <DialogContent dividers>
-            {children}
+
+            {
+              childrenWithProps
+            }
         </DialogContent>
         
       </Dialog>

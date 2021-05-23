@@ -24,6 +24,7 @@ import { validateSignup } from '_utils';
 import { createUser }     from '_api';
 
 import { SignUpModel }    from '_model';
+import { authenticationService } from '_services';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -49,7 +50,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export const SignUp = ()=>{
+export const SignUp = (props)=>{
+
+  const { handleClose } = props;
   const classes = useStyles();
 
   const [state, setState] = useState({
@@ -80,14 +83,11 @@ export const SignUp = ()=>{
 
     const model = new SignUpModel(state);
 
-    console.log( model );
-
     createUser(model)
     .then( handleResponse)
-    .then( res =>{
-      console.log( res );
-    })
-    .catch(console.warn);
+    .then( handleClose )
+    .catch(console.warn)
+    .then( handleClose );
   };
 
   useEffect(() => {
@@ -95,7 +95,6 @@ export const SignUp = ()=>{
   }, [state]);
 
   return (
-
     <Container component='main' maxWidth='xs'>
       <CssBaseline />
       <div className={classes.paper}>

@@ -33,18 +33,17 @@ const useStyles = makeStyles((theme) => ({
 
 export const PostContainer = (props) => {
 
-  const {  posts } = props;
+  const {  posts, history } = props;
   const classes = useStyles();
   return (
     <div className={classes.cardHolder}>
-
       <div component='h4' variant='h2' className={classes.titleBegin}>
         <strong>Recientes</strong>
       </div>
       {
         posts 
         &&
-        posts.map(x=><PostCard key={x.postID} post={x}/>)
+        posts.map(x=><PostCard key={x.postID} post={x} history={history}/>)
       }
         
     </div>
